@@ -1,0 +1,18 @@
+En este aprtado estara la logica de la aplicacion
+Clases abstractas como: 
+class User {
+    private $id;
+    private $email;
+
+    public function __construct($email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Email inválido"); // Regla de negocio
+        }
+        $this->email = $email;
+    }
+
+    public function getEmail() { return $this->email; }
+}
+
+
+EN ESTA CARPETAW SE COLOCA TODOS LOS OBJETOS QUE SE NECESITEN Y ABSTRACCIONES

@@ -1,0 +1,31 @@
+En este apartado seran lo casos de usos como:
+-Registro
+-Inicio de session
+-Mostrar informacion
+-guardar informacion
+-validar cierta informacion
+-etc 
+
+ejemplo
+
+class RegisterUser {
+    private $repository;
+
+    // Inyección de dependencia (La interfaz, no la clase concreta)
+    public function __construct(UserRepositoryInterface $repository) {
+        $this->repository = $repository;
+    }
+
+    public function execute($email) {
+        
+        $user = new User($email);
+
+        // 2. Verificar si ya existe (lógica de negocio)
+        if ($this->repository->findByEmail($email)) {
+            throw new Exception("El usuario ya existe");
+        }
+
+
+        return $this->repository->save($user);
+    }
+}

@@ -1,0 +1,10 @@
+Aqui se crean las interfaces contratos para las clases 
+
+
+interface UserRepositoryInterface {
+    public function save(User $user): bool;
+    public function findByEmail(string $email): ?User;
+}
+
+
+Define los metodos que debe de tener si o si una clase
