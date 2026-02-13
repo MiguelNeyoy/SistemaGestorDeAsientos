@@ -1,1 +1,0 @@
-<h1>Este es la conexion a la base de datos</h1>
