@@ -1,0 +1,21 @@
+# Archivos de configuración sensibles
+.env
+.env.*.local
+
+# Dependencias
+/vendor/
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
