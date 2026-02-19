@@ -18,7 +18,7 @@ class AlumnoModel{
     }
 
     public function obtenerAlumnosPorNumeroDeCuenta($NumeroCuenta){
-        $sql = 'SELECT * FROM Alumnos WHERE ?';
+        $sql = 'SELECT * FROM Alumnos WHERE $NumeroCuenta = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

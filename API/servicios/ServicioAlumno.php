@@ -28,9 +28,13 @@
                 'estado_texto' => ($alum['estado'] == 1) ? 'Confirmado' : 'Pendiente'
             ];
         }
-        
         return $listaLimpia;
 
+        
+        }
+        public function obtenerAlumno($numero_cuenta){
+            $alumno = $this -> alumnoModelo -> obtenerAlumnosPorNumeroDeCuenta($numero_cuenta);
+            return $alumno;
         }
     }
 

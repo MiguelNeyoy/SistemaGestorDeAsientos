@@ -3,12 +3,13 @@
 require_once(__DIR__ . './API/servicios/ServicioAlumno.php');
 
 class AlumnoController{
+    private $servicioAlumno;
 
    public function obtenerTodosAlumno(){
     //Llamamos el servicio de alumnos (logica)   
-   $servicioAlumno = new AlumnoServicio;
+   $this -> servicioAlumno = new AlumnoServicio;
 
-    $lista = $servicioAlumno->obtenerListaDeGraduados();
+    $lista = $$this -> servicioAlumno->obtenerListaDeGraduados();
 
     //Se prepara la respuesta para el frontEnd 
 
@@ -17,11 +18,22 @@ class AlumnoController{
 
    }
 
-    public function crearAlumno(){
-        $datos = json_decode(file_get_contents('php://input'),true);
+   //Funcion regresa a un solo alumno 
+   public function obtenerAlumno($numero_cuenta){
+            $Alumno = $this -> servicioAlumno -> obtenerAlumno($numero_cuenta);
 
-        //se manda a llamar a la funcion de guardar 
-        //se responde si fue exitoso o no
+        header('Content-Type: application/json');
+        echo json_encode($Alumno);
+            
+    }
+
+    //Listado de alumnos por carrera
+    public function obtenerAlumnoPorCarrera($carrera){
+
+    }
+
+    public function agregarInvitadosAlumno(){
+        
     }
 
 }
