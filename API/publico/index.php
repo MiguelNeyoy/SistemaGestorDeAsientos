@@ -25,7 +25,7 @@ switch ($method) {
         $alumnoController -> actualizarDatosAlumno();
         break;
     case 'DELETE':
-        // si se van a eliminar o desactivar datos
+        // si se van a eliminar o desactivar ejemplo
         $alumnoController -> eliminarAlumno();
         break;
     
