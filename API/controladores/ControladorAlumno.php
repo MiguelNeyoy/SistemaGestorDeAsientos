@@ -5,35 +5,24 @@ require_once(__DIR__ . './API/servicios/ServicioAlumno.php');
 class AlumnoController{
     private $servicioAlumno;
 
-   public function obtenerTodosAlumno(){
-    //Llamamos el servicio de alumnos (logica)   
-   $this -> servicioAlumno = new AlumnoServicio;
-
-    $lista = $$this -> servicioAlumno->obtenerListaDeGraduados();
-
-    //Se prepara la respuesta para el frontEnd 
-
-    header('Content-Type: application/json');
-    echo json_encode($lista);
-
+   public function validarAlumno() {
+    /* recibe el numero de cuenta y llama al servicio que busca al alumno por numero de cuenta 
+        responde 200 ok si todo bien sino 404 no se encontro
+    */ 
    }
-
-   //Funcion regresa a un solo alumno 
-   public function obtenerAlumno($numero_cuenta){
-            $Alumno = $this -> servicioAlumno -> obtenerAlumno($numero_cuenta);
-
-        header('Content-Type: application/json');
-        echo json_encode($Alumno);
-            
-    }
-
-    //Listado de alumnos por carrera
-    public function obtenerAlumnoPorCarrera($carrera){
-
-    }
-
-    public function agregarInvitadosAlumno(){
-        
-    }
+   public function confirmarAsistencia($numero_de_cuenta){
+    /** 
+     *  Recibe el numero de cuenta llama al servicio registrar asistencia
+     *  Ese servicio valida que sean los invitados correspondietes
+     *  responde 200 ok o 400 
+    */
+   }
+   public function obtenerEstado($numero_de_cuenta){
+    /**
+     *  recibe el numero de cuenta, manda a llamer el detalle alumno
+     *  y responde informacion del alumno
+     * 
+     */
+   }
 
 }
