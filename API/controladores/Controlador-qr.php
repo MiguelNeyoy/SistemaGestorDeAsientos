@@ -6,7 +6,8 @@
 
         public function generarQr(){
             /*
-                Genera el qr y maanda a llamar al servicio de que crea el token 
+             *
+                Genera el qr y manda a llamar al servicio de que crea el token
             */    
         } 
             

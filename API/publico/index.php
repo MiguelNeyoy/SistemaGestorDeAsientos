@@ -8,10 +8,11 @@ header("Control-Type: application/json; charset-UTF-8");
 $rutas = [
     '/alumnos/{id}' => [
         'GET' => ['AlumnoController' , 'validarAlumno'],
-        'GET' => ['AlumoController', 'confirmarAsistencia'],
-        'GET' => ['AlumnoController' , 'obtenerEstado']
+        'POST' => ['AlumoController', 'confirmarAsistencia']
     ],
-
+    '/alumno/{cuenta}/detalles' => [
+        'GET' => ['AlumoController', 'confirmarAsistencia']
+    ],
     '/asientos/{id}' => [
         'GET' => ['controlador_asientos', 'reinciarTeatro'],
         'GET' => ['controlador_asientos', 'verMapaAsientos'],
