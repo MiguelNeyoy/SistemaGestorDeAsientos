@@ -1,82 +1,87 @@
 <?php
-require_once "./API/controladores/ControladorAlumno.php";
-//Se configurarn los cors
+
+require_once __DIR__ . '/../controladores/ControladorAlumno.php';
+require_once __DIR__ . '/../controladores/ControladorAsientos.php';
+require_once __DIR__ . '/../controladores/ControladorQr.php';
+
+// Configurar CORS
 header("Access-Control-Allow-Origin: *");
-header("Control-Type: application/json; charset-UTF-8");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
 
-//se definen las rutas
+// Si es una solicitud OPTIONS (preflight), terminar aquí
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Definir las rutas
 $rutas = [
-    '/alumnos/{id}' => [
-        'GET' => ['AlumnoController' , 'validarAlumno'],
-        'GET' => ['AlumoController', 'confirmarAsistencia'],
-        'GET' => ['AlumnoController' , 'obtenerEstado']
+    '/alumnos/validar/{numero_cuenta}' => [
+        'GET' => ['ControladorAlumno', 'validarAlumno']
     ],
-
-    '/asientos/{id}' => [
-        'GET' => ['controlador_asientos', 'reinciarTeatro'],
-        'GET' => ['controlador_asientos', 'verMapaAsientos'],
+    '/alumnos/confirmar/{numero_cuenta}' => [
+        'POST' => ['ControladorAlumno', 'confirmarAsistencia']
     ],
-    '/qr/{id}' => [
-        'GET' => ['qr_controlador', 'generarQr'],
-        'GET' => ['qr_controlador', 'validarQr'],
+    '/alumnos/estado/{numero_cuenta}' => [
+        'GET' => ['ControladorAlumno', 'obtenerEstado']
+    ],
+    '/asientos/mapa' => [
+        'GET' => ['ControladorAsientos', 'verMapaAsientos']
+    ],
+    '/asientos/reiniciar' => [
+        'POST' => ['ControladorAsientos', 'reiniciarTeatro']
+    ],
+    '/qr/generar' => [
+        'POST' => ['ControladorQr', 'generarQr']
+    ],
+    '/qr/validar' => [
+        'POST' => ['ControladorQr', 'validarQr']
     ]
-
 ];
 
-//Obtenemos el metodo http 
+// Obtener el método HTTP y la URI
 $metodoHttp = $_SERVER['REQUEST_METHOD'];
-//limpiamos la URL
 $uriActual = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$basePath = './API/public/index.php'; //esto es esgun la carptea de ubicacion
-
-if (strpos($uriActual, $basePath) === 0) {
-    $uriActual = substr($uriActual, strlen($basePath));
+// Limpiar la URI para que no incluya subdirectorios si es que el proyecto no está en la raíz del servidor
+$scriptName = dirname($_SERVER['SCRIPT_NAME']);
+if (strpos($uriActual, $scriptName) === 0) {
+    $uriActual = substr($uriActual, strlen($scriptName));
 }
- 
+
 $rutaEncontrada = false;
 
-foreach($rutas as $rutaDefinida => $metodoPermitido){
-    $patron = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $rutaDefinida);
-    $patron = "#^" . $patron . "$#"; // Añadimos delimitadores para match exacto
+foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
+    $patron = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_-]+)', $rutaDefinida);
+    $patron = "#^" . $patron . "$#";
 
-    // Verificamos si la URI actual coincide con el patrón
     if (preg_match($patron, $uriActual, $coincidencias)) {
-        $rutaEncontrada = true;
-
-        // Validamos si el método HTTP (Ej: GET) está definido para esa ruta
         if (isset($metodosPermitidos[$metodoHttp])) {
-            
+            $rutaEncontrada = true;
             $accion = $metodosPermitidos[$metodoHttp];
             $nombreControlador = $accion[0];
             $nombreMetodo = $accion[1];
 
-            // Quitamos el primer elemento de coincidencias (que es la URL completa)
-            // para quedarnos solo con los parámetros dinámicos (Ej: el '123' del {id})
-            array_shift($coincidencias);
+            $parametros = array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY);
 
-            // Verificamos que la clase exista (para evitar errores fatales)
             if (class_exists($nombreControlador)) {
                 $controlador = new $nombreControlador();
-                
-                // Ejecutamos el método y le pasamos los parámetros dinámicos
-                // Si la ruta era /alumnos/123, esto equivale a $controlador->obtenerPorId('123')
-                call_user_func_array([$controlador, $nombreMetodo], $coincidencias);
+                call_user_func_array([$controlador, $nombreMetodo], $parametros);
             } else {
                 http_response_code(500);
-                echo json_encode(["error" => "El controlador $nombreControlador no existe."]);
+                echo json_encode(["error" => "El controlador '$nombreControlador' no existe."]);
             }
-
         } else {
-            http_response_code(405); // Method Not Allowed
-            echo json_encode(["error" => "Método $metodoHttp no permitido en esta ruta."]);
+            http_response_code(405);
+            echo json_encode(["error" => "Método $metodoHttp no permitido para esta ruta."]);
         }
-        break; // Detenemos el loop porque ya encontramos la ruta
+        break;
     }
 }
 
-// Si terminó el ciclo y no encontró nada:
 if (!$rutaEncontrada) {
-    http_response_code(404); // Not Found
-    echo json_encode(["error" => "La ruta $uriActual no fue encontrada."]);
+    http_response_code(404);
+    echo json_encode(["error" => "Ruta '$uriActual' no encontrada."]);
 }
