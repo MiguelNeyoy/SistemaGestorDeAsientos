@@ -60,7 +60,7 @@ class AlumnoModel {
 
             $stmt = $this->db->prepare($query);
 
-            $stmt->bindParam(":asistira", $asistira, PDO::PARAM_BOOL);
+            $stmt->bindParam(":asistira", $asistira, PDO::PARAM_INT);
             $stmt->bindParam(":num_invitados", $num_invitados, PDO::PARAM_INT);
             $stmt->bindParam(":correo", $correo, PDO::PARAM_STR);
             $stmt->bindParam(":id_alumno", $id_alumno, PDO::PARAM_INT);
@@ -74,26 +74,25 @@ class AlumnoModel {
     }
 
     public function verificarConfirmacion($id_alumno) {
-        try {
-            $query = "SELECT id_alumno 
-                      FROM alumnos 
-                      WHERE id_alumno = :id_alumno 
-                      AND asistira IS NOT NULL 
-                      AND fecha_confirmacion IS NOT NULL
-                      LIMIT 1";
+    try {
+        $query = "SELECT fecha_confirmacion
+                  FROM alumnos
+                  WHERE id_alumno = :id_alumno
+                  AND fecha_confirmacion IS NOT NULL
+                  LIMIT 1";
 
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(":id_alumno", $id_alumno, PDO::PARAM_INT);
-            $stmt->execute();
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":id_alumno", $id_alumno, PDO::PARAM_INT);
+        $stmt->execute();
 
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
 
-            return $resultado ? true : false;
+    } catch (PDOException $e) {
+        error_log("Error en verificarConfirmacion: " . $e->getMessage());
+        return false;
+    }
+}
 
-        } catch (PDOException $e) {
-            error_log("Error en verificarConfirmacion: " . $e->getMessage());
-            return false;
-        }
     }
 }
 ?>
