@@ -2,9 +2,10 @@
 
 /**
  *  
- * En la carpeta de servicio es donde va la logia de la toda la aplicacion
+ * En la carpeta de servicio es donde va la logica de la toda la aplicacion
  * Reglas de la app si no pueden pasar mas de 4 invitados 
- * creacion de qr. ect.
+ * creacion de QR
+ * Servicios para el administracion
 */
 // servicios/ServicioAlumno.php
 
@@ -37,43 +38,49 @@ class ServicioAlumno {
         return $this->respuesta(true, "Alumno encontrado", 200, $alumno);
     }
 
-    public function confirmarAsistencia($data) {
+ public function confirmarAsistencia($data) {
 
-        // Validaciones básicas
-        if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
-            return $this->respuesta(false, "Datos incompletos", 400);
-        }
-
-        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
-            return $this->respuesta(false, "Correo inválido", 400);
-        }
-
-        if ($data['num_invitados'] < 0 || $data['num_invitados'] > 4) {
-            return $this->respuesta(false, "Máximo 4 invitados", 400);
-        }
-
-        if (!$data['asistira']) {
-            $data['num_invitados'] = 0;
-        }
-
-        // Verificar si ya confirmó
-        if ($this->modelo->verificarConfirmacion($data['id_alumno'])) {
-            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
-        }
-
-        $guardado = $this->modelo->actualizarConfirmacion(
-            $data['id_alumno'],
-            $data['asistira'],
-            $data['num_invitados'],
-            $data['correo']
-        );
-
-        if (!$guardado) {
-            return $this->respuesta(false, "Error al guardar confirmación", 500);
-        }
-
-        return $this->respuesta(true, "Confirmación guardada correctamente", 200);
+    if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
+        return $this->respuesta(false, "Datos incompletos", 400);
     }
+
+    if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+        return $this->respuesta(false, "Correo inválido", 400);
+    }
+
+    if (!in_array($data['asistira'], [0, 1, true, false], true)) {
+        return $this->respuesta(false, "Valor de asistencia inválido", 400);
+    }
+
+    $asistira = $data['asistira'] ? 1 : 0;
+
+    $numInvitados = (int) $data['num_invitados'];
+
+    if ($numInvitados < 0 || $numInvitados > 4) {
+        return $this->respuesta(false, "Máximo 4 invitados", 400);
+    }
+
+    if ($asistira === 0) {
+        $numInvitados = 0;
+    }
+
+    if ($this->modelo->verificarConfirmacion($data['id_alumno'])) {
+        return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
+    }
+
+    $guardado = $this->modelo->actualizarConfirmacion(
+        $data['id_alumno'],
+        $asistira,
+        $numInvitados,
+        $data['correo']
+    );
+
+    if (!$guardado) {
+        return $this->respuesta(false, "Error al guardar confirmación", 500);
+    }
+
+    return $this->respuesta(true, "Confirmación guardada correctamente", 200);
+}
 
     private function respuesta($success, $message, $code, $data = null) {
         http_response_code($code);
