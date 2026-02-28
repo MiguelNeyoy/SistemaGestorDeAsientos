@@ -7,90 +7,81 @@
  * creacion de qr. ect.
 */
 // servicios/ServicioAlumno.php
+
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 
 class ServicioAlumno {
+
     private $modelo;
-    
+
     public function __construct() {
-        $this->modelo = new AlumnoModelo();
+        $this->modelo = new AlumnoModel();
     }
-    
-    public function validarAlumno($numero_cuenta) {
-        // Validar formato
-        if (!preg_match('/^\d{9}$/', $numero_cuenta)) {
-            return [
-                'exito' => false,
-                'error' => 'El número de cuenta debe tener 9 dígitos'
-            ];
+
+    public function buscarAlumno($data) {
+
+        if (empty($data['numero_cuenta'])) {
+            return $this->respuesta(false, "Número de cuenta requerido", 400);
         }
-        
-        // Buscar alumno
-        $alumno = $this->modelo->buscarPorNumeroCuenta($numero_cuenta);
-        
+
+        if (!ctype_digit($data['numero_cuenta'])) {
+            return $this->respuesta(false, "Número de cuenta inválido", 400);
+        }
+
+        $alumno = $this->modelo->buscarPorNumeroCuenta($data['numero_cuenta']);
+
         if (!$alumno) {
-            return [
-                'exito' => false,
-                'error' => 'Número de cuenta no encontrado'
-            ];
+            return $this->respuesta(false, "Alumno no encontrado", 404);
         }
-        
-        // Verificar si ya confirmó
-        $alumno['ya_confirmo'] = $this->modelo->verificarConfirmacion($alumno['id_alumno']);
-        
-        return [
-            'exito' => true,
-            'datos' => $alumno
-        ];
+
+        return $this->respuesta(true, "Alumno encontrado", 200, $alumno);
     }
-    
-    public function registrarConfirmacion($id_alumno, $datos) {
-        // Validaciones
-        if (!in_array($datos['asistira'], ['si', 'no'])) {
-            return [
-                'exito' => false,
-                'error' => 'Respuesta de asistencia no válida'
-            ];
+
+    public function confirmarAsistencia($data) {
+
+        // Validaciones básicas
+        if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
+            return $this->respuesta(false, "Datos incompletos", 400);
         }
-        
-        if ($datos['asistira'] === 'si') {
-            if (!isset($datos['num_invitados']) || $datos['num_invitados'] < 0 || $datos['num_invitados'] > 4) {
-                return [
-                    'exito' => false,
-                    'error' => 'Número de invitados debe ser entre 0 y 4'
-                ];
-            }
-        } else {
-            $datos['num_invitados'] = 0;
+
+        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+            return $this->respuesta(false, "Correo inválido", 400);
         }
-        
-        if (!filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
-            return [
-                'exito' => false,
-                'error' => 'Correo electrónico no válido'
-            ];
+
+        if ($data['num_invitados'] < 0 || $data['num_invitados'] > 4) {
+            return $this->respuesta(false, "Máximo 4 invitados", 400);
         }
-        
-        // Verificar que no haya confirmado antes
-        if ($this->modelo->verificarConfirmacion($id_alumno)) {
-            return [
-                'exito' => false,
-                'error' => 'Este alumno ya confirmó su asistencia'
-            ];
+
+        if (!$data['asistira']) {
+            $data['num_invitados'] = 0;
         }
-        
-        // Registrar
-        if ($this->modelo->actualizarConfirmacion($id_alumno, $datos)) {
-            return [
-                'exito' => true,
-                'mensaje' => 'Confirmación registrada exitosamente'
-            ];
-        } else {
-            return [
-                'exito' => false,
-                'error' => 'Error al registrar la confirmación'
-            ];
+
+        // Verificar si ya confirmó
+        if ($this->modelo->verificarConfirmacion($data['id_alumno'])) {
+            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
         }
+
+        $guardado = $this->modelo->actualizarConfirmacion(
+            $data['id_alumno'],
+            $data['asistira'],
+            $data['num_invitados'],
+            $data['correo']
+        );
+
+        if (!$guardado) {
+            return $this->respuesta(false, "Error al guardar confirmación", 500);
+        }
+
+        return $this->respuesta(true, "Confirmación guardada correctamente", 200);
+    }
+
+    private function respuesta($success, $message, $code, $data = null) {
+        http_response_code($code);
+
+        return json_encode([
+            "success" => $success,
+            "message" => $message,
+            "data" => $data
+        ]);
     }
 }
-?>
