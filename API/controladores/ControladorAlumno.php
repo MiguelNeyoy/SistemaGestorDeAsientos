@@ -1,27 +1,44 @@
 <?php
 
-require_once(__DIR__ . './API/servicios/ServicioAlumno.php');
+require_once __DIR__ . '/../servicios/ServicioAlumno.php';
 
-class AlumnoController{
+class AlumnoController {
 
-   public function obtenerTodosAlumno(){
-    //Llamamos el servicio de alumnos (logica)   
-   $servicioAlumno = new AlumnoServicio;
+    private $servicio;
 
-    $lista = $servicioAlumno->obtenerListaDeGraduados();
-
-    //Se prepara la respuesta para el frontEnd 
-
-    header('Content-Type: application/json');
-    echo json_encode($lista);
-
-   }
-
-    public function crearAlumno(){
-        $datos = json_decode(file_get_contents('php://input'),true);
-
-        //se manda a llamar a la funcion de guardar 
-        //se responde si fue exitoso o no
+    public function __construct() {
+        $this->servicio = new ServicioAlumno();
     }
 
+    public function buscarAlumno() {
+
+        $datos = json_decode(file_get_contents("php://input"), true);
+
+        if (!$datos) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "JSON inválido"
+            ]);
+            return;
+        }
+
+        echo $this->servicio->buscarAlumno($datos);
+    }
+
+    public function confirmarAsistencia() {
+
+        $datos = json_decode(file_get_contents("php://input"), true);
+
+        if (!$datos) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "JSON inválido"
+            ]);
+            return;
+        }
+
+        echo $this->servicio->confirmarAsistencia($datos);
+    }
 }
