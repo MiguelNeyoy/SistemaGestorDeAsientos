@@ -1,42 +1,32 @@
 <?php
+
 require_once "./API/controladores/ControladorAlumno.php";
 
 header("Access-Control-Allow-Origin: *");
-header("Control-Type: application/json; charset-UTF-8");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
 
 $method = $_SERVER["REQUEST_METHOD"];
-$alumnoController = new AlumnoController;
+$requestUri = $_SERVER["REQUEST_URI"];
 
-//Aqui se reciben toda las peticiones y dependiedo lo que  se requiera se mandada a al controlador correspondiente 
+$alumnoController = new AlumnoController();
 
-switch ($method) {
-    case 'POST':
-        //si va a mandar dartos
-        $alumnoController -> crearAlumno();
-        break;
-    case 'GET':
+// Solo aceptamos POST para esta fase
+if ($method !== "POST") {
+    http_response_code(405);
+    echo json_encode(["success" => false, "message" => "Método no permitido"]);
+    exit;
+}
 
-        //Si van a consular o mostrar datos 
-
-        $alumnoController -> validarAlumno();
-        break;
-    case 'PUT':
-        // si van a modificar datos 
-        $alumnoController -> actualizarDatosAlumno();
-        break;
-    case 'DELETE':
-        // si se van a eliminar o desactivar ejemplo
-        $alumnoController -> eliminarAlumno();
-        break;
-    
-    default:
-        http_response_code(405);
-        echo json_encode(["menssage" => "Metodo no permitido"]);
-        break;
-
-        // public/index.php
-// Este archivo redirige todas las peticiones al controlador
-
-require_once __DIR__ . '/../controladores/ControladorAlumno.php';
-// El controlador ya se ejecuta solo al incluirlo
+// Rutas
+if (strpos($requestUri, "/buscar") !== false) {
+    $alumnoController->buscarAlumno();
+} 
+elseif (strpos($requestUri, "/confirmar") !== false) {
+    $alumnoController->confirmarAsistencia();
+} 
+else {
+    http_response_code(404);
+    echo json_encode(["success" => false, "message" => "Ruta no encontrada"]);
 }
