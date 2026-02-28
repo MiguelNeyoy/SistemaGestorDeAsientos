@@ -18,3 +18,17 @@ Endpoint: `/NUEVA CARPETA/API/public/index.php`
 - `main` - Rama principal
 - `feature/servicio-alumno` - Desarrollo del servicio de alumnos
 - `feature/base-datos` - Estructura de BD
+
+## CREATE TABLE alumnos (
+    id_alumno INT PRIMARY KEY AUTO_INCREMENT,
+    numero_cuenta VARCHAR(20),
+    nombre VARCHAR(100),
+    apellido_paterno VARCHAR(100),
+    apellido_materno VARCHAR(100),
+    carrera VARCHAR(100),
+    semestre INT,
+    asistira TINYINT(1) NULL,
+    num_invitados INT NULL,
+    correo VARCHAR(150) NULL,
+    fecha_confirmacion DATETIME NULL
+);
