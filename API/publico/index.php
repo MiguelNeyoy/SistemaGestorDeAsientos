@@ -33,4 +33,10 @@ switch ($method) {
         http_response_code(405);
         echo json_encode(["menssage" => "Metodo no permitido"]);
         break;
+
+        // public/index.php
+// Este archivo redirige todas las peticiones al controlador
+
+require_once __DIR__ . '/../controladores/ControladorAlumno.php';
+// El controlador ya se ejecuta solo al incluirlo
 }
