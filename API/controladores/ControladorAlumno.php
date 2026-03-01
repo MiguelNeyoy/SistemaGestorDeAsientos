@@ -1,5 +1,4 @@
-
-<<<<<<< HEAD
+<?php
 require_once(__DIR__ . '/../servicios/ServicioAlumno.php');
 
 class ControladorAlumno
@@ -8,7 +7,7 @@ class ControladorAlumno
 
     public function __construct()
     {
-        $this->servicioAlumno = new AlumnoServicio();
+        $this->servicioAlumno = new ServicioAlumno();
     }
 
     /**
@@ -17,7 +16,7 @@ class ControladorAlumno
      */
     public function validarAlumno($numero_cuenta)
     {
-        $isValid = $this->servicioAlumno->validarAlumno($numero_cuenta);
+        $isValid = $this->servicioAlumno->buscarAlumno($numero_cuenta);
         if ($isValid) {
             http_response_code(200);
             echo json_encode([
@@ -37,7 +36,7 @@ class ControladorAlumno
      */
     public function confirmarAsistencia($numero_cuenta)
     {
-        $res = $this->servicioAlumno->registrarAsistencia($numero_cuenta);
+        $res = $this->servicioAlumno->confirmarAsistencia($numero_cuenta);
         if ($res) {
             http_response_code(200);
             echo json_encode([
@@ -54,20 +53,19 @@ class ControladorAlumno
      * Obtiene el estado actual del alumno (por ejemplo estado de confirmación).
      * Devuelve 200 con el estado o 404 si el alumno no existe.
      */
-    public function obtenerEstado($numero_cuenta)
-    {
-        $estado = $this->servicioAlumno->obtenerEstado($numero_cuenta);
-        if ($estado !== null) {
-            http_response_code(200);
-            echo json_encode([
-                "numero_cuenta" => $numero_cuenta,
-                "estado" => $estado
-            ]);
-        } else {
-            http_response_code(404);
-            echo json_encode(["error" => "Alumno no encontrado"]);
-        }
-    }
+
+    // public function obtenerEstado($numero_cuenta)
+    // {
+    //     $estado = $this->servicioAlumno->obtenerEstado($numero_cuenta);
+    //     if ($estado !== null) {
+    //         http_response_code(200);
+    //         echo json_encode([
+    //             "numero_cuenta" => $numero_cuenta,
+    //             "estado" => $estado
+    //         ]);
+    //     } else {
+    //         http_response_code(404);
+    //         echo json_encode(["error" => "Alumno no encontrado"]);
+    //     }
+    // }
 }
-=======
->>>>>>> SERVICIOS
