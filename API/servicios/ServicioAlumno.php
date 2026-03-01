@@ -85,10 +85,11 @@ class ServicioAlumno {
     private function respuesta($success, $message, $code, $data = null) {
         http_response_code($code);
 
-        return json_encode([
+        // Retornar arreglo en lugar de JSON codificado
+        return [
             "success" => $success,
             "message" => $message,
             "data" => $data
-        ]);
+        ];
     }
 }
