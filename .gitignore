@@ -8,6 +8,7 @@ node_modules/
 
 # Archivos del sistema
 .DS_Store
+.github.md
 Thumbs.db
 
 # IDEs
