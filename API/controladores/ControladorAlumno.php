@@ -1,5 +1,5 @@
-<?php
 
+<<<<<<< HEAD
 require_once(__DIR__ . '/../servicios/ServicioAlumno.php');
 
 class ControladorAlumno
@@ -69,3 +69,5 @@ class ControladorAlumno
         }
     }
 }
+=======
+>>>>>>> SERVICIOS

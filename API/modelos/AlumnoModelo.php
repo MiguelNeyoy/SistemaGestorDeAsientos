@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 
@@ -25,3 +26,5 @@ class AlumnoModel{
     }
 
 }
+=======
+>>>>>>> SERVICIOS

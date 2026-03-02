@@ -2,40 +2,93 @@
 
 /**
  *  
- * En la carpeta de servicio es donde va la logia de la toda la aplicacion
- * Reglas de la app si no pueden pasar mas de 2 invitados 
- * creacion de qr. ect.
+ * En la carpeta de servicio es donde va la logica de la toda la aplicacion
+ * Reglas de la app si no pueden pasar mas de 4 invitados 
+ * creacion de QR
+ * Servicios para el administracion
 */
-    require_once(__DIR__ . './API/modelos/AlumnoModelo.php');
-    class AlumnoServicio{
-        private $alumnoModelo;
+// servicios/ServicioAlumno.php
 
-        public function __construct() {
-            //al crear el objeto AlumnoServicio se crea el objeto AlumnoModel
-            $this -> alumnoModelo = new AlumnoModel;
-        }
+require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 
-        public function obtenerListaDeGraduados(){
-            $todosAlumnos = $this->alumnoModelo->obtenerAlumnos();
-            //limpiar la lista para evitar mandar datos sensibles
-            $listaLimpia = [];
+class ServicioAlumno {
 
-            foreach ($listaLimpia as $alum) {
-            $listaLimpia[] = [
-                'cuenta' => $alum['numero_cuenta'],
-                'nombre_completo' => $alum['nombre'] . ' ' . $alum['apellidos'],
-                'carrera' => $alum['carrera'],
-                'estado_texto' => ($alum['estado'] == 1) ? 'Confirmado' : 'Pendiente'
-            ];
-        }
-        return $listaLimpia;
+    private $modelo;
 
-        
-        }
-        public function obtenerAlumno($numero_cuenta){
-            $alumno = $this -> alumnoModelo -> obtenerAlumnosPorNumeroDeCuenta($numero_cuenta);
-            return $alumno;
-        }
+    public function __construct() {
+        $this->modelo = new AlumnoModel();
     }
 
-?>
+    public function buscarAlumno($data) {
+
+        if (empty($data['numero_cuenta'])) {
+            return $this->respuesta(false, "Número de cuenta requerido", 400);
+        }
+
+        if (!ctype_digit($data['numero_cuenta'])) {
+            return $this->respuesta(false, "Número de cuenta inválido", 400);
+        }
+
+        $alumno = $this->modelo->buscarPorNumeroCuenta($data['numero_cuenta']);
+
+        if (!$alumno) {
+            return $this->respuesta(false, "Alumno no encontrado", 404);
+        }
+
+        return $this->respuesta(true, "Alumno encontrado", 200, $alumno);
+    }
+
+ public function confirmarAsistencia($data) {
+
+    if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
+        return $this->respuesta(false, "Datos incompletos", 400);
+    }
+
+    if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+        return $this->respuesta(false, "Correo inválido", 400);
+    }
+
+    if (!in_array($data['asistira'], [0, 1, true, false], true)) {
+        return $this->respuesta(false, "Valor de asistencia inválido", 400);
+    }
+
+    $asistira = $data['asistira'] ? 1 : 0;
+
+    $numInvitados = (int) $data['num_invitados'];
+
+    if ($numInvitados < 0 || $numInvitados > 4) {
+        return $this->respuesta(false, "Máximo 4 invitados", 400);
+    }
+
+    if ($asistira === 0) {
+        $numInvitados = 0;
+    }
+
+    if ($this->modelo->verificarConfirmacion($data['id_alumno'])) {
+        return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
+    }
+
+    $guardado = $this->modelo->actualizarConfirmacion(
+        $data['id_alumno'],
+        $asistira,
+        $numInvitados,
+        $data['correo']
+    );
+
+    if (!$guardado) {
+        return $this->respuesta(false, "Error al guardar confirmación", 500);
+    }
+
+    return $this->respuesta(true, "Confirmación guardada correctamente", 200);
+}
+
+    private function respuesta($success, $message, $code, $data = null) {
+        http_response_code($code);
+
+        return json_encode([
+            "success" => $success,
+            "message" => $message,
+            "data" => $data
+        ]);
+    }
+}
