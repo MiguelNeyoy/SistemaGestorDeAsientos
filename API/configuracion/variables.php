@@ -8,7 +8,7 @@ $dotenv->load();
 
 
 $DB_HOST=$_ENV["DB_HOST"];
-$DB_USER = $_ENV["BB_USER"];
+$DB_USER = $_ENV["DB_USER"];
 $DB_PASS=$_ENV["DB_PASS"];
 $DB_NAME=$_ENV["DB_NAME"];
 $dbPort = $_ENV["DB_PORT"];
