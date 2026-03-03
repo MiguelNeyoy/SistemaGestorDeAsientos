@@ -52,8 +52,6 @@ if (strpos($uriActual, $scriptName) === 0) {
 }
 
 $rutaEncontrada = false;
-#echo json_encode(["Lo_que_lee_el_router" => $uriActual]);
-#exit;
 foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
     $patron = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_-]+)', $rutaDefinida);
     $patron = "#^" . $patron . "$#";
