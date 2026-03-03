@@ -16,7 +16,7 @@ class ControladorAlumno
      */
     public function validarAlumno($numero_cuenta)
     {
-        $isValid = $this->servicioAlumno->buscarAlumno($numero_cuenta);
+        $isValid = $this->servicioAlumno->buscarAlumno(['numero_cuenta' => $numero_cuenta]);
         if ($isValid) {
             http_response_code(200);
             echo json_encode([
