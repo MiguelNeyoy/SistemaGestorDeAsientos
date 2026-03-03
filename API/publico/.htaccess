@@ -1,0 +1,6 @@
+RewriteEngine On
+# Si el archivo o carpeta física no existe...
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# ...redirecciona todo el tráfico a nuestro Router
+RewriteRule ^(.*)$ public/index.php [QSA,L]
