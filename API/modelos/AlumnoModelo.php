@@ -24,7 +24,7 @@ class AlumnoModel
     {
         $sql = 'SELECT * FROM Alumnos WHERE $NumeroCuenta = ?';
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([$NumeroCuenta]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
