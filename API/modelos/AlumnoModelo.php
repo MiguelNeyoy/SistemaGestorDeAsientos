@@ -14,7 +14,7 @@ class AlumnoModel
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT * FROM Alumnos';
+        $sql = 'SELECT * FROM alumnos';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -22,7 +22,7 @@ class AlumnoModel
 
     public function obtenerAlumnosPorNumeroDeCuenta($NumeroCuenta)
     {
-        $sql = 'SELECT * FROM Alumnos WHERE $NumeroCuenta = ?';
+        $sql = 'SELECT * FROM alumno WHERE $NumeroCuenta = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$NumeroCuenta]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -30,7 +30,7 @@ class AlumnoModel
 
     public function buscarPorNumeroCuenta($numeroCuenta)
     {
-        $sql = 'SELECT * FROM Alumnos WHERE numero_cuenta = ?';
+        $sql = 'SELECT * FROM alumno WHERE numCuenta = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$numeroCuenta]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,7 +38,7 @@ class AlumnoModel
 
     public function verificarConfirmacion($idAlumno)
     {
-        $sql = 'SELECT * FROM Confirmaciones WHERE id_alumno = ?';
+        $sql = 'SELECT * FROM asistencia WHERE id_alumno = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$idAlumno]);
         return $stmt->fetch(PDO::FETCH_ASSOC) !== false;

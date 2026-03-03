@@ -29,7 +29,7 @@ class ServicioAlumno {
             return $this->respuesta(false, "Número de cuenta inválido", 400);
         }
 
-        $alumno = $this->modelo->obtenerAlumnosPorNumeroDeCuenta($data['numero_cuenta']);
+        $alumno = $this->modelo->buscarPorNumeroCuenta($data['numero_cuenta']);
 
         if (!$alumno) {
             return $this->respuesta(false, "Alumno no encontrado", 404);
