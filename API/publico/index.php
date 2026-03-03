@@ -1,5 +1,6 @@
 <?php
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
@@ -63,7 +64,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
             $nombreControlador = $accion[0];
             $nombreMetodo = $accion[1];
 
-            $parametros = array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY);
+            $parametros = array_values(array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY));
 
             if (class_exists($nombreControlador)) {
                 $controlador = new $nombreControlador();
