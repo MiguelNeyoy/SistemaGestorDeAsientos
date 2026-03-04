@@ -19,6 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Definir las rutas
 $rutas = [
+    '/alumnos' => [
+        'GET' => ['ControladorAlumno', 'obtenerAlumnos']
+    ],
     '/alumnos/{id}' => [
         'GET' => ['ControladorAlumno', 'validarAlumno']
     ],

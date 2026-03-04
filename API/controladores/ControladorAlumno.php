@@ -1,13 +1,22 @@
 <?php
 require_once(__DIR__ . '/../servicios/ServicioAlumno.php');
+require_once(__DIR__ . '/../modelos/AlumnoModelo.php');
 
 class ControladorAlumno
 {
     private $servicioAlumno;
+    private $modeloAlumno;
 
     public function __construct()
     {
         $this->servicioAlumno = new ServicioAlumno();
+        $this->modeloAlumno = new AlumnoModel();
+    }
+    
+    public function obtenerAlumnos()
+    {
+        $alumnos = $this->modeloAlumno->obtenerAlumnos();
+        echo json_encode($alumnos);
     }
 
     /**

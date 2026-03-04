@@ -14,7 +14,7 @@ class AlumnoModel
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT * FROM alumnos';
+        $sql = 'SELECT * FROM alumno';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
