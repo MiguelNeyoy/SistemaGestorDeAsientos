@@ -52,19 +52,33 @@ class ServicioAlumno {
         return $this->respuesta(false, "Valor de asistencia inválido", 400);
     }
 
+    // Verificar que el alumno existe antes de continuar
+    $alumno = $this->modelo->buscarPorNumeroCuenta($data['id_alumno']);
+    if (!$alumno) {
+        return $this->respuesta(false, "Alumno no encontrado", 404);
+    }
+
+    // Verificar que el correo le pertenece al alumno
+    if (empty($alumno['correo']) || $alumno['correo'] !== $data['correo']) {
+        return $this->respuesta(false, "El correo no coincide con el del alumno", 403);
+    }
+
     $asistira = $data['asistira'] ? 1 : 0;
 
     $numInvitados = (int) $data['num_invitados'];
 
-    if ($numInvitados < 0 || $numInvitados > 4) {
-        return $this->respuesta(false, "Máximo 4 invitados", 400);
+    if ($numInvitados < 0 || $numInvitados > 10) {
+        return $this->respuesta(false, "Máximo 9 invitados", 400);
     }
 
     if ($asistira === 0) {
         $numInvitados = 0;
     }
 
-    if ($this->modelo->verificarConfirmacion($data['id_alumno'])) {
+    // Verificar si el alumno ya confirmó su asistencia
+    // Si retorna algo diferente de false, significa que ya existe un registro
+    $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
+    if ($estadoConfirmacion !== false) {
         return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
     }
 
@@ -75,8 +89,9 @@ class ServicioAlumno {
         $data['correo']
     );
 
-    if (!$guardado) {
-        return $this->respuesta(false, "Error al guardar confirmación", 500);
+    if (!$guardado || (is_array($guardado) && !$guardado['success'])) {
+        $mensaje = is_array($guardado) ? $guardado['error'] : "Error al guardar confirmación";
+        return $this->respuesta(false, $mensaje, 500);
     }
 
     return $this->respuesta(true, "Confirmación guardada correctamente", 200);
