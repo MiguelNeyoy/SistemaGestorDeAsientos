@@ -35,6 +35,18 @@ class ServicioAlumno {
             return $this->respuesta(false, "Alumno no encontrado", 404);
         }
 
+        // Consultar si el alumno ya confirmó su asistencia en la tabla 'asistencia'
+        $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['numero_cuenta']);
+
+        // Si verificarConfirmacion retorna false, significa que no hay registro → "Pendiente"
+        // Si retorna 1 → "Si" (confirmó que asiste)
+        // Si retorna 0 → "No" (confirmó que no asiste)
+        if ($estadoConfirmacion === false) {
+            $alumno['asistencia'] = "Pendiente";
+        } else {
+            $alumno['asistencia'] = ($estadoConfirmacion == 1) ? "Si" : "No";
+        }
+
         return $this->respuesta(true, "Alumno encontrado", 200, $alumno);
     }
 
