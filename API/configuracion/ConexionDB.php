@@ -1,18 +1,20 @@
 <?php
 
 
-class conexion {
-    
+class Conexion
+{
+
     public static $conn = null;
 
-    public static function conectar(){
-        if(self::$conn !== null){
+    public static function conectar()
+    {
+        if (self::$conn !== null) {
             return self::$conn;
         }
 
-        require_once(__DIR__ . './API/configuracion/variables.php');
+        require_once(__DIR__ . '/variables.php');
 
-        if (!isset($DB_HOST) || !isset($DB_USER) ){
+        if (!isset($DB_HOST) || !isset($DB_USER)) {
             die("Error: Archivo de configuración incompleto.");
         }
 
@@ -20,20 +22,19 @@ class conexion {
 
         try {
             self::$conn = new PDO($dsn, $DB_USER, $DB_PASS);
-            
+
             self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             self::$conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            
-            return self::$conn;
 
+            return self::$conn;
         } catch (PDOException $e) {
             echo "Error de conexión: " . $e->getMessage();
             die();
         }
         // Método estático para cerrar
-        }
-        public static function cerrar() {
-            self::$conn = null;
-        }
-
+    }
+    public static function cerrar()
+    {
+        self::$conn = null;
+    }
 }

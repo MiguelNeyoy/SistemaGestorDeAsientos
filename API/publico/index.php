@@ -1,5 +1,6 @@
 <?php
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
@@ -18,15 +19,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Definir las rutas
 $rutas = [
-    '/alumnos/{id}' => [
-        'GET' => ['AlumnoController', 'validarAlumno'],
-        'GET' => ['AlumoController', 'confirmarAsistencia'],
-        'GET' => ['AlumnoController', 'obtenerEstado']
+    '/alumnos' => [
+        'GET' => ['ControladorAlumno', 'obtenerAlumnos']
     ],
-
-    '/asientos/{id}' => [
-        'GET' => ['controlador_asientos', 'reinciarTeatro'],
-        'GET' => ['controlador_asientos', 'verMapaAsientos'],
+    '/alumnos/{id}' => [
+        'GET' => ['ControladorAlumno', 'validarAlumno']
+    ],
+    '/alumnos/{id}/asistencia' => [
+        'POST' => ['ControladorAlumno', 'confirmarAsistencia']
+    ],
+    '/alumnos/{id}/estado' => [
+        'GET' => ['ControladorAlumno', 'obtenerEstado']
+    ],
+    '/asientos/reiniciar' => [
+        'POST' => ['ControladorAsientos', 'reiniciarTeatro']
+    ],
+    '/asientos/mapa' => [
+        'GET' => ['ControladorAsientos', 'verMapaAsientos']
     ],
     '/qr/generar' => [
         'POST' => ['ControladorQr', 'generarQr']
@@ -47,7 +56,6 @@ if (strpos($uriActual, $scriptName) === 0) {
 }
 
 $rutaEncontrada = false;
-
 foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
     $patron = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_-]+)', $rutaDefinida);
     $patron = "#^" . $patron . "$#";
@@ -59,7 +67,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
             $nombreControlador = $accion[0];
             $nombreMetodo = $accion[1];
 
-            $parametros = array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY);
+            $parametros = array_values(array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY));
 
             if (class_exists($nombreControlador)) {
                 $controlador = new $nombreControlador();
