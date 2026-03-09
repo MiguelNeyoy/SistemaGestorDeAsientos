@@ -57,9 +57,9 @@ class ServicioAlumno {
     if (!$alumno) {
         return $this->respuesta(false, "Alumno no encontrado", 404);
     }
-
     // Verificar que el correo le pertenece al alumno
-    if (empty($alumno['correo']) || $alumno['correo'] !== $data['correo']) {
+    if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
+
         return $this->respuesta(false, "El correo no coincide con el del alumno", 403);
     }
 
