@@ -10,9 +10,10 @@ class AsientoModel{
         $this->db  = Conexion::Conectar();
     }
 
+    #Visualizacion para el administrador
     public function mostrarTodosLosAsientos(){
-        $sql = 'SELECT alumno.nombre,alumno.apellido,asiento.letra,asiento.asiento.numero  
-                FROM alumno
+        $sql = 'SELECT alumno.nombre,alumno.apellido,asiento.letra,asiento.numero  
+                FROM asiento
                 INNER JOIN alumno
                 ON asiento.numCuenta = alumno.numCuenta';
                 
