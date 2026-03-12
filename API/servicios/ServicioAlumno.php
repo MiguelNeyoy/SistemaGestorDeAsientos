@@ -76,7 +76,8 @@ class ServicioAlumno
         // Verificar que el correo le pertenece al alumno
         if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
 
-            return $this->respuesta(false, "El correo no coincide con el del alumno", 403);
+            $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
+            return $this->respuesta(true, "Correo actualizado correctamente", 200);
         }
 
         $asistira = $data['asistira'] ? 1 : 0;

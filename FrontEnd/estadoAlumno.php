@@ -108,9 +108,16 @@ if (isset($_POST['confirmar'])) {
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
-            // Confirmación exitosa: redirigir para refrescar los datos del alumno
-            header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
-            exit;
+            $msgApi = isset($resultadoConfirmar['message']) ? $resultadoConfirmar['message'] : "";
+
+            if ($msgApi === "Correo actualizado correctamente") {
+                // La API detectó un correo diferente y lo actualizó, pero NO confirmó asistencia aún
+                $mensajeConfirmacion = "Tu correo fue actualizado correctamente. Por favor, presiona de nuevo 'Confirmar asistencia' para completar tu registro.";
+            } else {
+                // Confirmación exitosa: redirigir para refrescar los datos del alumno
+                header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
+                exit;
+            }
         } else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])
@@ -245,6 +252,9 @@ if (isset($_POST['actualizar_correo'])) {
                     <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
+                    <p style="font-size:12px; color:#666; margin-top:5px;">
+                        ¿No tienes acceso a este correo? No te preocupes, podrás actualizarlo después de confirmar tu asistencia.
+                    </p>
 
                     <p>Invitados</p>
                     <select name="invitados">
@@ -262,7 +272,11 @@ if (isset($_POST['actualizar_correo'])) {
 
             <!-- Mensaje de resultado de confirmación -->
             <?php if (!empty($mensajeConfirmacion)): ?>
-                <p style="color:red;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
+                <?php
+                    // Verde si el correo se actualizó, rojo si hubo error
+                    $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
+                ?>
+                <p style="color:<?php echo $colorMsg; ?>;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
             <?php endif; ?>
 
         <?php } else { ?>
