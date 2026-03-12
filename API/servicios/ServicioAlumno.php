@@ -83,8 +83,8 @@ class ServicioAlumno
 
         $numInvitados = (int) $data['num_invitados'];
 
-        if ($numInvitados < 0 || $numInvitados > 10) {
-            return $this->respuesta(false, "Máximo 9 invitados", 400);
+        if ($numInvitados < 0 || $numInvitados > 6) {
+            return $this->respuesta(false, "Máximo 6 invitados", 400);
         }
 
         if ($asistira === 0) {
@@ -133,6 +133,14 @@ class ServicioAlumno
         if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
             return $this->respuesta(false, "Correo inválido", 400);
         }
+
+        // $alumnos = $this->modelo->obtenerAlumnos();
+
+        // foreach ($alumnos as $alumno) {
+        //     if ($alumno['email'] == $data['correo']) {
+        //         return $this->respuesta(false, "El correo ya existe", 409);
+        //     }
+        // }
 
         $actualizado = $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
         if (!$actualizado) {
