@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(to bottom, #0B3C5D, #123E63);
+    color: white;
+}
+
+header {
+    text-align: center;
+    padding: 25px;
+    background: #082C44;
+    border-bottom: 4px solid #D4AF37;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+header p {
+    margin: 5px 0 0 0;
+    color: #D4AF37;
+    font-weight: bold;
+}
+
+.container {
+    padding: 30px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+
+
+.escenario {
+    background: #D4AF37;
+    color: #0B3C5D;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    font-size: 18px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+
+
+.teatro-container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 columnas */
+    gap: 15px;
+    justify-items: center;
+    margin-bottom: 40px;
+}
+
+
+
+.asiento {
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-size: 14px;
+}
+
+
+.asiento.libre {
+    background: white;
+    color: #0B3C5D;
+    border: 2px solid #D4AF37;
+}
+
+.asiento.libre:hover {
+    background: #D4AF37;
+    color: #0B3C5D;
+    transform: scale(1.1);
+}
+
+
+.asiento.ocupado {
+    background: #0B3C5D;
+    color: white;
+    border: 2px solid #D4AF37;
+    box-shadow: 0 0 10px rgba(212,175,55,0.7);
+}
+
+
+#info-asiento {
+    background: white;
+    color: #0B3C5D;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 3px solid #D4AF37;
+    max-width: 400px;
+    margin: auto;
+}
+
+
+
+a {
+    transition: 0.3s ease;
+}
+
+a:hover {
+    transform: translateY(-3px);
+}
+
+
+
+@media (max-width: 768px) {
+    .teatro-container {
+        grid-template-columns: repeat(5, 1fr); 
+    }
+
+    .asiento {
+        width: 45px;
+        height: 45px;
+        font-size: 12px;
+    }
+}
