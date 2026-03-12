@@ -12,9 +12,16 @@ if (empty($cuenta)) {
 $alumno = null;
 $errorApi = "";
 
-// -------------------------------------------------------------
-// 1. OBTENER INFORMACIÓN DEL ALUMNO A TRAVÉS DE LA API (GET)
-// -------------------------------------------------------------
+// =============================================================
+// CONSUMO 1: OBTENER INFORMACIÓN DEL ALUMNO (GET)
+// =============================================================
+// Endpoint: GET /alumnos/{numero_cuenta}
+// Propósito: Validar que el alumno existe y obtener sus datos
+//            (nombre, apellido, carrera, turno, email, asistencia, cantInvitado).
+// Respuesta esperada:
+//   200 → { success: true, data: { ...datosDelAlumno } }
+//   404 → { success: false, message: "Alumno no encontrado" }
+// =============================================================
 $apiUrlGet = $BASE_API_URL . "/alumnos/" . urlencode($cuenta);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrlGet);
@@ -24,8 +31,6 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 $responseGet = curl_exec($ch);
 $httpCodeGet = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
-
-print_r($responseGet);
 
 if ($httpCodeGet == 200 && $responseGet) {
     $dataGet = json_decode($responseGet, true);
@@ -41,74 +46,146 @@ if ($httpCodeGet == 200 && $responseGet) {
 }
 
 
-?>
-<?php
-// Actualizacion del correo
-$datos = [];
+// =============================================================
+// CONSUMO 2: CONFIRMAR ASISTENCIA (POST)
+// =============================================================
+// Endpoint: POST /alumnos/{numero_cuenta}/asistencia
+// Propósito: Registrar si el alumno asistirá o no a la clausura,
+//            junto con su correo y cantidad de invitados.
+// Datos enviados (JSON):
+//   { id_alumno, asistira (1 o 0), num_invitados, correo }
+// Respuesta esperada:
+//   200 → { success: true, message: "Confirmación guardada correctamente" }
+//   400 → Datos incompletos o correo inválido
+//   403 → El correo no coincide
+//   409 → El alumno ya confirmó asistencia
+//   500 → Error interno del servidor
+// =============================================================
+$mensajeConfirmacion = "";
 
-if (isset($_POST['actualizar_correo'])) {
-    $newEmail = $_POST['correo_actualizar'];
-    $datos = [
-        "id_alumno" => $cuenta,
-        "correo" => $newEmail
+if (isset($_POST['confirmar'])) {
+    $asiste   = isset($_POST['asiste']) ? $_POST['asiste'] : '';
+    $correo   = isset($_POST['correo']) ? trim($_POST['correo']) : '';
+    $invitados = isset($_POST['invitados']) ? (int) $_POST['invitados'] : 0;
+
+    // Convertir "Si"/"No" a 1/0 para la API
+    $asistira = ($asiste === "Si") ? 1 : 0;
+
+    // Si no asiste, forzar invitados a 0 y usar el correo del alumno por defecto
+    if ($asistira === 0) {
+        $invitados = 0;
+        $correo = $alumno['email'];
+    }
+
+    // Armar el arreglo de datos que espera la API
+    $datosConfirmacion = [
+        "id_alumno"     => $cuenta,
+        "asistira"      => $asistira,
+        "num_invitados" => $invitados,
+        "correo"        => $correo
     ];
 
-    if ($newEmail == $alumno['email']) {
-        $messaje = "correo igual";
-    }
-}
-
-
-//VALIDACIÓN DEL CORREO
-$messaje = ""; // Inicializar
-if (isset($_POST['actualizar_correo'])) {
-    $newEmail = trim($_POST['correo_actualizar']);
-
-    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
-        $messaje = "Correo inválido";
-    } else if ($newEmail == $alumno['email']) {
-        $messaje = "El correo ingresado es igual al actual";
-    } else {
-        $messaje = "Correo válido y diferente al actual";
-        // Aquí podrías enviar $datos a la API para actualizar
-        $datos = [
-            "id_alumno" => $cuenta,
-            "correo" => $newEmail
-        ];
-    }
-}
-
-//conexion a la api
-
-if (!empty($datos['correo'])) {
-    echo ("entra al if");
-    $url_api = $BASE_API_URL . "/alumnos/" . $datos['id_alumno'] . "/correo";
+    // Enviar la petición POST a la API
+    $urlConfirmar = $BASE_API_URL . "/alumnos/" . urlencode($cuenta) . "/asistencia";
     $ch = curl_init();
     curl_setopt_array($ch, [
-        CURLOPT_URL            => $url_api,
+        CURLOPT_URL            => $urlConfirmar,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
         CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        CURLOPT_POSTFIELDS     => json_encode($datos)
+        CURLOPT_POSTFIELDS     => json_encode($datosConfirmacion),
+        CURLOPT_SSL_VERIFYPEER => false
     ]);
-    // Ejecutar petición
-    $respuesta = curl_exec($ch);
-    $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    // Verificar errores de cURL
+
+    $respuestaConfirmar = curl_exec($ch);
+    $httpCodeConfirmar  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
     if (curl_errno($ch)) {
-        echo 'Error cURL: ' . curl_error($ch);
+        $mensajeConfirmacion = "Error de conexión: " . curl_error($ch);
         curl_close($ch);
-        exit;
+    } else {
+        curl_close($ch);
+        $resultadoConfirmar = json_decode($respuestaConfirmar, true);
+
+        if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
+            // Confirmación exitosa: redirigir para refrescar los datos del alumno
+            header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
+            exit;
+        } else {
+            // Capturar el mensaje de error de la API
+            $mensajeConfirmacion = isset($resultadoConfirmar['message'])
+                ? $resultadoConfirmar['message']
+                : "Error al confirmar asistencia (Código: $httpCodeConfirmar)";
+        }
     }
-    curl_close($ch);
+}
 
-    $resultado = json_decode($respuesta, true);
 
-    print_r($resultado);
+// =============================================================
+// CONSUMO 3: ACTUALIZAR CORREO (POST)
+// =============================================================
+// Endpoint: POST /alumnos/{numero_cuenta}/correo
+// Propósito: Actualizar el correo electrónico del alumno después
+//            de que ya confirmó su asistencia.
+// Datos enviados (JSON):
+//   { id_alumno, correo }
+// Respuesta esperada:
+//   200 → { success: true, message: "Correo actualizado correctamente" }
+//   400 → Datos incompletos o correo inválido
+//   500 → Error interno del servidor
+// =============================================================
+$mensajeCorreo = "";
+
+if (isset($_POST['actualizar_correo'])) {
+    $newEmail = trim($_POST['correo_actualizar']);
+
+    // Validación local del correo antes de enviarlo a la API
+    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+        $mensajeCorreo = "Correo inválido";
+    } else if ($newEmail == $alumno['email']) {
+        $mensajeCorreo = "El correo ingresado es igual al actual";
+    } else {
+        // El correo es válido y diferente, enviarlo a la API
+        $datosCorreo = [
+            "id_alumno" => $cuenta,
+            "correo"    => $newEmail
+        ];
+
+        $urlCorreo = $BASE_API_URL . "/alumnos/" . urlencode($cuenta) . "/correo";
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $urlCorreo,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS     => json_encode($datosCorreo),
+            CURLOPT_SSL_VERIFYPEER => false
+        ]);
+
+        $respuestaCorreo = curl_exec($ch);
+        $httpCodeCorreo  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch)) {
+            $mensajeCorreo = "Error de conexión: " . curl_error($ch);
+            curl_close($ch);
+        } else {
+            curl_close($ch);
+            $resultadoCorreo = json_decode($respuestaCorreo, true);
+
+            if ($httpCodeCorreo == 200 && isset($resultadoCorreo['success']) && $resultadoCorreo['success']) {
+                $mensajeCorreo = "Correo actualizado correctamente";
+                // Actualizar el correo en la variable local para reflejar el cambio
+                $alumno['email'] = $newEmail;
+            } else {
+                $mensajeCorreo = isset($resultadoCorreo['message'])
+                    ? $resultadoCorreo['message']
+                    : "Error al actualizar correo (Código: $httpCodeCorreo)";
+            }
+        }
+    }
 }
 
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -146,12 +223,11 @@ if (!empty($datos['correo'])) {
         <?php } ?>
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
-        <!-- OJO: Si el modelo trae un estado vacío en "asistencia", asumimos pendiente -->
         <?php
         $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
         if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
         ?>
-            <!-- Formulario de confirmación de asistencia -->
+            <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
             <form method="post">
                 <p>¿Asistirás a la clausura?</p>
 
@@ -166,7 +242,6 @@ if (!empty($datos['correo'])) {
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
                 <div id="extra" style="display:none">
                     <p>Correo</p>
-                    <!-- El backend validará que el correo coincida con el original guardado -->
                     <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
@@ -185,6 +260,11 @@ if (!empty($datos['correo'])) {
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
             </form>
 
+            <!-- Mensaje de resultado de confirmación -->
+            <?php if (!empty($mensajeConfirmacion)): ?>
+                <p style="color:red;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
+            <?php endif; ?>
+
         <?php } else { ?>
 
             <!-- Si el alumno ya confirmó su asistencia, se le muestra su estado actual -->
@@ -194,28 +274,22 @@ if (!empty($datos['correo'])) {
                 <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
 
                 <?php if ($estadoAsistencia == "Si") { ?>
-                    <!-- Se capturan los datos -->
+                    <!-- Se muestran los datos de confirmación -->
                     <p>Invitados: <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
                 <?php } ?>
 
-                <!-- BOTÓN PARA ACTUALIZAR CORREO -->
+                <!-- Formulario para actualizar correo (CONSUMO 3) -->
                 <form method="post" style="margin-top:15px;">
                     <p>Actualizar correo:</p>
                     <input type="email" name="correo_actualizar" placeholder="Nuevo correo" required>
                     <button type="submit" name="actualizar_correo">Actualizar correo</button>
                 </form>
 
-                <?php if (isset($mensajeCorreo)) { ?>
-                    <p style="color:green;"><?php echo htmlspecialchars($mensajeCorreo); ?></p>
-                <?php } ?>
-
-
-                <!-- HTML Mensaje de validaciones -->
-
-                <?php if (!empty($messaje)): ?>
-                    <p style="color:<?php echo $messaje == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
-                        <?php echo htmlspecialchars($messaje); ?>
+                <!-- Mensaje de resultado de actualización de correo -->
+                <?php if (!empty($mensajeCorreo)): ?>
+                    <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
+                        <?php echo htmlspecialchars($mensajeCorreo); ?>
                     </p>
                 <?php endif; ?>
 
