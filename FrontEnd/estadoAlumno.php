@@ -108,16 +108,9 @@ if (isset($_POST['confirmar'])) {
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
-            $msgApi = isset($resultadoConfirmar['message']) ? $resultadoConfirmar['message'] : "";
-
-            if ($msgApi === "Correo actualizado correctamente") {
-                // La API detectó un correo diferente y lo actualizó, pero NO confirmó asistencia aún
-                $mensajeConfirmacion = "Tu correo fue actualizado correctamente. Por favor, presiona de nuevo 'Confirmar asistencia' para completar tu registro.";
-            } else {
-                // Confirmación exitosa: redirigir para refrescar los datos del alumno
-                header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
-                exit;
-            }
+            // Confirmación exitosa (el correo se actualizó automáticamente si era diferente)
+            header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
+            exit;
         } else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])

@@ -73,11 +73,10 @@ class ServicioAlumno
         if (!$alumno) {
             return $this->respuesta(false, "Alumno no encontrado", 404);
         }
-        // Verificar que el correo le pertenece al alumno
+        // Verificar si el correo es diferente al del alumno y actualizarlo
         if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
-
+            // Actualizar el correo y continuar con la confirmación
             $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
-            return $this->respuesta(true, "Correo actualizado correctamente", 200);
         }
 
         $asistira = $data['asistira'] ? 1 : 0;
