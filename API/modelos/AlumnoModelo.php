@@ -88,10 +88,17 @@ class AlumnoModel
             }
 
             return true;
-
         } catch (PDOException $e) {
             // Retornar error específico de la BD para debugging
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    public function actualizarCorreo($idAlumno, $correo)
+    {
+        $sql = 'UPDATE alumno SET email = ? WHERE numCuenta = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$correo, $idAlumno]);
+        return $stmt->rowCount() > 0;
     }
 }

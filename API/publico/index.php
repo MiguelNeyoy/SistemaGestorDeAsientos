@@ -28,6 +28,9 @@ $rutas = [
     '/alumnos/{id}/asistencia' => [
         'POST' => ['ControladorAlumno', 'confirmarAsistencia']
     ],
+    '/alumnos/{id}/correo' => [
+        'POST' => ['ControladorAlumno', 'actualizarCorreo']
+    ],
     '/alumnos/{id}/estado' => [
         'GET' => ['ControladorAlumno', 'obtenerEstado']
     ],

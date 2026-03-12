@@ -12,7 +12,7 @@ class ControladorAlumno
         $this->servicioAlumno = new ServicioAlumno();
         $this->modeloAlumno = new AlumnoModel();
     }
-    
+
     public function obtenerAlumnos()
     {
         $alumnos = $this->modeloAlumno->obtenerAlumnos();
@@ -26,9 +26,8 @@ class ControladorAlumno
     public function validarAlumno($numero_cuenta)
     {
         $respuestaDelServicio = $this->servicioAlumno->buscarAlumno(['numero_cuenta' => $numero_cuenta]);
-        
-        echo json_encode($respuestaDelServicio);
 
+        echo json_encode($respuestaDelServicio);
     }
 
     /** 
@@ -43,28 +42,15 @@ class ControladorAlumno
 
         // Pasar el arreglo completo al servicio
         $res = $this->servicioAlumno->confirmarAsistencia($input ?? []);
-        
+
         // El servicio ya establece el código HTTP y retorna un arreglo
         echo json_encode($res);
     }
 
-    /**
-     * Obtiene el estado actual del alumno (por ejemplo estado de confirmación).
-     * Devuelve 200 con el estado o 404 si el alumno no existe.
-     */
-
-    // public function obtenerEstado($numero_cuenta)
-    // {
-    //     $estado = $this->servicioAlumno->obtenerEstado($numero_cuenta);
-    //     if ($estado !== null) {
-    //         http_response_code(200);
-    //         echo json_encode([
-    //             "numero_cuenta" => $numero_cuenta,
-    //             "estado" => $estado
-    //         ]);
-    //     } else {
-    //         http_response_code(404);
-    //         echo json_encode(["error" => "Alumno no encontrado"]);
-    //     }
-    // }
+    public function actualizarCorreo()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $res = $this->servicioAlumno->actualizarCorreo($input ?? []);
+        echo json_encode($res);
+    }
 }
