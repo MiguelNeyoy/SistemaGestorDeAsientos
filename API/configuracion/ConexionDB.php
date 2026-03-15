@@ -12,7 +12,7 @@ class Conexion
             return self::$conn;
         }
 
-        require_once(__DIR__ . './variables.php');
+        require_once(__DIR__ . '/variables.php');
 
         if (!isset($DB_HOST) || !isset($DB_USER)) {
             die("Error: Archivo de configuración incompleto.");
