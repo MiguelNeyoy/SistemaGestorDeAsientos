@@ -18,15 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Definir las rutas
 $rutas = [
-    '/alumnos/{id}' => [
-        'GET' => ['AlumnoController', 'validarAlumno'],
-        'GET' => ['AlumoController', 'confirmarAsistencia'],
-        'GET' => ['AlumnoController', 'obtenerEstado']
+    '/alumnos/{numero_cuenta}' => [
+        'GET' => ['ControladorAlumno', 'validarAlumno']
+    ],
+
+    '/alumnos/{numero_cuenta}/confirmar' => [
+        'POST' => ['ControladorAlumno', 'confirmarAsistencia']
     ],
 
     '/asientos/{id}' => [
-        'GET' => ['controlador_asientos', 'reinciarTeatro'],
-        'GET' => ['controlador_asientos', 'verMapaAsientos'],
+        'GET' => ['ControladorAsientos', 'reinciarTeatro'],
+        'PUT' => ['ControladorAsientos', 'verMapaAsientos']
     ],
     '/qr/generar' => [
         'POST' => ['ControladorQr', 'generarQr']
