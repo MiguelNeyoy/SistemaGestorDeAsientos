@@ -140,3 +140,40 @@ font-size:18px;
 }
 
 }
+
+
+/* Mensaje indicativo para ingresar correo */
+
+.mensaje-correo {
+  margin-top: 15px;
+  color: #555;
+  font-style: italic;
+}
+
+/* Formulario de actualizar correo */
+
+.form-correo {
+  margin-top: 10px;
+}
+
+/* Campos extras (ocultos por defecto) */
+
+.extra-campos {
+  display: none;
+}
+
+/* Mensajes de confirmación */
+
+.mensaje-ok {
+  color: green;
+}
+
+.mensaje-error {
+  color: red;
+}
+
+/* Enlace de regresar */
+
+.enlace-regresar {
+  text-align: center;
+}
