@@ -66,17 +66,17 @@ class AlumnoModel
             }
 
             // 2. Si va a asistir, crear registros de invitados
-            if ($asistira && $numInvitados > 0) {
-                $sqlInvitado = 'INSERT INTO invitado (numCuenta) VALUES (?)';
-                $stmtInvitado = $this->db->prepare($sqlInvitado);
+            // if ($asistira && $numInvitados > 0) {
+            //     $sqlInvitado = 'INSERT INTO invitado (numCuenta) VALUES (?)';
+            //     $stmtInvitado = $this->db->prepare($sqlInvitado);
 
-                for ($i = 0; $i < $numInvitados; $i++) {
-                    $resultadoInvitado = $stmtInvitado->execute([$idAlumno]);
-                    if (!$resultadoInvitado) {
-                        return ['success' => false, 'error' => 'Error al insertar invitado'];
-                    }
-                }
-            }
+            //     for ($i = 0; $i < $numInvitados; $i++) {
+            //         $resultadoInvitado = $stmtInvitado->execute([$idAlumno]);
+            //         if (!$resultadoInvitado) {
+            //             return ['success' => false, 'error' => 'Error al insertar invitado'];
+            //         }
+            //     }
+            // }
 
             // 3. Actualizar cantidad de invitados en tabla alumno
             $sqlAlumno = 'UPDATE alumno SET cantInvitado = ? WHERE numCuenta = ?';

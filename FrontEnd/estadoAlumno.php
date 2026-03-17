@@ -192,6 +192,7 @@ if (isset($_POST['actualizar_correo'])) {
 
 <head>
     <title>Confirmar asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bienvenida.css">
 
     <script>
@@ -219,7 +220,7 @@ if (isset($_POST['actualizar_correo'])) {
 
         <!-- Bloque para mostrar posibles errores devueltos por la API -->
         <?php if ($errorApi != "") { ?>
-            <p class="error" style="color:red;"><?php echo htmlspecialchars($errorApi); ?></p>
+            <p class="error"><?php echo htmlspecialchars($errorApi); ?></p>
         <?php } ?>
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
@@ -240,14 +241,15 @@ if (isset($_POST['actualizar_correo'])) {
                 </label>
 
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
-                <div id="extra" style="display:none">
-                    <p>Correo</p>
+                <div id="extra" class="extra-campos">
+                    <p class="mensaje-correo">
+                        Ingresa tu correo electrónico para recibir información importante sobre la clausura. <br>
+                        <strong>Tienes solo un intento para hacerlo.</strong>
+                    </p>
                     <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
-                    <p style="font-size:12px; color:#666; margin-top:5px;">
-                        ¿No tienes acceso a este correo? No te preocupes, podrás actualizarlo después de confirmar tu asistencia.
-                    </p>
+
 
                     <p>Invitados</p>
                     <select name="invitados">
@@ -266,10 +268,10 @@ if (isset($_POST['actualizar_correo'])) {
             <!-- Mensaje de resultado de confirmación -->
             <?php if (!empty($mensajeConfirmacion)): ?>
                 <?php
-                    // Verde si el correo se actualizó, rojo si hubo error
-                    $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
+                // Verde si el correo se actualizó, rojo si hubo error
+                $claseMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "mensaje-ok" : "mensaje-error";
                 ?>
-                <p style="color:<?php echo $colorMsg; ?>;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
+                <p class="<?php echo $claseMsg; ?>"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
             <?php endif; ?>
 
         <?php } else { ?>
@@ -287,22 +289,24 @@ if (isset($_POST['actualizar_correo'])) {
                 <?php } ?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
-                <form method="post" style="margin-top:15px;">
-                    <p>Actualizar correo:</p>
-                    <input type="email" name="correo_actualizar" placeholder="Nuevo correo" required>
-                    <button type="submit" name="actualizar_correo">Actualizar correo</button>
+
+                <form method="post" class="form-correo">
+                    <input hidden type="email" name="correo_actualizar" placeholder="Escribe tu correo"
+                        value="<?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ''); ?>" required>
                 </form>
+
+                <p> <strong>Si deseas actualizar tu correo electrónico, Acude con un administrador para hacerlo</strong></p>
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>
-                    <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
+                    <p class="<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "mensaje-ok" : "mensaje-error"; ?>">
                         <?php echo htmlspecialchars($mensajeCorreo); ?>
                     </p>
                 <?php endif; ?>
 
 
                 <br>
-                <p style="text-align: center;"><a href="bienvenida.php">Regresar al inicio</a></p>
+                <p class="enlace-regresar"><a href="bienvenida.php">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>
