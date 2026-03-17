@@ -291,10 +291,11 @@ if (isset($_POST['actualizar_correo'])) {
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
 
                 <form method="post" class="form-correo">
-                    <input type="email" name="correo_actualizar" placeholder="Escribe tu correo"
+                    <input hidden type="email" name="correo_actualizar" placeholder="Escribe tu correo"
                         value="<?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ''); ?>" required>
-                    <button type="submit" name="actualizar_correo">Actualizar correo</button>
                 </form>
+
+                <p> <strong>Si deseas actualizar tu correo electrónico, Acude con un administrador para hacerlo</strong></p>
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>
