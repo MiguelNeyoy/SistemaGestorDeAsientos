@@ -306,7 +306,7 @@ if (isset($_POST['actualizar_correo'])) {
 
 
                 <br>
-                <p class="enlace-regresar"><a href="bienvenida.php">Regresar al inicio</a></p>
+                <p class="enlace-regresar"><a href="index.php">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>
