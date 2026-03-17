@@ -192,6 +192,7 @@ if (isset($_POST['actualizar_correo'])) {
 
 <head>
     <title>Confirmar asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bienvenida.css">
 
     <script>
@@ -245,9 +246,7 @@ if (isset($_POST['actualizar_correo'])) {
                     <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
-                    <p style="font-size:12px; color:#666; margin-top:5px;">
-                        ¿No tienes acceso a este correo? No te preocupes, podrás actualizarlo después de confirmar tu asistencia.
-                    </p>
+                    
 
                     <p>Invitados</p>
                     <select name="invitados">
@@ -287,11 +286,7 @@ if (isset($_POST['actualizar_correo'])) {
                 <?php } ?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
-                <form method="post" style="margin-top:15px;">
-                    <p>Actualizar correo:</p>
-                    <input type="email" name="correo_actualizar" placeholder="Nuevo correo" required>
-                    <button type="submit" name="actualizar_correo">Actualizar correo</button>
-                </form>
+              
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>

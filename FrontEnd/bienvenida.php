@@ -55,13 +55,20 @@ if (isset($_POST['buscar'])) {
 <html>
 <head>
     <title>Confirmación de asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/bienvenida.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>Confirmación de asistencia</h2>
-        <p>Ingresa tu número de cuenta</p>
+        <h1 class="titulo-evento">CLAUSURA 2022 - 2026</h1>
+        <h2 class="subtitulo">Confirmación de asistencia</h2>
+        
+
+        <div class="alert alert-info mt-3">
+    Ingresa tu número de cuenta <strong>sin el último dígito</strong>.
+        </div>
 
         <!-- Bloque para mostrar errores si existen -->
         <?php if ($error != "") { ?>
@@ -70,7 +77,7 @@ if (isset($_POST['buscar'])) {
 
         <form method="post">
             <input type="text" name="numCuenta" placeholder="Número de cuenta" required>
-            <button type="submit" name="buscar">Buscar</button>
+            <button type="submit" name="buscar">Ingresar</button>
         </form>
 
     </div>
