@@ -67,7 +67,7 @@ class ServicioAlumno
 
         //Validar si ya confirmo asistencia
         $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
-        if ($estadoConfirmacion !== false) {
+        if ($estadoConfirmacion !== false || $estadoConfirmacion === 1) {
             return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
         }
 
@@ -136,6 +136,10 @@ class ServicioAlumno
     {
         if (!isset($data['id_alumno'], $data['correo'])) {
             return $this->respuesta(false, "Datos incompletos", 400);
+        }
+        $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
+        if ($estadoConfirmacion !== false || $estadoConfirmacion === 1) {
+            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
         }
 
         if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
