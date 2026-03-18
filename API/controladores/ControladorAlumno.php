@@ -92,4 +92,16 @@ class ControladorAlumno
         $res = $this->servicioAlumno->actualizarCorreo($input);
         echo json_encode($res);
     }
+
+    public function obtenerEstado()
+    {
+        if (isset($_SERVER['JWT_NUMERO_CUENTA'])) {
+            $numero_cuenta = $_SERVER['JWT_NUMERO_CUENTA'];
+            $respuestaDelServicio = $this->servicioAlumno->buscarAlumno(['numero_cuenta' => $numero_cuenta]);
+            echo json_encode($respuestaDelServicio);
+        } else {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "No autorizado"]);
+        }
+    }
 }
