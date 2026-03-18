@@ -2,10 +2,14 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
-
 // Configurar CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -77,12 +81,12 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidas = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado'];
-            
+
             if (in_array($rutaDefinida, $rutasProtegidas)) {
                 $headers = null;
                 if (isset($_SERVER['Authorization'])) {
                     $headers = trim($_SERVER["Authorization"]);
-                } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { 
+                } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                     $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
                 } elseif (function_exists('apache_request_headers')) {
                     $requestHeaders = apache_request_headers();
@@ -96,7 +100,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
                     if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                         $token = $matches[1];
                         try {
-                            $secret_key = "secreto_super_seguro_asientos";
+                            $secret_key = $_SERVER['JWT_KEY'];
                             $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($secret_key, 'HS256'));
                             // Inyectar el número de cuenta en $_SERVER para que el controlador lo use
                             $_SERVER['JWT_NUMERO_CUENTA'] = $decoded->data->numero_cuenta;

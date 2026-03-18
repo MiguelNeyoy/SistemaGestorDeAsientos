@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/../servicios/ServicioAlumno.php');
 require_once(__DIR__ . '/../modelos/AlumnoModelo.php');
 
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -35,7 +36,7 @@ class ControladorAlumno
 
         // Si fue exitoso y el alumno fue encontrado, agregamos el token
         if (isset($respuestaDelServicio['success']) && $respuestaDelServicio['success'] === true) {
-            $secret_key = "secreto_super_seguro_asientos";
+            $secret_key = $_SERVER['JWT_KEY'];
             $issuer_claim = "http://asientos.local";
             $audience_claim = "http://asientos.local";
             $issuedat_claim = time(); // tiempo de emisión
