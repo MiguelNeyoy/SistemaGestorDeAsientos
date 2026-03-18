@@ -1,6 +1,8 @@
 /* Reset de box-sizing para evitar desbordamiento en inputs */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -56,13 +58,15 @@ body {
 
 /* Inputs */
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 16px; /* Evita zoom automático en iOS */
+  font-size: 16px;
+  /* Evita zoom automático en iOS */
 }
 
 
@@ -234,7 +238,8 @@ label {
     margin-bottom: 12px;
   }
 
-  input, select {
+  input,
+  select {
     padding: 8px;
     font-size: 16px;
   }
@@ -258,4 +263,10 @@ label {
   label {
     font-size: 14px;
   }
+}
+
+/*estilos aviso header*/
+.avisoHeader {
+  color: white;
+  background-color: #90CAF9;
 }

@@ -1,13 +1,13 @@
 <?php
+session_start();
 // URL base de la API, se usa para no reescribir manualmente
 $BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
 
-// Obtenemos el número de cuenta de la URL
-$cuenta = isset($_GET['cuenta']) ? $_GET['cuenta'] : '';
-
-if (empty($cuenta)) {
-    die("Número de cuenta no proporcionado");
+if (!isset($_SESSION['jwt_token']) || empty($_SESSION['jwt_token'])) {
+    header("Location: index.php");
+    exit;
 }
+$token = $_SESSION['jwt_token'];
 
 $alumno = null;
 $errorApi = "";
@@ -22,10 +22,11 @@ $errorApi = "";
 //   200 → { success: true, data: { ...datosDelAlumno } }
 //   404 → { success: false, message: "Alumno no encontrado" }
 // =============================================================
-$apiUrlGet = $BASE_API_URL . "/alumnos/" . urlencode($cuenta);
+$apiUrlGet = $BASE_API_URL . "/alumnos/estado";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrlGet);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 $responseGet = curl_exec($ch);
@@ -79,20 +80,22 @@ if (isset($_POST['confirmar'])) {
 
     // Armar el arreglo de datos que espera la API
     $datosConfirmacion = [
-        "id_alumno"     => $cuenta,
         "asistira"      => $asistira,
         "num_invitados" => $invitados,
         "correo"        => $correo
     ];
 
     // Enviar la petición POST a la API
-    $urlConfirmar = $BASE_API_URL . "/alumnos/" . urlencode($cuenta) . "/asistencia";
+    $urlConfirmar = $BASE_API_URL . "/alumnos/asistencia";
     $ch = curl_init();
     curl_setopt_array($ch, [
         CURLOPT_URL            => $urlConfirmar,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $token
+        ],
         CURLOPT_POSTFIELDS     => json_encode($datosConfirmacion),
         CURLOPT_SSL_VERIFYPEER => false
     ]);
@@ -109,7 +112,7 @@ if (isset($_POST['confirmar'])) {
 
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
             // Confirmación exitosa (el correo se actualizó automáticamente si era diferente)
-            header("Location: estadoAlumno.php?cuenta=" . urlencode($cuenta));
+            header("Location: estadoAlumno.php");
             exit;
         } else {
             // Capturar el mensaje de error de la API
@@ -147,17 +150,19 @@ if (isset($_POST['actualizar_correo'])) {
     } else {
         // El correo es válido y diferente, enviarlo a la API
         $datosCorreo = [
-            "id_alumno" => $cuenta,
             "correo"    => $newEmail
         ];
 
-        $urlCorreo = $BASE_API_URL . "/alumnos/" . urlencode($cuenta) . "/correo";
+        $urlCorreo = $BASE_API_URL . "/alumnos/correo";
         $ch = curl_init();
         curl_setopt_array($ch, [
             CURLOPT_URL            => $urlCorreo,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_HTTPHEADER     => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token
+            ],
             CURLOPT_POSTFIELDS     => json_encode($datosCorreo),
             CURLOPT_SSL_VERIFYPEER => false
         ]);
