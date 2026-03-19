@@ -192,6 +192,7 @@ if (isset($_POST['actualizar_correo'])) {
 
 <head>
     <title>Confirmar asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bienvenida.css">
 
     <script>
@@ -210,105 +211,96 @@ if (isset($_POST['actualizar_correo'])) {
 
 <body>
 
-    <div class="container"> <!-- Contenedor principal -->
+   <div class="contenedor-principal">
+  <div class="form-box">
 
-        <h2><?php echo htmlspecialchars($alumno['nombre'] . " " . $alumno['apellido']); ?></h2>
+    <h2><?php echo htmlspecialchars($alumno['nombre'] . " " . $alumno['apellido']); ?></h2>
 
-        <p>Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
-        <p>Turno: <?php echo htmlspecialchars($alumno['turno']); ?></p>
+    <p>Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
+    <p>Turno: <?php echo htmlspecialchars($alumno['turno']); ?></p>
 
-        <!-- Bloque para mostrar posibles errores devueltos por la API -->
-        <?php if ($errorApi != "") { ?>
-            <p class="error" style="color:red;"><?php echo htmlspecialchars($errorApi); ?></p>
-        <?php } ?>
+    <!-- Error API -->
+    <?php if ($errorApi != "") { ?>
+      <p class="error"><?php echo htmlspecialchars($errorApi); ?></p>
+    <?php } ?>
 
-        <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
-        <?php
-        $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
-        if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
-        ?>
-            <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
-            <form method="post">
-                <p>¿Asistirás a la clausura?</p>
+    <?php
+    $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
 
-                <label>
-                    <input type="radio" name="asiste" value="Si" onclick="mostrarCampos()" required> Si
-                </label>
+    if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
+    ?>
 
-                <label>
-                    <input type="radio" name="asiste" value="No" onclick="mostrarCampos()"> No
-                </label>
+    <!-- FORMULARIO -->
+    <form method="post">
+      <p>¿Asistirás a la clausura?</p>
 
-                <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
-                <div id="extra" style="display:none">
-                    <p>Correo</p>
-                    <!-- Por defecto lo cargamos del modelo -->
-                    <input type="email" name="correo" placeholder="Escribe tu correo" required
-                        value="<?php echo htmlspecialchars($alumno['email']); ?>">
-                    <p style="font-size:12px; color:#666; margin-top:5px;">
-                        ¿No tienes acceso a este correo? No te preocupes, podrás actualizarlo después de confirmar tu asistencia.
-                    </p>
+      <label>
+        <input type="radio" name="asiste" value="Si" onclick="mostrarCampos()" required> Sí
+      </label>
 
-                    <p>Invitados</p>
-                    <select name="invitados">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
+      <label>
+        <input type="radio" name="asiste" value="No" onclick="mostrarCampos()"> No
+      </label>
 
-                <button type="submit" name="confirmar">Confirmar asistencia</button>
-            </form>
+      <div id="extra" style="display:none">
+        <p>Correo</p>
+        <input type="email" name="correo" placeholder="Escribe tu correo" required
+          value="<?php echo htmlspecialchars($alumno['email']); ?>">
 
-            <!-- Mensaje de resultado de confirmación -->
-            <?php if (!empty($mensajeConfirmacion)): ?>
-                <?php
-                    // Verde si el correo se actualizó, rojo si hubo error
-                    $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
-                ?>
-                <p style="color:<?php echo $colorMsg; ?>;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
-            <?php endif; ?>
+        <p>Selecciona la cantidad de invitados (Máximo 5)</p>
+        <select name="invitados">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
 
-        <?php } else { ?>
+      <button type="submit" name="confirmar">Confirmar asistencia</button>
+    </form>
 
-            <!-- Si el alumno ya confirmó su asistencia, se le muestra su estado actual -->
-            <div class="estado">
-                <h3>Tu estado actual</h3>
+    <!-- Mensaje confirmación -->
+    <?php if (!empty($mensajeConfirmacion)): ?>
+      <?php
+      $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
+      ?>
+      <p style="color:<?php echo $colorMsg; ?>;">
+        <?php echo htmlspecialchars($mensajeConfirmacion); ?>
+      </p>
+    <?php endif; ?>
 
-                <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
+    <?php } else { ?>
 
-                <?php if ($estadoAsistencia == "Si") { ?>
-                    <!-- Se muestran los datos de confirmación -->
-                    <p>Invitados: <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
-                    <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
-                <?php } ?>
+    <!-- ESTADO -->
+    <div class="estado">
+      <h3>Tu estado actual</h3>
 
-                <!-- Formulario para actualizar correo (CONSUMO 3) -->
-                <form method="post" style="margin-top:15px;">
-                    <p>Actualizar correo:</p>
-                    <input type="email" name="correo_actualizar" placeholder="Nuevo correo" required>
-                    <button type="submit" name="actualizar_correo">Actualizar correo</button>
-                </form>
+      <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
 
-                <!-- Mensaje de resultado de actualización de correo -->
-                <?php if (!empty($mensajeCorreo)): ?>
-                    <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
-                        <?php echo htmlspecialchars($mensajeCorreo); ?>
-                    </p>
-                <?php endif; ?>
+      <?php if ($estadoAsistencia == "Si") { ?>
+        <p>Invitados: <?php echo htmlspecialchars($alumno['cantInvitado'] ?? "0"); ?></p>
+        <p>Correo: <?php echo htmlspecialchars($alumno['email'] ?? ""); ?></p>
+      <?php } ?>
 
+      <!-- Mensaje correo -->
+      <?php if (!empty($mensajeCorreo)): ?>
+        <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
+          <?php echo htmlspecialchars($mensajeCorreo); ?>
+        </p>
+      <?php endif; ?>
 
-                <br>
-                <p style="text-align: center;"><a href="bienvenida.php">Regresar al inicio</a></p>
-            </div>
-
-        <?php } ?>
-
+      <br>
+      <p style="text-align: center;">
+        <a href="bienvenida.php">Regresar al inicio</a>
+      </p>
     </div>
 
+    <?php } ?>
+
+  </div> <!-- form-box -->
+</div> <!-- contenedor-principal -->
 </body>
 
 </html>
