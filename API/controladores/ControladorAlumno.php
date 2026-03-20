@@ -17,12 +17,6 @@ class ControladorAlumno
         $this->modeloAlumno = new AlumnoModel();
     }
 
-    public function obtenerAlumnos()
-    {
-        $alumnos = $this->modeloAlumno->obtenerAlumnos();
-        echo json_encode($alumnos);
-    }
-
     /**
      * Recibe el número de cuenta vía POST (body) y llama al servicio.
      * Si es exitoso, genera un token JWT.
