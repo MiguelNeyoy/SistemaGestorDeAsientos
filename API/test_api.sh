@@ -129,4 +129,77 @@ else
 fi
 echo "----------------------------------------"
 
+# ==========================================
+# 6. Validar restricción de privacidad (GET)
+# ==========================================
+echo -e "${YELLOW}Prueba 6: Intentar obtener todos los alumnos con token de alumno (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp6.txt -w "%{http_code}" -X GET $BASE_URL/admin/alumnos \
+    -H "Authorization: Bearer $TOKEN")
+
+if [ "$HTTP_STATUS" -eq 403 ]; then
+    echo -e "${GREEN}✅ Éxito: La API bloqueó el acceso a un alumno regular (HTTP 403). Privacidad asegurada.${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 403 Forbidden)${NC}"
+    cat /tmp/resp6.txt
+    echo ""
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 7. Autenticar Administrador (POST)
+# ==========================================
+ADMIN_USER="admin"    # Ajustar a un usuario real para pruebas
+ADMIN_PASS="12345"    # Ajustar a contraseña real
+echo -e "${YELLOW}Prueba 7: Autenticar administrador y obtener JWT...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp7.txt -w "%{http_code}" -X POST $BASE_URL/admin/login \
+    -H "Content-Type: application/json" \
+    -d '{
+        "usuario": "'$ADMIN_USER'",
+        "contrasena": "'$ADMIN_PASS'"
+    }')
+
+if [ "$HTTP_STATUS" -eq 200 ]; then
+    ADMIN_TOKEN=$(grep -o '"token":"[^"]*' /tmp/resp7.txt | awk -F'"' '{print $4}')
+    echo -e "${GREEN}✅ Éxito: Administrador autenticado. Token obtenido.${NC}"
+else
+    echo -e "${YELLOW}⚠️ Aviso: Falló el login de administrador (HTTP $HTTP_STATUS). Puede deberse a que no existe el administrador '$ADMIN_USER' configurado en la base de datos local aún. Las pruebas que requieren este token serán omitidas.${NC}"
+    cat /tmp/resp7.txt
+    echo ""
+fi
+echo "----------------------------------------"
+
+if [ -n "$ADMIN_TOKEN" ]; then
+    # ==========================================
+    # 8. Obtener lista de alumnos como admin (GET)
+    # ==========================================
+    echo -e "${YELLOW}Prueba 8: Obtener todos los alumnos como Administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp8.txt -w "%{http_code}" -X GET $BASE_URL/admin/alumnos \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Listado de alumnos obtenido correctamente por el administrador.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp8.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+
+    # ==========================================
+    # 9. Obtener Métricas como admin (GET)
+    # ==========================================
+    echo -e "${YELLOW}Prueba 9: Obtener métricas como Administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp9.txt -w "%{http_code}" -X GET $BASE_URL/admin/metricas \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Métricas obtenidas correctamente por el administrador.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp9.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
 echo -e "\n${YELLOW}Pruebas terminadas.${NC}"
