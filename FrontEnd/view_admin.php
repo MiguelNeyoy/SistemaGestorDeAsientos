@@ -43,7 +43,10 @@
             <div class="container-fluid px-4 py-2">
                 <span class="navbar-brand mb-0 h1 fs-3 fw-bold titulo-evento m-0 p-0" style="text-shadow: none;">Panel de Administración</span>
                 <span class="text-light text-muted d-none d-md-block">Sistema Gestor de Asientos</span>
-                <button id="btnLogout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                <div class="d-flex align-items-center">
+                    <a href="view_registroAdmin.php" class="btn btn-outline-info btn-sm me-3">Nuevo Admin</a>
+                    <button id="btnLogout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                </div>
             </div>
         </nav>
 
