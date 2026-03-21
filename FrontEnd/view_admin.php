@@ -1,125 +1,230 @@
+<?php
+session_start();
+$BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+$error = "";
+
+if (isset($_GET['logout'])) {
+    unset($_SESSION['admin_token']);
+    header("Location: view_admin.php");
+    exit;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
+    $usuario = trim($_POST['usuario']);
+    $contrasena = trim($_POST['contrasena']);
+
+    $apiUrl = $BASE_API_URL . "/admin/login";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'usuario' => $usuario,
+        'contrasena' => $contrasena
+    ]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if (($httpCode == 200 || $httpCode == 201) && $response) {
+        $data = json_decode($response, true);
+        if (isset($data['success']) && $data['success'] === true && !empty($data['data']['token'])) {
+            $_SESSION['admin_token'] = $data['data']['token'];
+            header("Location: view_admin.php");
+            exit;
+        } else {
+            $error = isset($data['message']) ? $data['message'] : "Credenciales inválidas";
+        }
+    } else {
+        if ($response) {
+            $data = json_decode($response, true);
+            $error = isset($data['message']) ? $data['message'] : "Error al iniciar sesión";
+        } else {
+            $error = "Error de conexión con el servidor.";
+        }
+    }
+}
+
+$tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token']);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administrador - Clausura</title>
-    <!-- Bootstrap para la base de la UI interna -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Estilo base del proyecto (Reutilizando la semántica y estética) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <link rel="stylesheet" href="css/bienvenida.css">
-    <!-- Estilos específicos del Dashboard del Admin -->
     <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* Pequeños ajustes visuales para las tarjetas */
+        .metric-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        .metric-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- VISTA DE LOGIN -->
-    <div id="loginView" class="container mt-5" style="display: none; max-width: 450px;">
+    <?php if (!$tieneSesion): ?>
+    <div id="loginView" class="container mt-5" style="max-width: 450px;">
         <div class="text-center mb-4">
             <h1 class="titulo-evento">CLAUSURA 2022 - 2026</h1>
-            <h2 class="subtitulo">Acceso a Dashboard de Administración</h2>
-            <div class="alert alert-info mt-3">
-                Ingresa tus credenciales de <strong>administrador</strong> para continuar.
+            <h2 class="subtitulo">Acceso de Administración</h2>
+            <div class="alert alert-info mt-3 shadow-sm">
+                <i class="bi bi-shield-lock me-2"></i> Ingresa tus credenciales para continuar.
             </div>
         </div>
 
-        <div id="loginError" class="alert alert-danger text-center" style="display: none;"></div>
+        <?php if ($error != ""): ?>
+            <div id="loginError" class="alert alert-danger text-center shadow-sm"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
 
-        <form id="loginForm" class="p-4 rounded" style="background: rgba(255,255,255,0.05);">
-            <div class="mb-3">
-                <input type="text" id="adminUser" class="form-control" placeholder="Usuario" required>
+        <form id="loginForm" method="POST" action="">
+            <div style="position: relative; margin-top: 15px;">
+                <i class="bi bi-person" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #555; font-size: 1.2rem;"></i>
+                <input type="text" name="usuario" id="adminUser" placeholder="Usuario" required style="padding-left: 45px; margin-top: 0; box-shadow: none;">
             </div>
-            <div class="mb-4">
-                <input type="password" id="adminPass" class="form-control" placeholder="Contraseña" required>
+            <div style="position: relative; margin-top: 15px;">
+                <i class="bi bi-key" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #555; font-size: 1.2rem;"></i>
+                <input type="password" name="contrasena" id="adminPass" placeholder="Contraseña" required style="padding-left: 45px; margin-top: 0; box-shadow: none;">
             </div>
-            <button type="submit" class="w-100 align-items-center justify-content-center">Ingresar al Panel</button>
+            <button type="submit" name="loginAdmin">Ingresar al Panel</button>
         </form>
     </div>
+    <?php else: ?>
 
-    <!-- VISTA DE DASHBOARD -->
-    <div id="dashboardView" style="display: none;">
-        <!-- Navegación -->
-        <nav class="navbar navbar-dark mb-4 admin-navbar">
+    <div id="dashboardView">
+        
+        <nav class="navbar navbar-light mb-4 shadow-sm" style="background-color: #ffffff; border-bottom: 2px solid #e2e8f0;">
             <div class="container-fluid px-4 py-2">
-                <span class="navbar-brand mb-0 h1 fs-3 fw-bold titulo-evento m-0 p-0" style="text-shadow: none;">Panel de Administración</span>
-                <span class="text-light text-muted d-none d-md-block">Sistema Gestor de Asientos</span>
-                <button id="btnLogout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                <span class="navbar-brand mb-0 h1 fs-4 fw-bold titulo-evento m-0 p-0" style="text-shadow: none;">
+                    <i class="bi bi-speedometer2 me-2 text-primary"></i>Panel de Administración
+                </span>
+                <span class="text-secondary d-none d-md-block small fw-bold">Sistema Gestor de Asientos</span>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="view_registroAdmin.php" class="btn btn-outline-primary btn-sm"><i class="bi bi-person-plus me-1"></i>Nuevo Admin</a>
+                    <button id="btnLogout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión</button>
+                </div>
             </div>
         </nav>
 
         <div class="container-fluid px-4 pb-5">
             
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="text-white m-0">Métricas Generales</h3>
-                <span id="lastUpdated" class="badge bg-secondary">Actualizando...</span>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class=" m-0 fw-light"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Resumen del Evento</h3>
+                <span id="lastUpdated" class="badge bg-secondary rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i>Actualizando...</span>
             </div>
 
-            <!-- Tarjetas de Métricas -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card metric-card text-white bg-primary mb-3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-uppercase fw-light">Total Invitados</h5>
-                            <h1 class="card-text fw-bold display-4" id="metric-total">0</h1>
+            <div class="row g-3 mb-5">
+                
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card text-white bg-success h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-person-check-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Alumnos Confirmados</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-confirmados">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card metric-card text-white bg-success mb-3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-uppercase fw-light">Turno Matutino</h5>
-                            <h1 class="card-text fw-bold display-4" id="metric-m">0</h1>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card text-white bg-primary h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-people-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Total Invitados</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-total">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card metric-card text-white bg-info mb-3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-uppercase fw-light">Turno Vespertino</h5>
-                            <h1 class="card-text fw-bold display-4" id="metric-v">0</h1>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card text-white bg-info h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-sun-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Matutino</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-m">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card metric-card text-white bg-warning mb-3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-uppercase fw-light text-dark">Ingeniería</h5>
-                            <h1 class="card-text fw-bold display-4 text-dark" id="metric-ing">0</h1>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card text-white bg-secondary h-100" style="background-color: #6f42c1 !important;">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-moon-stars-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Vespertino</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-v">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card metric-card text-white bg-danger mb-3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-uppercase fw-light">Informática</h5>
-                            <h1 class="card-text fw-bold display-4" id="metric-inf">0</h1>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card bg-warning text-dark h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-gear-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Ingeniería</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-ing">0</h2>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card metric-card text-white bg-danger h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                            <i class="bi bi-pc-display metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Informática</h6>
+                            <h2 class="card-text fw-bold m-0" id="metric-inf">0</h2>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Tabla de Estado de Alumnos -->
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
-                    <h5 class="m-0">Estado de Confirmación de Alumnos</h5>
-                    <input type="text" id="searchInput" class="form-control form-control-sm w-25" placeholder="Buscar por cuenta o nombre...">
+            <div class="card shadow rounded-3 mb-4" style="background-color: #fff; border: 1px solid #e2e8f0;">
+                <div class="card-header p-3 d-flex flex-wrap justify-content-between align-items-center" style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                    <h5 class="m-0 fw-bold" style="color: #334155;"><i class="bi bi-list-check me-2 text-primary"></i>Directorio de Asistencia</h5>
+                    
+                    <!-- Buscador con icono integrado -->
+                    <div style="position: relative; width: 300px; max-width: 100%;">
+                        <i class="bi bi-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar alumno..." style="margin-top: 0; padding-left: 45px; padding-right: 15px; width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #fff; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 0.95rem;">
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-dark table-striped table-hover m-0" id="alumnosTable">
-                            <thead class="table-secondary">
+                        <table class="table table-striped table-hover m-0 align-middle" id="alumnosTable">
+                            <thead style="background-color: #f1f5f9; color: #475569;">
                                 <tr>
-                                    <th>No. Cuenta</th>
-                                    <th>Nombre Completo</th>
-                                    <th>Crr/Trn</th>
-                                    <th class="text-center">Invitados Autorizados</th>
-                                    <th>Correo Contacto</th>
-                                    <th class="text-center">Estado ASISTENCIA</th>
+                                    <th class="ps-3 border-bottom-0">No. Cuenta</th>
+                                    <th class="border-bottom-0">Nombre Completo</th>
+                                    <th class="border-bottom-0">Crr/Trn</th>
+                                    <th class="text-center border-bottom-0">Invitados Autorizados</th>
+                                    <th class="border-bottom-0">Correo Contacto</th>
+                                    <th class="text-center pe-3 border-bottom-0">Estado</th>
                                 </tr>
                             </thead>
-                            <tbody id="alumnosTableBody">
+                            <tbody id="alumnosTableBody" style="color: #334155; font-size: 0.95rem;">
                                 <tr>
-                                    <td colspan="6" class="text-center">Cargando datos...</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div>
+                                        Cargando datos del servidor...
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -129,7 +234,14 @@
 
         </div>
     </div>
+    
+    <script>
+        // Set secure token dynamically from PHP session
+        const ADMIN_TOKEN = "<?php echo $_SESSION['admin_token']; ?>";
+    </script>
+    <?php endif; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/admin.js"></script>
 </body>
 </html>

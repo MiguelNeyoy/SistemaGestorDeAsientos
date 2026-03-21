@@ -5,6 +5,11 @@ $BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
 
 $error = "";
 $success_msg = "";
+if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
+    // Si no hay sesión de administrador, redirigimos al login
+    header("Location: view_admin.php");
+    exit;
+}
 
 if (isset($_POST['registrar'])) {
     // Limpiamos los datos ingresados
@@ -15,7 +20,7 @@ if (isset($_POST['registrar'])) {
 
     // Endpoint de la API que registra a un nuevo administrador
     $apiUrl = $BASE_API_URL . "/admin/registro";
-    
+
     // Inicializamos cURL para consumir la API
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -27,28 +32,35 @@ if (isset($_POST['registrar'])) {
         'usuario' => $usuario,
         'contrasena' => $contrasena
     ]));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $_SESSION['admin_token']
+    ]);
     // Desactivamos verificación SSL en desarrollo local
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    
+
     // Ejecutamos la petición y obtenemos la respuesta y código HTTP
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    
+    print_r($response);
+
     // Si la respuesta HTTP es 200 o 201 (OK/Created), procesamos el éxito
     if (($httpCode == 200 || $httpCode == 201) && $response) {
         $data = json_decode($response, true);
         if (isset($data['success']) && $data['success'] === true) {
             $success_msg = "Administrador registrado exitosamente.";
-        } else {
+        }
+        else {
             $error = isset($data['message']) ? $data['message'] : "Error al registrar administrador";
         }
-    } else {
+    }
+    else {
         if ($response) {
             $data = json_decode($response, true);
             $error = isset($data['message']) ? $data['message'] : "No se pudo registrar al administrador";
-        } else {
+        }
+        else {
             $error = "No se pudo comunicar con el sistema. Intente de nuevo más tarde.";
         }
     }
@@ -74,12 +86,14 @@ if (isset($_POST['registrar'])) {
         <!-- Mensajes de error o éxito -->
         <?php if ($error != "") { ?>
             <p class="error"><?php echo htmlspecialchars($error); ?></p>
-        <?php } ?>
+        <?php
+}?>
         <?php if ($success_msg != "") { ?>
             <p style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold;">
                 <?php echo htmlspecialchars($success_msg); ?>
             </p>
-        <?php } ?>
+        <?php
+}?>
 
         <form method="post">
             <input type="text" name="nombre" placeholder="Nombre" required>

@@ -3,70 +3,33 @@ let pollInterval = null;
 let allStudentsCache = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkAuthStatus();
+    // Si ADMIN_TOKEN está definido (inyectado por PHP) y no está vacío, cargamos los datos
+    if (typeof ADMIN_TOKEN !== 'undefined' && ADMIN_TOKEN) {
+        loadDashboardData(ADMIN_TOKEN);
+        
+        // Configurar Polling (tiempo real) cada 15 segundos
+        if (!pollInterval) {
+            pollInterval = setInterval(() => loadDashboardData(ADMIN_TOKEN), 15000);
+        }
 
-    document.getElementById("loginForm").addEventListener("submit", handleLogin);
-    document.getElementById("btnLogout").addEventListener("click", handleLogout);
-    
-    // Filtrado de tabla
-    document.getElementById("searchInput").addEventListener("keyup", (e) => {
-        renderTable(e.target.value);
-    });
+        // Eventos del dashboard
+        const btnLogout = document.getElementById("btnLogout");
+        if (btnLogout) {
+            btnLogout.addEventListener("click", handleLogout);
+        }
+
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.addEventListener("keyup", (e) => {
+                renderTable(e.target.value);
+            });
+        }
+    }
 });
 
-function checkAuthStatus() {
-    const token = localStorage.getItem("admin_token");
-    if (token) {
-        document.getElementById("loginView").style.display = "none";
-        document.getElementById("dashboardView").style.display = "block";
-        loadDashboardData(token);
-        // Configurar Polling (tiempo real) cada 15 segundos
-        if(!pollInterval) {
-            pollInterval = setInterval(() => loadDashboardData(token), 15000);
-        }
-    } else {
-        document.getElementById("dashboardView").style.display = "none";
-        document.getElementById("loginView").style.display = "block";
-        if(pollInterval) {
-            clearInterval(pollInterval);
-            pollInterval = null;
-        }
-    }
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    const usuario = document.getElementById("adminUser").value;
-    const contrasena = document.getElementById("adminPass").value;
-    const errorBox = document.getElementById("loginError");
-
-    try {
-        const res = await fetch(`${BASE_API_URL}/admin/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, contrasena })
-        });
-        
-        const data = await res.json();
-        
-        if (data.success && data.data && data.data.token) {
-            localStorage.setItem("admin_token", data.data.token);
-            errorBox.style.display = "none";
-            document.getElementById("loginForm").reset();
-            checkAuthStatus();
-        } else {
-            errorBox.innerText = data.message || "Credenciales inválidas";
-            errorBox.style.display = "block";
-        }
-    } catch (err) {
-        errorBox.innerText = "Error de red al intentar iniciar sesión.";
-        errorBox.style.display = "block";
-    }
-}
-
 function handleLogout() {
-    localStorage.removeItem("admin_token");
-    checkAuthStatus();
+    // Redirigir al script PHP para destruir la sesión de forma segura
+    window.location.href = "view_admin.php?logout=1";
 }
 
 async function loadDashboardData(token) {
@@ -97,6 +60,14 @@ async function loadDashboardData(token) {
         }
         if (alumnosData.success) {
             allStudentsCache = alumnosData.data;
+
+            // --- NUEVO CÓDIGO: Calcular alumnos confirmados ---
+            const totalConfirmados = allStudentsCache.filter(al =>
+                al.asistencia_estado === 1 || al.asistencia_estado === "1"
+            ).length;
+            document.getElementById("metric-confirmados").innerText = totalConfirmados;
+            // --------------------------------------------------
+
             renderTable(document.getElementById("searchInput").value);
         }
 
@@ -115,16 +86,16 @@ function updateMetricsUI(metrics) {
     document.getElementById("metric-total").innerText = metrics.total_invitados || 0;
     document.getElementById("metric-m").innerText = (metrics.por_turno && metrics.por_turno['M']) ? metrics.por_turno['M'] : 0;
     document.getElementById("metric-v").innerText = (metrics.por_turno && metrics.por_turno['V']) ? metrics.por_turno['V'] : 0;
-    
+
     // Identificar las llaves en por_carrera considerando los agrupamientos creados en el backend
     let ing = 0, inf = 0;
-    if(metrics.por_carrera) {
+    if (metrics.por_carrera) {
         for (const [key, value] of Object.entries(metrics.por_carrera)) {
             if (key.toLowerCase().includes("ingeniería") || key.toLowerCase().includes("sistemas")) ing += value;
             else if (key.toLowerCase().includes("informática") || key.toLowerCase().includes("informatica")) inf += value;
         }
     }
-    
+
     document.getElementById("metric-ing").innerText = ing;
     document.getElementById("metric-inf").innerText = inf;
 }
@@ -134,7 +105,7 @@ function renderTable(filterText = "") {
     tbody.innerHTML = "";
 
     const lowerFilter = filterText.toLowerCase();
-    
+
     // Filtrar localmente por cuenta o por nombre completo
     const filtered = allStudentsCache.filter(al => {
         const nombreStr = (al.nombre + " " + al.apellido).toLowerCase();
@@ -156,7 +127,7 @@ function renderTable(filterText = "") {
         }
 
         const carreraCorta = al.carrera.toLowerCase().includes("informática") ? "Informática" : "Ingeniería";
-        
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><strong>${al.numCuenta}</strong></td>
