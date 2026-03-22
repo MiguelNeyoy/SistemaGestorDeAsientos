@@ -24,25 +24,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
     ]));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    
+
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    
+
     if (($httpCode == 200 || $httpCode == 201) && $response) {
         $data = json_decode($response, true);
         if (isset($data['success']) && $data['success'] === true && !empty($data['data']['token'])) {
             $_SESSION['admin_token'] = $data['data']['token'];
             header("Location: view_admin.php");
             exit;
-        } else {
-            $error = isset($data['message']) ? $data['message'] : "Credenciales inválidas";
         }
-    } else {
+        else {
+            $error = isset($data['message']) ? $data['message'] : "git add inválidas";
+        }
+    }
+    else {
         if ($response) {
             $data = json_decode($response, true);
             $error = isset($data['message']) ? $data['message'] : "Error al iniciar sesión";
-        } else {
+        }
+        else {
             $error = "Error de conexión con el servidor.";
         }
     }
@@ -94,7 +97,8 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
 
         <?php if ($error != ""): ?>
             <div id="loginError" class="alert alert-danger text-center shadow-sm"><?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
+        <?php
+    endif; ?>
 
         <form id="loginForm" method="POST" action="">
             <div style="position: relative; margin-top: 15px;">
@@ -108,7 +112,8 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
             <button type="submit" name="loginAdmin">Ingresar al Panel</button>
         </form>
     </div>
-    <?php else: ?>
+    <?php
+else: ?>
 
     <div id="dashboardView">
         
@@ -239,7 +244,8 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
         // Set secure token dynamically from PHP session
         const ADMIN_TOKEN = "<?php echo $_SESSION['admin_token']; ?>";
     </script>
-    <?php endif; ?>
+    <?php
+endif; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/admin.js"></script>
