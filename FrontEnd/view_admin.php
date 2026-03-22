@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
             exit;
         }
         else {
-            $error = isset($data['message']) ? $data['message'] : "git add inválidas";
+            $error = isset($data['message']) ? $data['message'] : "Credenciales inválidas";
         }
     }
     else {
