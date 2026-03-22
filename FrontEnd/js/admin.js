@@ -6,10 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Si ADMIN_TOKEN está definido (inyectado por PHP) y no está vacío, cargamos los datos
     if (typeof ADMIN_TOKEN !== 'undefined' && ADMIN_TOKEN) {
         loadDashboardData(ADMIN_TOKEN);
-        
+
         // Configurar Polling (tiempo real) cada 15 segundos
         if (!pollInterval) {
-            pollInterval = setInterval(() => loadDashboardData(ADMIN_TOKEN), 15000);
+            pollInterval = setInterval(() => loadDashboardData(ADMIN_TOKEN), 1000);
         }
 
         // Eventos del dashboard

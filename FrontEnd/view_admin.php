@@ -218,7 +218,7 @@ else: ?>
                                 <tr>
                                     <th class="ps-3 border-bottom-0">No. Cuenta</th>
                                     <th class="border-bottom-0">Nombre Completo</th>
-                                    <th class="border-bottom-0">Crr/Trn</th>
+                                    <th class="border-bottom-0">Carrera/Turno</th>
                                     <th class="text-center border-bottom-0">Invitados Autorizados</th>
                                     <th class="border-bottom-0">Correo Contacto</th>
                                     <th class="text-center pe-3 border-bottom-0">Estado</th>

@@ -38,10 +38,12 @@ if ($httpCodeGet == 200 && $responseGet) {
     if (isset($dataGet['success']) && $dataGet['success'] === true) {
         // Almacenamos la información del alumno devuelta por la API
         $alumno = $dataGet['data'];
-    } else {
+    }
+    else {
         die(isset($dataGet['message']) ? $dataGet['message'] : "Alumno no encontrado.");
     }
-} else {
+}
+else {
     // Si la API falla, detenemos la ejecución mostrando un mensaje de error
     die("Error al consultar el alumno en el sistema. (Código de error: $httpCodeGet)");
 }
@@ -65,9 +67,9 @@ if ($httpCodeGet == 200 && $responseGet) {
 $mensajeConfirmacion = "";
 
 if (isset($_POST['confirmar'])) {
-    $asiste   = isset($_POST['asiste']) ? $_POST['asiste'] : '';
-    $correo   = isset($_POST['correo']) ? trim($_POST['correo']) : '';
-    $invitados = isset($_POST['invitados']) ? (int) $_POST['invitados'] : 0;
+    $asiste = isset($_POST['asiste']) ? $_POST['asiste'] : '';
+    $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
+    $invitados = isset($_POST['invitados']) ? (int)$_POST['invitados'] : 0;
 
     // Convertir "Si"/"No" a 1/0 para la API
     $asistira = ($asiste === "Si") ? 1 : 0;
@@ -80,41 +82,43 @@ if (isset($_POST['confirmar'])) {
 
     // Armar el arreglo de datos que espera la API
     $datosConfirmacion = [
-        "asistira"      => $asistira,
+        "asistira" => $asistira,
         "num_invitados" => $invitados,
-        "correo"        => $correo
+        "correo" => $correo
     ];
 
     // Enviar la petición POST a la API
     $urlConfirmar = $BASE_API_URL . "/alumnos/asistencia";
     $ch = curl_init();
     curl_setopt_array($ch, [
-        CURLOPT_URL            => $urlConfirmar,
+        CURLOPT_URL => $urlConfirmar,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_HTTPHEADER     => [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $token
         ],
-        CURLOPT_POSTFIELDS     => json_encode($datosConfirmacion),
+        CURLOPT_POSTFIELDS => json_encode($datosConfirmacion),
         CURLOPT_SSL_VERIFYPEER => false
     ]);
 
     $respuestaConfirmar = curl_exec($ch);
-    $httpCodeConfirmar  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $httpCodeConfirmar = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     if (curl_errno($ch)) {
         $mensajeConfirmacion = "Error de conexión: " . curl_error($ch);
         curl_close($ch);
-    } else {
+    }
+    else {
         curl_close($ch);
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
             // Confirmación exitosa (el correo se actualizó automáticamente si era diferente)
-            header("Location: estadoAlumno.php");
+            header("Location: view_confirmacion.php");
             exit;
-        } else {
+        }
+        else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])
                 ? $resultadoConfirmar['message']
@@ -145,35 +149,38 @@ if (isset($_POST['actualizar_correo'])) {
     // Validación local del correo antes de enviarlo a la API
     if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
         $mensajeCorreo = "Correo inválido";
-    } else if ($newEmail == $alumno['email']) {
+    }
+    else if ($newEmail == $alumno['email']) {
         $mensajeCorreo = "El correo ingresado es igual al actual";
-    } else {
+    }
+    else {
         // El correo es válido y diferente, enviarlo a la API
         $datosCorreo = [
-            "correo"    => $newEmail
+            "correo" => $newEmail
         ];
 
         $urlCorreo = $BASE_API_URL . "/alumnos/correo";
         $ch = curl_init();
         curl_setopt_array($ch, [
-            CURLOPT_URL            => $urlCorreo,
+            CURLOPT_URL => $urlCorreo,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST           => true,
-            CURLOPT_HTTPHEADER     => [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $token
             ],
-            CURLOPT_POSTFIELDS     => json_encode($datosCorreo),
+            CURLOPT_POSTFIELDS => json_encode($datosCorreo),
             CURLOPT_SSL_VERIFYPEER => false
         ]);
 
         $respuestaCorreo = curl_exec($ch);
-        $httpCodeCorreo  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $httpCodeCorreo = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if (curl_errno($ch)) {
             $mensajeCorreo = "Error de conexión: " . curl_error($ch);
             curl_close($ch);
-        } else {
+        }
+        else {
             curl_close($ch);
             $resultadoCorreo = json_decode($respuestaCorreo, true);
 
@@ -181,7 +188,8 @@ if (isset($_POST['actualizar_correo'])) {
                 $mensajeCorreo = "Correo actualizado correctamente";
                 // Actualizar el correo en la variable local para reflejar el cambio
                 $alumno['email'] = $newEmail;
-            } else {
+            }
+            else {
                 $mensajeCorreo = isset($resultadoCorreo['message'])
                     ? $resultadoCorreo['message']
                     : "Error al actualizar correo (Código: $httpCodeCorreo)";
@@ -226,13 +234,14 @@ if (isset($_POST['actualizar_correo'])) {
         <!-- Bloque para mostrar posibles errores devueltos por la API -->
         <?php if ($errorApi != "") { ?>
             <p class="error"><?php echo htmlspecialchars($errorApi); ?></p>
-        <?php } ?>
+        <?php
+}?>
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
         <?php
-        $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
-        if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
-        ?>
+$estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
+if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
+?>
             <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
             <form method="post">
                 <p>¿Asistirás a la clausura?</p>
@@ -273,13 +282,16 @@ if (isset($_POST['actualizar_correo'])) {
             <!-- Mensaje de resultado de confirmación -->
             <?php if (!empty($mensajeConfirmacion)): ?>
                 <?php
-                // Verde si el correo se actualizó, rojo si hubo error
-                $claseMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "mensaje-ok" : "mensaje-error";
-                ?>
+        // Verde si el correo se actualizó, rojo si hubo error
+        $claseMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "mensaje-ok" : "mensaje-error";
+?>
                 <p class="<?php echo $claseMsg; ?>"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
-            <?php endif; ?>
+            <?php
+    endif; ?>
 
-        <?php } else { ?>
+        <?php
+}
+else { ?>
 
             <!-- Si el alumno ya confirmó su asistencia, se le muestra su estado actual -->
             <div class="estado">
@@ -291,7 +303,8 @@ if (isset($_POST['actualizar_correo'])) {
                     <!-- Se muestran los datos de confirmación -->
                     <p>Invitados: <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
-                <?php } ?>
+                <?php
+    }?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
 
@@ -307,14 +320,16 @@ if (isset($_POST['actualizar_correo'])) {
                     <p class="<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "mensaje-ok" : "mensaje-error"; ?>">
                         <?php echo htmlspecialchars($mensajeCorreo); ?>
                     </p>
-                <?php endif; ?>
+                <?php
+    endif; ?>
 
 
                 <br>
                 <p class="enlace-regresar"><a href="index.php">Regresar al inicio</a></p>
             </div>
 
-        <?php } ?>
+        <?php
+}?>
 
     </div>
 
