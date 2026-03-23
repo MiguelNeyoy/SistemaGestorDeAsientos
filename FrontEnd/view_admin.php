@@ -184,7 +184,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-dark h-100" onclick="setFilterType('RECHAZADOS')" title="Filtrar por Rechazados">
+                        <div class="card metric-card bg-dark h-100" onclick="setFilterType('RECHAZADOS')" title="Filtrar por Rechazados">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-person-x-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">No Asistirán</h6>
@@ -195,8 +195,8 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
 
                 </div>
 
-                <div class="card shadow rounded-3 mb-4" style="background-color: #fff; border: 1px solid #e2e8f0;">
-                    <div class="card-header p-3 d-flex flex-wrap justify-content-between align-items-center" style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <div class="card shadow rounded-3 mb-4" style="background-color: #fff; border: 1px solid #e2e8f0; overflow: hidden;">
+                    <div class="card-header p-3 d-flex flex-wrap justify-content-between align-items-center gap-3" style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                         <h5 class="m-0 fw-bold" style="color: #334155;"><i class="bi bi-list-check me-2 text-primary"></i>Directorio de Asistencia</h5>
 
                         <!-- Buscador con icono integrado y Botón Mostrar Todo -->

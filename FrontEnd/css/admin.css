@@ -52,8 +52,13 @@ body {
     background-color: rgba(33, 37, 41, 0.8) !important;
 }
 
-.table th, .table td {
+#alumnosTable {
+    min-width: 900px; /* Fuerza scroll horizontal fluido en celulares */
+}
+
+#alumnosTable th, #alumnosTable td {
     vertical-align: middle;
+    white-space: nowrap; /* Evita que el texto de las celdas se aplaste como escalera */
 }
 
 .badge-pendiente {

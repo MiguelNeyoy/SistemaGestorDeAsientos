@@ -1,4 +1,4 @@
-const BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+const BASE_API_URL = window.location.origin + "/SistemaGestorDeAsientos/API/publico";
 let pollInterval = null;
 let allStudentsCache = [];
 let currentFilterType = 'ALL';
