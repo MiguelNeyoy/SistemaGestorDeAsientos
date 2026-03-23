@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof ADMIN_TOKEN !== 'undefined' && ADMIN_TOKEN) {
         loadDashboardData(ADMIN_TOKEN);
 
-        // Configurar Polling (tiempo real) cada 15 segundos
+        // Configurar Polling (tiempo real) cada 5 segundos
         if (!pollInterval) {
-            pollInterval = setInterval(() => loadDashboardData(ADMIN_TOKEN), 1000);
+            pollInterval = setInterval(() => loadDashboardData(ADMIN_TOKEN), 5000);
         }
 
         // Eventos del dashboard
