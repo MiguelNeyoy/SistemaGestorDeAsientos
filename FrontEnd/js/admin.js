@@ -1,6 +1,7 @@
 const BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
 let pollInterval = null;
 let allStudentsCache = [];
+let currentFilterType = 'ALL';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Si ADMIN_TOKEN está definido (inyectado por PHP) y no está vacío, cargamos los datos
@@ -113,10 +114,38 @@ function renderTable(filterText = "") {
 
     const lowerFilter = filterText.toLowerCase();
 
-    // Filtrar localmente por cuenta o por nombre completo
+    // Filtrar localmente por cuenta o por nombre completo Y POR TIPO DE MÉTRICA
     const filtered = allStudentsCache.filter(al => {
+        // 1. Filtro de búsqueda por texto
         const nombreStr = (al.nombre + " " + al.apellido).toLowerCase();
-        return al.numCuenta.includes(lowerFilter) || nombreStr.includes(lowerFilter);
+        const matchesText = al.numCuenta.includes(lowerFilter) || nombreStr.includes(lowerFilter);
+        
+        if (!matchesText) return false;
+
+        // 2. Filtro de selección de tarjetas (Métricas)
+        if (currentFilterType !== 'ALL') {
+            const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
+            const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
+            
+            if (currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
+            if (currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
+            
+            if (currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
+            
+            if (currentFilterType === 'M' && !(isConfirmado && al.turno.toUpperCase() === 'M')) return false;
+            if (currentFilterType === 'V' && !(isConfirmado && al.turno.toUpperCase() === 'V')) return false;
+            
+            if (currentFilterType === 'ING') {
+                const esIngenieria = al.carrera.toLowerCase().includes("ingeniería") || al.carrera.toLowerCase().includes("sistemas");
+                if (!(isConfirmado && esIngenieria)) return false;
+            }
+            if (currentFilterType === 'INF') {
+                const esInformatica = al.carrera.toLowerCase().includes("informática") || al.carrera.toLowerCase().includes("informatica");
+                if (!(isConfirmado && esInformatica)) return false;
+            }
+        }
+
+        return true;
     });
 
     if (filtered.length === 0) {
@@ -133,7 +162,13 @@ function renderTable(filterText = "") {
             estadoBadge = `<span class="badge badge-rechazado">No Asistirá</span>`;
         }
 
-        const carreraCorta = al.carrera.toLowerCase().includes("informática") ? "Informática" : "Ingeniería";
+        let carreraCorta = al.carrera;
+        const carLower = al.carrera.toLowerCase();
+        if (carLower.includes("informática") || carLower.includes("informatica")) {
+            carreraCorta = "Informática";
+        } else if (carLower.includes("ingeniería") || carLower.includes("sistemas")) {
+            carreraCorta = "Ingeniería";
+        }
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -146,4 +181,22 @@ function renderTable(filterText = "") {
         `;
         tbody.appendChild(tr);
     });
+}
+
+function setFilterType(type) {
+    currentFilterType = type;
+    
+    // Mostrar u ocultar botón de "Mostrar Todo"
+    const btn = document.getElementById("btnMostrarTodo");
+    if (btn) {
+        if (type === 'ALL') {
+            btn.classList.add('d-none');
+        } else {
+            btn.classList.remove('d-none');
+        }
+    }
+    
+    // Refrescar tabla respetando el buscador
+    const searchVal = document.getElementById("searchInput") ? document.getElementById("searchInput").value : "";
+    renderTable(searchVal);
 }

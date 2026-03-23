@@ -70,6 +70,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.2s;
+            cursor: pointer;
         }
 
         .metric-card:hover {
@@ -141,7 +142,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                 <div class="row g-3 mb-5">
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-success h-100">
+                        <div class="card metric-card text-white bg-success h-100" onclick="setFilterType('CONFIRMADOS')" title="Filtrar por Confirmados">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-person-check-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Alumnos Confirmados</h6>
@@ -154,7 +155,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-primary h-100">
+                        <div class="card metric-card text-white bg-primary h-100" onclick="setFilterType('INVITADOS')" title="Filtrar por alumnos con invitados">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-people-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Total Invitados</h6>
@@ -164,7 +165,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-info h-100">
+                        <div class="card metric-card text-white bg-info h-100" onclick="setFilterType('M')" title="Filtrar por turno Matutino">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-sun-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Matutino</h6>
@@ -174,7 +175,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-secondary h-100" style="background-color: #6f42c1 !important;">
+                        <div class="card metric-card text-white bg-secondary h-100" style="background-color: #6f42c1 !important;" onclick="setFilterType('V')" title="Filtrar por turno Vespertino">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-moon-stars-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Vespertino</h6>
@@ -184,7 +185,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card bg-warning text-dark h-100">
+                        <div class="card metric-card bg-warning text-dark h-100" onclick="setFilterType('ING')" title="Filtrar por Ingeniería">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-gear-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Ingeniería</h6>
@@ -194,7 +195,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-danger h-100">
+                        <div class="card metric-card text-white bg-danger h-100" onclick="setFilterType('INF')" title="Filtrar por Informática">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-pc-display metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Informática</h6>
@@ -204,7 +205,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </div>
 
                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="card metric-card text-white bg-dark h-100">
+                        <div class="card metric-card text-white bg-dark h-100" onclick="setFilterType('RECHAZADOS')" title="Filtrar por Rechazados">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                 <i class="bi bi-person-x-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">No Asistirán</h6>
@@ -219,10 +220,15 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     <div class="card-header p-3 d-flex flex-wrap justify-content-between align-items-center" style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
                         <h5 class="m-0 fw-bold" style="color: #334155;"><i class="bi bi-list-check me-2 text-primary"></i>Directorio de Asistencia</h5>
 
-                        <!-- Buscador con icono integrado -->
-                        <div style="position: relative; width: 300px; max-width: 100%;">
-                            <i class="bi bi-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                            <input type="text" id="searchInput" placeholder="Buscar alumno..." style="margin-top: 0; padding-left: 45px; padding-right: 15px; width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #fff; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 0.95rem;">
+                        <!-- Buscador con icono integrado y Botón Mostrar Todo -->
+                        <div class="d-flex gap-2 align-items-center">
+                            <button id="btnMostrarTodo" class="btn btn-sm btn-outline-secondary d-none text-nowrap" onclick="setFilterType('ALL')">
+                                <i class="bi bi-funnel-fill me-1"></i>Mostrar Todo
+                            </button>
+                            <div style="position: relative; width: 300px; max-width: 100%;">
+                                <i class="bi bi-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                                <input type="text" id="searchInput" placeholder="Buscar alumno..." style="margin-top: 0; padding-left: 45px; padding-right: 15px; width: 100%; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #fff; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 0.95rem;">
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
