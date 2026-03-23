@@ -114,6 +114,15 @@ function renderTable(filterText = "") {
 
     const lowerFilter = filterText.toLowerCase();
 
+    const directorioCardBody = document.getElementById("directorioCardBody");
+    if (directorioCardBody) {
+        if (currentFilterType !== 'ALL' || filterText.trim() !== "") {
+            directorioCardBody.classList.add("has-filter");
+        } else {
+            directorioCardBody.classList.remove("has-filter");
+        }
+    }
+
     // Filtrar localmente por cuenta o por nombre completo Y POR TIPO DE MÉTRICA
     const filtered = allStudentsCache.filter(al => {
         // 1. Filtro de búsqueda por texto

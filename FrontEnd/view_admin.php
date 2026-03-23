@@ -62,27 +62,6 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
 
     <link rel="stylesheet" href="css/bienvenida.css">
     <link rel="stylesheet" href="css/admin.css">
-
-    <style>
-        /* Pequeños ajustes visuales para las tarjetas */
-        .metric-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .metric-icon {
-            font-size: 2rem;
-            opacity: 0.8;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 
 <body>
@@ -231,7 +210,11 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-0">
+                    <div class="card-body p-0" id="directorioCardBody">
+                        <div id="directorioHintMobile" style="display: none;">
+                            <i class="bi bi-info-circle me-2 fs-5"></i><br>
+                            Utiliza la barra de búsqueda o toca alguna tarjeta métrica arriba para mostrar alumnos.
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover m-0 align-middle" id="alumnosTable">
                                 <thead style="background-color: #f1f5f9; color: #475569;">
