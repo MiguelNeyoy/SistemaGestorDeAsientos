@@ -61,11 +61,18 @@ async function loadDashboardData(token) {
         if (alumnosData.success) {
             allStudentsCache = alumnosData.data;
 
-            // --- NUEVO CÓDIGO: Calcular alumnos confirmados ---
+            // --- NUEVO CÓDIGO: Calcular alumnos confirmados, rechazados y totales ---
             const totalConfirmados = allStudentsCache.filter(al =>
                 al.asistencia_estado === 1 || al.asistencia_estado === "1"
             ).length;
             document.getElementById("metric-confirmados").innerText = totalConfirmados;
+
+            const totalRechazados = allStudentsCache.filter(al =>
+                al.asistencia_estado === 0 || al.asistencia_estado === "0"
+            ).length;
+            document.getElementById("metric-rechazados").innerText = totalRechazados;
+            
+            document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
             // --------------------------------------------------
 
             renderTable(document.getElementById("searchInput").value);
