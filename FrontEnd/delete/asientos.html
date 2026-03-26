@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa de Asientos Teatro</title>
+  <!-- Vinculamos el CSS externo -->
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="mesa">Mesa Directiva</div>
+  <div class="teatro"></div>
+
+  <script>
+    const teatro = document.querySelector('.teatro');
+    const filas = 10; // A-J
+    const letras = "ABCDEFGHIJ";
+
+    for (let f = 0; f < filas; f++) {
+      const filaDiv = document.createElement('div');
+      filaDiv.classList.add('fila');
+
+      const secciones = [
+        {inicio:1, fin:7},
+        {inicio:8, fin:23},
+        {inicio:24, fin:30}
+      ];
+
+      secciones.forEach(sec => {
+        const secDiv = document.createElement('div');
+        secDiv.classList.add('seccion');
+
+        for (let n = sec.inicio; n <= sec.fin; n++) {
+          const asiento = document.createElement('div');
+          asiento.classList.add('asiento');
+          asiento.textContent = letras[f] + n;
+
+          // Fila A ocupada
+          if (f === 0) {
+            asiento.classList.add('ocupado');
+          }
+
+          secDiv.appendChild(asiento);
+        }
+        filaDiv.appendChild(secDiv);
+      });
+
+      teatro.appendChild(filaDiv);
+    }
+  </script>
+</body>
+</html>
