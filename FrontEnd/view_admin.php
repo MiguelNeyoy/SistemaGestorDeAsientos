@@ -105,6 +105,8 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </span>
                     <span class="text-secondary d-none d-md-block small fw-bold">Sistema Gestor de Asientos</span>
                     <div class="d-flex align-items-center gap-3">
+                        <button id="btnEscanearQR" class="btn btn-primary btn-sm" onclick="alert('Función de Escanear QR en desarrollo')"><i class="bi bi-qr-code-scan me-1"></i>Escanear QR</button>
+                        <button id="btnEnviarCorreos" class="btn btn-success btn-sm" onclick="alert('Función de Enviar Correos masivos en desarrollo')"><i class="bi bi-envelope-paper me-1"></i>Enviar QRs</button>
                         <a href="view_registroAdmin.php" class="btn btn-outline-primary btn-sm"><i class="bi bi-person-plus me-1"></i>Nuevo Admin</a>
                         <button id="btnLogout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión</button>
                     </div>
@@ -224,12 +226,14 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                                         <th class="border-bottom-0">Carrera/Turno</th>
                                         <th class="text-center border-bottom-0">Invitados Autorizados</th>
                                         <th class="border-bottom-0">Correo Contacto</th>
-                                        <th class="text-center pe-3 border-bottom-0">Estado</th>
+                                        <th class="text-center border-bottom-0">Asiento</th>
+                                        <th class="text-center border-bottom-0">Estado</th>
+                                        <th class="text-center pe-3 border-bottom-0">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="alumnosTableBody" style="color: #334155; font-size: 0.95rem;">
                                     <tr>
-                                        <td colspan="6" class="text-center py-4 text-muted">
+                                        <td colspan="8" class="text-center py-4 text-muted">
                                             <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div>
                                             Cargando datos del servidor...
                                         </td>

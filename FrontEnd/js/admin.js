@@ -6,7 +6,7 @@ let currentFilterType = 'ALL';
 document.addEventListener("DOMContentLoaded", () => {
     // Si ADMIN_TOKEN está definido (inyectado por PHP) y no está vacío, cargamos los datos
     if (typeof ADMIN_TOKEN !== 'undefined' && ADMIN_TOKEN) {
-        loadDashboardData(ADMIN_TOKEN);
+        loadDashboardData(ADMIN_TOKEN)
 
         // Configurar Polling (tiempo real) cada 5 segundos
         if (!pollInterval) {
@@ -72,7 +72,7 @@ async function loadDashboardData(token) {
                 al.asistencia_estado === 0 || al.asistencia_estado === "0"
             ).length;
             document.getElementById("metric-rechazados").innerText = totalRechazados;
-            
+
             document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
             // --------------------------------------------------
 
@@ -128,22 +128,22 @@ function renderTable(filterText = "") {
         // 1. Filtro de búsqueda por texto
         const nombreStr = (al.nombre + " " + al.apellido).toLowerCase();
         const matchesText = al.numCuenta.includes(lowerFilter) || nombreStr.includes(lowerFilter);
-        
+
         if (!matchesText) return false;
 
         // 2. Filtro de selección de tarjetas (Métricas)
         if (currentFilterType !== 'ALL') {
             const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
             const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
-            
+
             if (currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
             if (currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
-            
+
             if (currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
-            
+
             if (currentFilterType === 'M' && !(isConfirmado && al.turno.toUpperCase() === 'M')) return false;
             if (currentFilterType === 'V' && !(isConfirmado && al.turno.toUpperCase() === 'V')) return false;
-            
+
             if (currentFilterType === 'ING') {
                 const esIngenieria = al.carrera.toLowerCase().includes("ingeniería") || al.carrera.toLowerCase().includes("sistemas");
                 if (!(isConfirmado && esIngenieria)) return false;
@@ -158,7 +158,7 @@ function renderTable(filterText = "") {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">No se encontraron alumnos coincidentes.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center">No se encontraron alumnos coincidentes.</td></tr>`;
         return;
     }
 
@@ -186,7 +186,15 @@ function renderTable(filterText = "") {
             <td><small>${carreraCorta} (${al.turno})</small></td>
             <td class="text-center fs-5">${al.cantInvitado || 0}</td>
             <td>${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
+            <td class="text-center text-muted">-</td>
             <td class="text-center">${estadoBadge}</td>
+            <td class="text-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-primary" title="Cambiar Correo" onclick="alert('Función de cambiar correo en desarrollo')"><i class="bi bi-envelope"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" title="Actualizar Estado" onclick="alert('Función de actualizar estado en desarrollo')"><i class="bi bi-arrow-repeat"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-success" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')"><i class="bi bi-qr-code"></i></button>
+                </div>
+            </td>
         `;
         tbody.appendChild(tr);
     });
@@ -194,7 +202,7 @@ function renderTable(filterText = "") {
 
 function setFilterType(type) {
     currentFilterType = type;
-    
+
     // Mostrar u ocultar botón de "Mostrar Todo"
     const btn = document.getElementById("btnMostrarTodo");
     if (btn) {
@@ -204,7 +212,7 @@ function setFilterType(type) {
             btn.classList.remove('d-none');
         }
     }
-    
+
     // Refrescar tabla respetando el buscador
     const searchVal = document.getElementById("searchInput") ? document.getElementById("searchInput").value : "";
     renderTable(searchVal);
