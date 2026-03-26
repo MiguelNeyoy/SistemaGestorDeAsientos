@@ -1,7 +1,7 @@
 <?php
 session_start();
 // URL base de la API, se usa para no reescribir manualmente
-$BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+$BASE_API_URL = "https://graduacion.inftecn.com/API/publico";
 
 if (!isset($_SESSION['jwt_token']) || empty($_SESSION['jwt_token'])) {
     header("Location: index.php");

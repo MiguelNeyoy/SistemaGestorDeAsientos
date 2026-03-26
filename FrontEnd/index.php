@@ -1,7 +1,7 @@
 <?php
 session_start();
 // URL base de la API, se usa para no reescribir manualmente
-$BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+$BASE_API_URL = "https://graduacion.inftecn.com/API/publico";
 
 $error = "";
 
@@ -33,16 +33,19 @@ if (isset($_POST['buscar'])) {
             // El alumno existe en el sistema, lo enviamos al siguiente paso
             header("Location: estadoAlumno.php");
             exit;
-        } else {
+        }
+        else {
             // Si la API dice que success es false, obtenemos su mensaje de error
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no encontrado";
         }
-    } else {
+    }
+    else {
         // Si el código HTTP trae error (ej. 404, 400), intentamos leer el mensaje que mandó la API
         if ($response) {
             $data = json_decode($response, true);
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no válido o no encontrado";
-        } else {
+        }
+        else {
             // Error general en caso de que la API este caída o haya fallado cURL
             $error = "No se pudo comunicar con el sistema. Intente de nuevo más tarde.";
         }
@@ -73,7 +76,8 @@ if (isset($_POST['buscar'])) {
         <!-- Bloque para mostrar errores si existen -->
         <?php if ($error != "") { ?>
             <p class="error"><?php echo htmlspecialchars($error); ?></p>
-        <?php } ?>
+        <?php
+}?>
 
         <form method="post">
             <input type="text" name="numCuenta" placeholder="Número de cuenta" required>

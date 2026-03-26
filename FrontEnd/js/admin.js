@@ -1,4 +1,4 @@
-const BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+const BASE_API_URL = "https://graduacion.inftecn.com/API/publico";
 let pollInterval = null;
 let allStudentsCache = [];
 
