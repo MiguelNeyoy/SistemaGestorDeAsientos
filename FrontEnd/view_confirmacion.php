@@ -38,12 +38,10 @@ if ($httpCodeGet == 200 && $responseGet) {
     if (isset($dataGet['success']) && $dataGet['success'] === true) {
         // Almacenamos la información del alumno devuelta por la API
         $alumno = $dataGet['data'];
-    }
-    else {
+    } else {
         die(isset($dataGet['message']) ? $dataGet['message'] : "Alumno no encontrado.");
     }
-}
-else {
+} else {
     // Si la API falla, detenemos la ejecución mostrando un mensaje de error
     die("Error al consultar el alumno en el sistema. (Código de error: $httpCodeGet)");
 }
@@ -77,7 +75,7 @@ if (isset($_POST['confirmar'])) {
     // Si no asiste, forzar invitados a 0 y usar el correo del alumno por defecto
     if ($asistira === 0) {
         $invitados = 0;
-        $correo = $alumno['email'];
+        $correo = !empty($alumno['email']) ? $alumno['email'] : 'no_asiste@sin-correo.com';
     }
 
     // Armar el arreglo de datos que espera la API
@@ -108,8 +106,7 @@ if (isset($_POST['confirmar'])) {
     if (curl_errno($ch)) {
         $mensajeConfirmacion = "Error de conexión: " . curl_error($ch);
         curl_close($ch);
-    }
-    else {
+    } else {
         curl_close($ch);
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
@@ -117,8 +114,7 @@ if (isset($_POST['confirmar'])) {
             // Confirmación exitosa (el correo se actualizó automáticamente si era diferente)
             header("Location: view_confirmacion.php");
             exit;
-        }
-        else {
+        } else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])
                 ? $resultadoConfirmar['message']
@@ -149,11 +145,9 @@ if (isset($_POST['actualizar_correo'])) {
     // Validación local del correo antes de enviarlo a la API
     if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
         $mensajeCorreo = "Correo inválido";
-    }
-    else if ($newEmail == $alumno['email']) {
+    } else if ($newEmail == $alumno['email']) {
         $mensajeCorreo = "El correo ingresado es igual al actual";
-    }
-    else {
+    } else {
         // El correo es válido y diferente, enviarlo a la API
         $datosCorreo = [
             "correo" => $newEmail
@@ -179,8 +173,7 @@ if (isset($_POST['actualizar_correo'])) {
         if (curl_errno($ch)) {
             $mensajeCorreo = "Error de conexión: " . curl_error($ch);
             curl_close($ch);
-        }
-        else {
+        } else {
             curl_close($ch);
             $resultadoCorreo = json_decode($respuestaCorreo, true);
 
@@ -188,8 +181,7 @@ if (isset($_POST['actualizar_correo'])) {
                 $mensajeCorreo = "Correo actualizado correctamente";
                 // Actualizar el correo en la variable local para reflejar el cambio
                 $alumno['email'] = $newEmail;
-            }
-            else {
+            } else {
                 $mensajeCorreo = isset($resultadoCorreo['message'])
                     ? $resultadoCorreo['message']
                     : "Error al actualizar correo (Código: $httpCodeCorreo)";
@@ -213,11 +205,25 @@ if (isset($_POST['actualizar_correo'])) {
         // dependiendo de si el alumno asiste o no.
         function mostrarCampos() {
             let opcion = document.querySelector('input[name="asiste"]:checked')?.value;
+            let inputCorreo = document.querySelector('input[name="correo"]');
+            let btnConfirmar = document.getElementById("btnConfirmar");
             if (opcion == "Si") {
                 document.getElementById("extra").style.display = "block";
+                inputCorreo.required = true;
+                if (btnConfirmar) btnConfirmar.innerText = "Confirmar asistencia";
             } else {
                 document.getElementById("extra").style.display = "none";
+                inputCorreo.required = false;
+                if (btnConfirmar) btnConfirmar.innerText = "Enviar";
             }
+        }
+
+        function validarEnvio() {
+            let opcion = document.querySelector('input[name="asiste"]:checked')?.value;
+            if (opcion == "No") {
+                return confirm("¿Estás seguro de no ir? No se te contemplará para la ceremonia de graduación.");
+            }
+            return true;
         }
     </script>
 </head>
@@ -235,15 +241,15 @@ if (isset($_POST['actualizar_correo'])) {
         <?php if ($errorApi != "") { ?>
             <p class="error"><?php echo htmlspecialchars($errorApi); ?></p>
         <?php
-}?>
+        } ?>
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
         <?php
-$estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
-if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
-?>
+        $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
+        if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
+        ?>
             <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
-            <form method="post">
+            <form method="post" novalidate onsubmit="return validarEnvio()">
                 <p>¿Asistirás a la clausura?</p>
 
                 <label>
@@ -261,8 +267,7 @@ if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != 
                         <strong>Tienes solo un intento para hacerlo.</strong>
                     </p>
                     <!-- Por defecto lo cargamos del modelo -->
-                    <input type="email" name="correo" placeholder="Escribe tu correo" required
-                        value="<?php echo htmlspecialchars($alumno['email']); ?>">
+                    <input type="email" name="correo" placeholder="Escribe tu correo">
 
 
                     <p>Invitados</p>
@@ -276,22 +281,21 @@ if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != 
                     </select>
                 </div>
 
-                <button type="submit" name="confirmar">Confirmar asistencia</button>
+                <button type="submit" name="confirmar" id="btnConfirmar">Confirmar asistencia</button>
             </form>
 
             <!-- Mensaje de resultado de confirmación -->
             <?php if (!empty($mensajeConfirmacion)): ?>
                 <?php
-        // Verde si el correo se actualizó, rojo si hubo error
-        $claseMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "mensaje-ok" : "mensaje-error";
-?>
+                // Verde si el correo se actualizó, rojo si hubo error
+                $claseMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "mensaje-ok" : "mensaje-error";
+                ?>
                 <p class="<?php echo $claseMsg; ?>"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
             <?php
-    endif; ?>
+            endif; ?>
 
         <?php
-}
-else { ?>
+        } else { ?>
 
             <!-- Si el alumno ya confirmó su asistencia, se le muestra su estado actual -->
             <div class="estado">
@@ -304,7 +308,7 @@ else { ?>
                     <p>Invitados: <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
                 <?php
-    }?>
+                } ?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
 
@@ -313,7 +317,12 @@ else { ?>
                         value="<?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ''); ?>" required>
                 </form>
 
-                <p> <strong>Si deseas actualizar tu correo electrónico, Acude con un administrador para hacerlo</strong></p>
+                <?php if ($estadoAsistencia == "Si") { ?>
+                    <p> <strong>Si deseas actualizar tu correo electrónico, Acude con un administrador para hacerlo</strong></p>
+                <?php } ?>
+                <?php if ($estadoAsistencia == "No") { ?>
+                    <p> <strong>Si quieres asistir a la clausura, acude con un administrador para hacerlo</strong></p>
+                <?php } ?>
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>
@@ -321,7 +330,7 @@ else { ?>
                         <?php echo htmlspecialchars($mensajeCorreo); ?>
                     </p>
                 <?php
-    endif; ?>
+                endif; ?>
 
 
                 <br>
@@ -329,7 +338,7 @@ else { ?>
             </div>
 
         <?php
-}?>
+        } ?>
 
     </div>
 

@@ -60,8 +60,8 @@ class ServicioAlumno
             return $this->respuesta(false, "Datos incompletos", 400);
         }
 
-        // Validar correo
-        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+        // Validar correo (solo exigirlo si sí van a asistir)
+        if ($data['asistira'] == 1 && !filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
             return $this->respuesta(false, "Correo inválido", 400);
         }
 
@@ -81,10 +81,12 @@ class ServicioAlumno
         if (!$alumno) {
             return $this->respuesta(false, "Alumno no encontrado", 404);
         }
-        // Verificar si el correo es diferente al del alumno y actualizarlo
-        if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
-            // Actualizar el correo y continuar con la confirmación
-            $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
+        // Verificar si el correo es diferente al del alumno y actualizarlo (solo si asisten)
+        if ($data['asistira'] == 1) {
+            if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
+                // Actualizar el correo y continuar con la confirmación
+                $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
+            }
         }
 
         $asistira = $data['asistira'] ? 1 : 0;
