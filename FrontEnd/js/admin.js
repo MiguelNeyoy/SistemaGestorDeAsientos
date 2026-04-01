@@ -1,4 +1,3 @@
-const BASE_API_URL = window.location.origin + "/SistemaGestorDeAsientos/API/publico";
 // BASE_API_URL ya está definido globalmente en los archivos PHP (como view_admin.php)
 let pollInterval = null;
 let allStudentsCache = [];
