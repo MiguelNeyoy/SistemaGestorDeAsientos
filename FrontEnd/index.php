@@ -31,7 +31,7 @@ if (isset($_POST['buscar'])) {
             // Guardamos el token en la sesión
             $_SESSION['jwt_token'] = $data['token'];
             // El alumno existe en el sistema, lo enviamos al siguiente paso
-            header("Location: estadoAlumno.php");
+            header("Location: view_confirmacion.php");
             exit;
         }
         else {
