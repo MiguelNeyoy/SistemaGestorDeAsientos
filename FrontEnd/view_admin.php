@@ -1,6 +1,6 @@
 <?php
 session_start();
-$BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+require_once 'config.php';
 $error = "";
 
 if (isset($_GET['logout'])) {
@@ -241,6 +241,8 @@ else: ?>
     </div>
     
     <script>
+        // Configuración global para JS
+        const BASE_API_URL = "<?php echo $BASE_API_URL; ?>";
         // Set secure token dynamically from PHP session
         const ADMIN_TOKEN = "<?php echo $_SESSION['admin_token']; ?>";
     </script>
