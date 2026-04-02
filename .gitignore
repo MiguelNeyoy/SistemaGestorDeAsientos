@@ -9,6 +9,7 @@ node_modules/
 # Archivos del sistema
 .DS_Store
 .md
+/agents/
 Thumbs.db
 
 # IDEs
