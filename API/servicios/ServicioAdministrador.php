@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 require_once __DIR__ . '/../modelos/AdministradorModelo.php';
+
 use Firebase\JWT\JWT;
 
 class ServicioAdministrador
@@ -28,7 +29,7 @@ class ServicioAdministrador
             $secret_key = $_SERVER['JWT_KEY'];
             $issuer_claim = "http://asientos.local";
             $audience_claim = "http://asientos.local";
-            $issuedat_claim = time(); 
+            $issuedat_claim = time();
             $expire_claim = $issuedat_claim + (86400); // expira en 24h
             $token = array(
                 "iss" => $issuer_claim,
@@ -71,7 +72,6 @@ class ServicioAdministrador
         }
 
         $actualizado = $this->modeloAlumno->actualizarCorreo($data['numCuenta'], $data['correo']);
-        
         if ($actualizado) {
             return $this->respuesta(true, "Correo actualizado correctamente", 200);
         } else {

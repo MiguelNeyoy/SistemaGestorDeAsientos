@@ -1,4 +1,4 @@
-const BASE_API_URL = window.location.origin + "/SistemaGestorDeAsientos/API/publico";
+// BASE_API_URL ya está definido globalmente en los archivos PHP (como view_admin.php)
 let pollInterval = null;
 let allStudentsCache = [];
 let currentFilterType = 'ALL';
@@ -62,18 +62,42 @@ async function loadDashboardData(token) {
         if (alumnosData.success) {
             allStudentsCache = alumnosData.data;
 
-            // --- NUEVO CÓDIGO: Calcular alumnos confirmados, rechazados y totales ---
-            const totalConfirmados = allStudentsCache.filter(al =>
-                al.asistencia_estado === 1 || al.asistencia_estado === "1"
-            ).length;
+            let totalConfirmados = 0;
+            let totalRechazados = 0;
+            let guestsM = 0;
+            let guestsV = 0;
+            let guestsIng = 0;
+            let guestsInf = 0;
+
+            allStudentsCache.forEach(al => {
+                const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
+                const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
+
+                if (isConfirmado) {
+                    totalConfirmados++;
+                    const cant = parseInt(al.cantInvitado) || 0;
+                    if (al.turno.toUpperCase() === 'M') guestsM += cant;
+                    if (al.turno.toUpperCase() === 'V') guestsV += cant;
+
+                    const carLower = al.carrera.toLowerCase();
+                    if (carLower.includes("ingeniería") || carLower.includes("sistemas")) {
+                        guestsIng += cant;
+                    } else if (carLower.includes("informática") || carLower.includes("informatica")) {
+                        guestsInf += cant;
+                    }
+                } else if (isRechazado) {
+                    totalRechazados++;
+                }
+            });
+
             document.getElementById("metric-confirmados").innerText = totalConfirmados;
-
-            const totalRechazados = allStudentsCache.filter(al =>
-                al.asistencia_estado === 0 || al.asistencia_estado === "0"
-            ).length;
             document.getElementById("metric-rechazados").innerText = totalRechazados;
-
             document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
+
+            if (document.getElementById("guests-m")) document.getElementById("guests-m").innerText = guestsM;
+            if (document.getElementById("guests-v")) document.getElementById("guests-v").innerText = guestsV;
+            if (document.getElementById("guests-ing")) document.getElementById("guests-ing").innerText = guestsIng;
+            if (document.getElementById("guests-inf")) document.getElementById("guests-inf").innerText = guestsInf;
             // --------------------------------------------------
 
             renderTable(document.getElementById("searchInput").value);

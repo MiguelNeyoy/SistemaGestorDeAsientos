@@ -17,6 +17,17 @@ class AdministradorModelo
         $stmt->execute([$usuario]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function obtenerInvitadosPorCarrera()
+    {
+        $sql = "SELECT alumno.carrera, SUM(alumno.cantInvitado) as total_invitados
+            FROM alumno 
+            JOIN asistencia ON alumno.numCuenta = asistencia.numCuenta 
+            WHERE asistencia.estado = 1
+            GROUP BY alumno.carrera";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function obtenerMetricas()
     {
@@ -36,7 +47,7 @@ class AdministradorModelo
         foreach ($alumnosConfirmados as $alumno) {
             $invitados = (int)$alumno['cantInvitado'];
             $total_invitados += $invitados;
-            
+
             $turno = strtoupper(trim($alumno['turno']));
             if (isset($por_turno[$turno])) {
                 $por_turno[$turno] += $invitados;
@@ -66,11 +77,14 @@ class AdministradorModelo
             ];
         }
 
+        $invitadosPorCarrera = $this->obtenerInvitadosPorCarrera();
+
         return [
             'total_invitados' => $total_invitados,
             'por_turno' => $por_turno,
             'por_carrera' => $por_carrera,
-            'individual' => $individual
+            'individual' => $individual,
+            'invitadosPorCarrera' => $invitadosPorCarrera
         ];
     }
 }
