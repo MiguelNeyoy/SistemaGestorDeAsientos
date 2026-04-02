@@ -151,6 +151,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                                 <i class="bi bi-sun-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Matutino</h6>
                                 <h2 class="card-text fw-bold m-0" id="metric-m">0</h2>
+                                <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span id="guests-m">0</span> invitados</small>
                             </div>
                         </div>
                     </div>
@@ -161,6 +162,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                                 <i class="bi bi-moon-stars-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Vespertino</h6>
                                 <h2 class="card-text fw-bold m-0" id="metric-v">0</h2>
+                                <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span id="guests-v">0</span> invitados</small>
                             </div>
                         </div>
                     </div>
@@ -171,6 +173,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                                 <i class="bi bi-gear-fill metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Ingeniería</h6>
                                 <h2 class="card-text fw-bold m-0" id="metric-ing">0</h2>
+                                <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span id="guests-ing">0</span> invitados</small>
                             </div>
                         </div>
                     </div>
@@ -181,6 +184,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                                 <i class="bi bi-pc-display metric-icon"></i>
                                 <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Informática</h6>
                                 <h2 class="card-text fw-bold m-0" id="metric-inf">0</h2>
+                                <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span id="guests-inf">0</span> invitados</small>
                             </div>
                         </div>
                     </div>
