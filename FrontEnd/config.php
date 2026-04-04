@@ -8,6 +8,6 @@ if ($host === 'localhost' || $host === '127.0.0.1') {
 } else {
     // Entorno de producción (Hostinger)
     // Se adapta dinámicamente al dominio actual
-    $BASE_API_URL = "https://" . $host . "/API/publico"; 
+    $BASE_API_URL = "https://" . $host . "/API/publico";
 }
 ?>
