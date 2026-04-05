@@ -77,8 +77,8 @@ class ServicioAdministrador
 
         // 2. Lógica de Asistencia y Número de invitados
         if (isset($data['asistencia_estado']) && isset($data['num_invitados'])) {
-            $estado = (int)$data['asistencia_estado']; // 1 o 0
-            $invitados = (int)$data['num_invitados'];
+            $estado = (int) $data['asistencia_estado']; // 1 o 0
+            $invitados = (int) $data['num_invitados'];
 
             if ($invitados < 0 || $invitados > 4) {
                 return $this->respuesta(false, "El límite de invitados es 4", 400);
@@ -89,8 +89,7 @@ class ServicioAdministrador
             }
 
             // Actualizar la confirmación/estado y cantidad de invitados directamente en la BD
-            $correo = $data['correo'] ?? null;
-            $resultado = $this->modeloAlumno->actualizarConfirmacion($data['numCuenta'], $estado, $invitados, $correo);
+            $resultado = $this->modeloAlumno->actualizarConfirmacion($data['numCuenta'], $estado, $invitados);
 
             if (!$resultado || (is_array($resultado) && !$resultado['success'])) {
                 return $this->respuesta(false, "Error al actualizar la asistencia", 500);
