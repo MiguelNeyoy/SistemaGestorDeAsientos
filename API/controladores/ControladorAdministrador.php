@@ -30,10 +30,10 @@ class ControladorAdministrador
         echo json_encode($respuesta);
     }
 
-    public function actualizarCorreoAlumno()
+    public function editarAlumno()
     {
         $input = json_decode(file_get_contents('php://input'), true) ?? [];
-        $respuesta = $this->servicioAdmin->actualizarCorreoAlumno($input);
+        $respuesta = $this->servicioAdmin->editarAlumno($input);
         echo json_encode($respuesta);
     }
 }

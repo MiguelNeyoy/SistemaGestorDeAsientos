@@ -35,8 +35,8 @@ $rutas = [
     '/admin/metricas' => [
         'GET' => ['ControladorAdministrador', 'obtenerMetricas']
     ],
-    '/admin/alumnos/correo' => [
-        'PUT' => ['ControladorAdministrador', 'actualizarCorreoAlumno']
+    '/admin/alumnos/editar' => [
+        'PUT' => ['ControladorAdministrador', 'editarAlumno']
     ],
     // Cambio: Para validar, usamos POST para no enviar datos sensibles y retornamos JWT
     '/alumnos/validar' => [
@@ -92,7 +92,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado'];
-            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/correo'];
+            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;
