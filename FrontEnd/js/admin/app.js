@@ -1,3 +1,4 @@
+console.log(window.BASE_API_URL + " Desde APP.js");
 import { state } from './modules/state.js';
 import { fetchDashboardData } from './modules/api.js';
 import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js';
@@ -44,7 +45,7 @@ function handleLogout() {
 
 async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
-    if(statusText) {
+    if (statusText) {
         statusText.innerText = "Actualizando...";
         statusText.classList.remove("bg-success", "bg-danger");
         statusText.classList.add("bg-secondary");
@@ -61,25 +62,29 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
+        console.log(metricasData);
         if (metricasData.success) {
             updateMetricsUI(metricasData.data);
         }
         if (alumnosData.success) {
-            state.allStudentsCache = alumnosData.data;
+            const unicos = new Map();
+            alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
+            state.allStudentsCache = Array.from(unicos.values());
+
             updateCustomLocalMetrics(state.allStudentsCache);
-            
+
             const searchInput = document.getElementById("searchInput");
             renderTable(searchInput ? searchInput.value : "");
         }
 
-        if(statusText) {
+        if (statusText) {
             const now = new Date();
             statusText.innerText = `Actualizado: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
             statusText.classList.replace("bg-secondary", "bg-success");
         }
     } catch (err) {
         console.error("Error obteniendo datos del dashboard:", err);
-        if(statusText) {
+        if (statusText) {
             statusText.innerText = "Error de conexión";
             statusText.classList.replace("bg-secondary", "bg-danger");
         }

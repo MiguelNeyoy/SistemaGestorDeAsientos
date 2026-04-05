@@ -1,4 +1,6 @@
 // API Methods
+
+console.log(window.BASE_API_URL);
 export async function fetchDashboardData(token) {
     const [metricasRes, alumnosRes] = await Promise.all([
         fetch(`${window.BASE_API_URL}/admin/metricas`, { headers: { "Authorization": `Bearer ${token}` } }),
@@ -10,9 +12,9 @@ export async function fetchDashboardData(token) {
 export async function updateAlumno(token, dataPayload) {
     const response = await fetch(`${window.BASE_API_URL}/admin/alumnos/editar`, {
         method: 'PUT',
-        headers: { 
+        headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` 
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(dataPayload)
     });
