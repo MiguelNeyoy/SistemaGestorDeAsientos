@@ -68,6 +68,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
 
     <?php if (!$tieneSesion): ?>
         <div id="loginView" class="container mt-5" style="max-width: 450px;">
+            <div class="form-box">
             <div class="text-center mb-4">
                 <h1 class="titulo-evento">CLAUSURA 2022 - 2026</h1>
                 <h2 class="subtitulo">Acceso de Administración</h2>
@@ -194,7 +195,17 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                             </div>
                         </div>
                     </div>
-
+                      <div class="col-6 col-md-4 col-lg-2">
+                        <a href="asientos.php" style="text-decoration: none;">
+                        <div class="card metric-card bg-black h-100">
+                            <div class="card-body text-center d-flex flex-column justify-content-center">
+                               <i class="bi bi-grid-3x3-gap-fill metric-icon"></i>
+                               <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Mapa de asientos</h6>
+     
+                            </div>
+                        </div>
+                    </div>
+                        </a>
                 </div>
 
                 <div class="card shadow rounded-3 mb-4" style="background-color: #fff; border: 1px solid #e2e8f0; overflow: hidden;">

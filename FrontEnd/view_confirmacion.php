@@ -110,10 +110,14 @@ if (isset($_POST['confirmar'])) {
         curl_close($ch);
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
-        if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
-            // Confirmación exitosa (el correo se actualizó automáticamente si era diferente)
+       if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
+    
+        if ($asistira == 1) {
+            header("Location: asientos.php");
+         } else {
             header("Location: view_confirmacion.php");
-            exit;
+        }
+    exit;
         } else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])
@@ -231,6 +235,7 @@ if (isset($_POST['actualizar_correo'])) {
 <body>
 
     <div class="container"> <!-- Contenedor principal -->
+        <div class="form-box"> 
 
         <h2><?php echo htmlspecialchars($alumno['nombre'] . " " . $alumno['apellido']); ?></h2>
 
@@ -334,13 +339,22 @@ if (isset($_POST['actualizar_correo'])) {
 
 
                 <br>
-                <p class="enlace-regresar"><a href="index.php">Regresar al inicio</a></p>
+                <?php if ($estadoAsistencia == "Si") { ?>
+        <p class="enlace-regresar">
+        <a href="asientos.php">Ver asiento</a>
+         </p>
+        <?php } else { ?>
+        <p class="enlace-regresar">
+        <a href="index.php">Regresar al inicio</a>
+         </p>
+        <?php } ?>
             </div>
 
         <?php
         } ?>
 
-    </div>
+        </div>
+</div>
 
 </body>
 

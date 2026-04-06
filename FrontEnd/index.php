@@ -28,12 +28,50 @@ if (isset($_POST['buscar'])) {
         $data = json_decode($response, true);
         // Verificamos la bandera 'success' de la respuesta JSON
         if (isset($data['success']) && $data['success'] === true && !empty($data['token'])) {
-            // Guardamos el token en la sesión
-            $_SESSION['jwt_token'] = $data['token'];
-            // El alumno existe en el sistema, lo enviamos al siguiente paso
-            header("Location: view_confirmacion.php");
+
+    // Guardamos el token en la sesión
+    $_SESSION['jwt_token'] = $data['token'];
+    $token = $data['token'];
+
+    //  CONSULTAR ESTADO DEL ALUMNO
+    $apiEstado = $BASE_API_URL . "/alumnos/estado";
+
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $apiEstado,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $token
+        ],
+        CURLOPT_SSL_VERIFYPEER => false
+    ]);
+
+    $responseEstado = curl_exec($ch);
+    $httpCodeEstado = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCodeEstado == 200 && $responseEstado) {
+        $dataEstado = json_decode($responseEstado, true);
+
+        if (isset($dataEstado['success']) && $dataEstado['success']) {
+            $alumno = $dataEstado['data'];
+            $estado = $alumno['asistencia']; // "Si", "No", "Pendiente"
+
+            if ($estado == "Si") {
+                header("Location: asientos.php");
+            } else {
+                header("Location: view_confirmacion.php");
+            }
             exit;
+
+        } else {
+            $error = "No se pudo obtener el estado del alumno.";
         }
+
+    } else {
+        $error = "Error al consultar el estado del alumno.";
+    }
+}
         else {
             // Si la API dice que success es false, obtenemos su mensaje de error
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no encontrado";
@@ -66,11 +104,13 @@ if (isset($_POST['buscar'])) {
 <body>
 
     <div class="container">
-        <h1 class="titulo-evento">CLAUSURA 2022 - 2026</h1>
+        <div class="form-box">
+        <strong><h1 class="titulo-escuela">Facultad de informática</h1></strong>
         <h2 class="subtitulo">Confirmación de asistencia</h2>
+       
 
         <div class="alert alert-info mt-3">
-            Ingresa tu número de cuenta <strong>sin el último dígito</strong>.
+            Ingresa tu número de cuenta <strong>sin el último dígito</strong>. En caso de no tenerlo, solicítalo en ventanilla con control escolar.
         </div>
 
         <!-- Bloque para mostrar errores si existen -->
@@ -83,9 +123,18 @@ if (isset($_POST['buscar'])) {
             <input type="text" name="numCuenta" placeholder="Número de cuenta" required>
             <button type="submit" name="buscar">Ingresar</button>
         </form>
+        
 
     </div>
-
+   <div class="leyenda">
+        <div class="alert alert-warning">
+            Este formulario es para registrar tu asistencia al evento de clausura 2022–2026.<br><br>
+            ⚠ La confirmación estará disponible hasta una semana antes del evento. 
+            Después de esa fecha, el sistema se cerrará y no será posible registrar tu asistencia,
+             por lo que tendrás que acercarte a control escolar.
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

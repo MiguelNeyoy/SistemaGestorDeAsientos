@@ -217,3 +217,4 @@ function setFilterType(type) {
     const searchVal = document.getElementById("searchInput") ? document.getElementById("searchInput").value : "";
     renderTable(searchVal);
 }
+
