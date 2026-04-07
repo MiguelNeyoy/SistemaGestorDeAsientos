@@ -24,6 +24,7 @@ class AsientoModel{
 
         $sql = 'SELECT letra, numero, estado 
                 FROM asiento';
+
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
@@ -40,6 +41,7 @@ class AsientoModel{
                 INNER JOIN asiento 
                 ON alumno.numCuenta = asiento.numCuenta
                 WHERE asiento.numCuenta = ?';
+
         $stmt = $this->db->prepare( $sql );
         $stmt->execute( [$numCuenta] );
 
@@ -56,6 +58,7 @@ class AsientoModel{
                 ON asiento.numCuenta = asistencia.numCuenta
                 SET asiento.estado = 1
                 WHERE asistencia.numCuenta = ? AND asistencia.estado = 1';
+
         $stmt = $this->db->prepare( $sql );
         $stmt->execute( [$numCuenta ] );
 
@@ -72,6 +75,7 @@ class AsientoModel{
                 JOIN asiento
                 ON alumno.numCuenta = asiento.numCuenta
                 WHERE alumno.carrera = ? AND alumno.turno = ? ';
+
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
@@ -88,6 +92,7 @@ class AsientoModel{
                 JOIN asiento
                 ON alumno.numCuenta = asiento.numCuenta
                 WHERE alumno.carrera = ? AND alumno.turno = ?';
+                
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
