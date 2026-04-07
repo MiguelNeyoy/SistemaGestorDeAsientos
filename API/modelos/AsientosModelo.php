@@ -52,7 +52,8 @@ class AsientoModel{
     public function actualizarAsiento( $numCuenta ) {
 
         $sql = 'UPDATE asiento
-                JOIN asistencia ON asiento.numCuenta = asistencia.numCuenta
+                JOIN asistencia 
+                ON asiento.numCuenta = asistencia.numCuenta
                 SET asiento.estado = 1
                 WHERE asistencia.numCuenta = ? AND asistencia.estado = 1';
         $stmt = $this->db->prepare( $sql );
@@ -61,6 +62,22 @@ class AsientoModel{
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
     }//fin-actualizarAsiento
+
+
+    //Consulta todos los asientos que pertenezcan a la misma carrera y turno
+    public function grupoAsientosAlumnos(){
+        
+        $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento.letra, asiento.numero, asiento.estado
+                FROM alumno 
+                JOIN asiento
+                ON alumno.numCuenta = asiento.numCuenta
+                WHERE alumno.carrera = ? AND alumno.turno = ? ';
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-grupoAsientosAlumnos
 
 
 }//fin-AsientoModel
