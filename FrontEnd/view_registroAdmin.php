@@ -1,7 +1,7 @@
 <?php
 session_start();
 // URL base de la API, se usa para no reescribir manualmente
-$BASE_API_URL = "http://localhost/SistemaGestorDeAsientos/API/publico";
+require_once 'config.php';
 
 $error = "";
 $success_msg = "";

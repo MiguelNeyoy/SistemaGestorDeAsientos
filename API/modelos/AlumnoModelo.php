@@ -9,7 +9,7 @@ class AlumnoModel
     public function __construct()
     {
         require_once(__DIR__ . '/../configuracion/ConexionDB.php');
-        $this->db  = Conexion::Conectar();
+        $this->db = Conexion::Conectar();
     }
 
     public function obtenerAlumnos()
@@ -48,20 +48,26 @@ class AlumnoModel
         return $resultado !== false ? $resultado['estado'] : false;
     }
 
-    public function actualizarConfirmacion($idAlumno, $asistira, $numInvitados, $correo)
+    public function actualizarConfirmacion($idAlumno, $asistira, $numInvitados)
     {
         try {
             // Convertir asistira a estado: 1 = "confirmado", 0 = "no_asistira"
             $estado = $asistira ? 1 : 0;
 
-            // 1. Insertar/Actualizar registro en tabla asistencia
-            $sql = 'INSERT INTO asistencia (numCuenta, estado) 
-                    VALUES (?, ?)
-                    ON DUPLICATE KEY UPDATE 
-                    estado = VALUES(estado)';
+            // 1. Verificar si ya existe registro en asistencia
+            $stmtCheck = $this->db->prepare('SELECT COUNT(*) FROM asistencia WHERE numCuenta = ?');
+            $stmtCheck->execute([$idAlumno]);
+            $existe = $stmtCheck->fetchColumn() > 0;
 
-            $stmt = $this->db->prepare($sql);
-            $resultado = $stmt->execute([$idAlumno, $estado]);
+            if ($existe) {
+                $sql = 'UPDATE asistencia SET estado = ? WHERE numCuenta = ?';
+                $stmt = $this->db->prepare($sql);
+                $resultado = $stmt->execute([$estado, $idAlumno]);
+            } else {
+                $sql = 'INSERT INTO asistencia (numCuenta, estado) VALUES (?, ?)';
+                $stmt = $this->db->prepare($sql);
+                $resultado = $stmt->execute([$idAlumno, $estado]);
+            }
 
             if (!$resultado) {
                 return ['success' => false, 'error' => 'Error en asistencia'];
