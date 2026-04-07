@@ -48,4 +48,19 @@ class AsientoModel{
     }//fin-mostrarAsientoAlumno
 
 
+    //Actualiza el estado del asiento cuando el alumno confirma la asistencia
+    public function actualizarAsiento( $numCuenta ) {
+
+        $sql = 'UPDATE asiento
+                JOIN asistencia ON asiento.numCuenta = asistencia.numCuenta
+                SET asiento.estado = 1
+                WHERE asistencia.numCuenta = ? AND asistencia.estado = 1';
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute( [$numCuenta ] );
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-actualizarAsiento
+
+
 }//fin-AsientoModel
