@@ -14,7 +14,9 @@ class AlumnoModel
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT * FROM alumno';
+        $sql = 'SELECT a.*, asi.estado as asistencia_estado 
+                FROM alumno a 
+                LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

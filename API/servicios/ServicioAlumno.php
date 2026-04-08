@@ -55,15 +55,23 @@ class ServicioAlumno
 
     public function confirmarAsistencia($data)
     {
-
+        // Validar datos
         if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
             return $this->respuesta(false, "Datos incompletos", 400);
         }
 
-        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+        // Validar correo (solo exigirlo si sí van a asistir)
+        if ($data['asistira'] == 1 && !filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
             return $this->respuesta(false, "Correo inválido", 400);
         }
 
+        //Validar si ya confirmo asistencia
+        $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
+        if ($estadoConfirmacion !== false || $estadoConfirmacion === 1) {
+            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
+        }
+
+        // Validar asistencia
         if (!in_array($data['asistira'], [0, 1, true, false], true)) {
             return $this->respuesta(false, "Valor de asistencia inválido", 400);
         }
@@ -73,10 +81,12 @@ class ServicioAlumno
         if (!$alumno) {
             return $this->respuesta(false, "Alumno no encontrado", 404);
         }
-        // Verificar si el correo es diferente al del alumno y actualizarlo
-        if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
-            // Actualizar el correo y continuar con la confirmación
-            $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
+        // Verificar si el correo es diferente al del alumno y actualizarlo (solo si asisten)
+        if ($data['asistira'] == 1) {
+            if (empty($alumno['email']) || $alumno['email'] !== $data['correo']) {
+                // Actualizar el correo y continuar con la confirmación
+                $this->modelo->actualizarCorreo($data['id_alumno'], $data['correo']);
+            }
         }
 
         $asistira = $data['asistira'] ? 1 : 0;
@@ -128,6 +138,10 @@ class ServicioAlumno
     {
         if (!isset($data['id_alumno'], $data['correo'])) {
             return $this->respuesta(false, "Datos incompletos", 400);
+        }
+        $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
+        if ($estadoConfirmacion !== false || $estadoConfirmacion === 1) {
+            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
         }
 
         if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
