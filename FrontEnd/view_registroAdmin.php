@@ -80,6 +80,7 @@ if (isset($_POST['registrar'])) {
 <body>
 
     <div class="container">
+        <div class="form-box">
         <h1 class="titulo-evento">SISTEMA GESTOR</h1>
         <h2 class="subtitulo">Registro de Administrador</h2>
 
@@ -107,6 +108,7 @@ if (isset($_POST['registrar'])) {
             <a href="view_admin.php" style="color: #fff; text-decoration: none;">Volver al panel</a>
         </div>
     </div>
+</div>
 
 </body>
 

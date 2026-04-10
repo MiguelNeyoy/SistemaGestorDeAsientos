@@ -46,6 +46,8 @@ body {
 .metric-card.bg-info { background: linear-gradient(135deg, rgba(13,202,240,0.8), rgba(0,0,0,0.5)) !important; }
 .metric-card.bg-warning { background: linear-gradient(135deg, rgba(255,193,7,0.8), rgba(0,0,0,0.5)) !important; }
 .metric-card.bg-danger { background: linear-gradient(135deg, rgba(220,53,69,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-dark { background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-black { background: linear-gradient(135deg, rgba(240, 245, 135, 0.8), rgba(0,0,0,0.5)) !important; }
 
 /* Configuración de tabla */
 .table-dark {
@@ -54,6 +56,7 @@ body {
 
 #alumnosTable {
     min-width: 900px; /* Fuerza scroll horizontal fluido en celulares */
+    width: 100%;
 }
 
 #alumnosTable th, #alumnosTable td {
