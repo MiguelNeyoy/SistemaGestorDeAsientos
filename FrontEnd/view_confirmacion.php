@@ -67,7 +67,7 @@ $mensajeConfirmacion = "";
 if (isset($_POST['confirmar'])) {
     $asiste = isset($_POST['asiste']) ? $_POST['asiste'] : '';
     $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
-    $invitados = isset($_POST['invitados']) ? (int)$_POST['invitados'] : 0;
+    $invitados = isset($_POST['invitados']) ? (int) $_POST['invitados'] : 0;
 
     // Convertir "Si"/"No" a 1/0 para la API
     $asistira = ($asiste === "Si") ? 1 : 0;
@@ -110,14 +110,14 @@ if (isset($_POST['confirmar'])) {
         curl_close($ch);
         $resultadoConfirmar = json_decode($respuestaConfirmar, true);
 
-       if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
-    
-        if ($asistira == 1) {
-            header("Location: asientos.php");
-         } else {
-            header("Location: view_confirmacion.php");
-        }
-    exit;
+        if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
+
+            if ($asistira == 1) {
+                header("Location: asientos.php");
+            } else {
+                header("Location: view_confirmacion.php");
+            }
+            exit;
         } else {
             // Capturar el mensaje de error de la API
             $mensajeConfirmacion = isset($resultadoConfirmar['message'])
@@ -236,10 +236,10 @@ if (isset($_POST['actualizar_correo'])) {
 
     <div class="container"> <!-- Contenedor principal -->
 
-    <h2><?php echo htmlspecialchars($alumno['nombre'] . " " . $alumno['apellido']); ?></h2>
+        <h2><?php echo htmlspecialchars($alumno['nombre'] . " " . $alumno['apellido']); ?></h2>
 
-    <p>Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
-    <p>Turno: <?php echo htmlspecialchars($alumno['turno']); ?></p>
+        <p>Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
+        <p>Turno: <?php echo htmlspecialchars($alumno['turno']); ?></p>
 
         <!-- Bloque para mostrar posibles errores devueltos por la API -->
         <?php if ($errorApi != "") { ?>
@@ -250,18 +250,18 @@ if (isset($_POST['actualizar_correo'])) {
         <?php
         $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
         if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
-        ?>
+            ?>
             <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
             <form method="post">
                 <p>¿Asistirás a la clausura?</p>
 
-      <label>
-        <input type="radio" name="asiste" value="Si" onclick="mostrarCampos()" required> Sí
-      </label>
+                <label>
+                    <input type="radio" name="asiste" value="Si" onclick="mostrarCampos()" required> Sí
+                </label>
 
-      <label>
-        <input type="radio" name="asiste" value="No" onclick="mostrarCampos()"> No
-      </label>
+                <label>
+                    <input type="radio" name="asiste" value="No" onclick="mostrarCampos()"> No
+                </label>
 
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
                 <div id="extra" style="display:none">
@@ -269,18 +269,17 @@ if (isset($_POST['actualizar_correo'])) {
                     <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
-                    
 
-        <p>Selecciona la cantidad de invitados (Máximo 5)</p>
-        <select name="invitados">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
+
+                    <p>Selecciona la cantidad de invitados (Máximo 5)</p>
+                    <select name="invitados">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
 
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
             </form>
@@ -288,28 +287,29 @@ if (isset($_POST['actualizar_correo'])) {
             <!-- Mensaje de resultado de confirmación -->
             <?php if (!empty($mensajeConfirmacion)): ?>
                 <?php
-                    // Verde si el correo se actualizó, rojo si hubo error
-                    $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
+                // Verde si el correo se actualizó, rojo si hubo error
+                $colorMsg = (strpos($mensajeConfirmacion, "actualizado correctamente") !== false) ? "green" : "red";
                 ?>
                 <p style="color:<?php echo $colorMsg; ?>;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
             <?php endif; ?>
 
         <?php } else { ?>
 
-    <!-- ESTADO -->
-    <div class="estado">
-      <h3>Tu estado actual</h3>
+            <!-- ESTADO -->
+            <div class="estado">
+                <h3>Tu estado actual</h3>
 
-      <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
+                <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
 
                 <?php if ($estadoAsistencia == "Si") { ?>
                     <!-- Se muestran los datos de confirmación -->
-                    <p>Invitados: <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
+                    <p>Invitados:
+                        <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?></p>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
                 <?php } ?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
-              
+
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>

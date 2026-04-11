@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "../API/config/config.php";
+require_once "config.php";
 
 if (!isset($_SESSION['jwt_token'])) {
   header("Location: index.php");
