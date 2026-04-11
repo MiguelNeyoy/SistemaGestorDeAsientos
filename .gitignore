@@ -5,6 +5,7 @@
 # Dependencias
 /vendor/
 node_modules/
+/SKILL
 
 # Archivos del sistema
 .DS_Store
