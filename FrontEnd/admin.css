@@ -1,0 +1,94 @@
+/* Estilos complementarios para la vista de administrador */
+body {
+    /* Aprovechamos el background ya definido en bienvenida.css, 
+       pero aseguramos que ocupe al menos el 100% en pantallas largas */
+    min-height: 100vh;
+}
+
+.admin-navbar {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Modificamos comportamiento del form en el panel de admin si es necesario */
+#loginForm button {
+    margin-top: 15px;
+}
+
+#loginForm input {
+    margin-bottom: 0;
+}
+
+/* Tarjetas de métricas */
+.metric-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    cursor: pointer;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.metric-card.bg-primary { background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-success { background: linear-gradient(135deg, rgba(25,135,84,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-info { background: linear-gradient(135deg, rgba(13,202,240,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-warning { background: linear-gradient(135deg, rgba(255,193,7,0.8), rgba(0,0,0,0.5)) !important; }
+.metric-card.bg-danger { background: linear-gradient(135deg, rgba(220,53,69,0.8), rgba(0,0,0,0.5)) !important; }
+
+/* Configuración de tabla */
+.table-dark {
+    background-color: rgba(33, 37, 41, 0.8) !important;
+}
+
+#alumnosTable {
+    min-width: 900px; /* Fuerza scroll horizontal fluido en celulares */
+}
+
+#alumnosTable th, #alumnosTable td {
+    vertical-align: middle;
+    white-space: nowrap; /* Evita que el texto de las celdas se aplaste como escalera */
+}
+
+.badge-pendiente {
+    background-color: #6c757d;
+}
+.badge-confirmado {
+    background-color: #198754;
+}
+.badge-rechazado {
+    background-color: #dc3545;
+}
+
+/* Estilos Responsive para el listado (Buscador y Métricas móviles) */
+@media (max-width: 767px) {
+    #directorioCardBody:not(.has-filter) .table-responsive {
+        display: none !important;
+    }
+    #directorioHintMobile {
+        display: block;
+        padding: 20px;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+    #directorioCardBody.has-filter #directorioHintMobile {
+        display: none !important;
+    }
+}
+@media (min-width: 768px) {
+    #directorioHintMobile {
+        display: none !important;
+    }
+}
