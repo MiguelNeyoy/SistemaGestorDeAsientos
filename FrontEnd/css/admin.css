@@ -64,6 +64,32 @@ body {
     white-space: nowrap; /* Evita que el texto de las celdas se aplaste como escalera */
 }
 
+/* Columna de acciones (última columna) posicionamiento sticky para responsive scroll */
+#alumnosTable th:last-child,
+#alumnosTable td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+}
+
+#alumnosTable th:last-child {
+    background-color: #f1f5f9; /* Color thead */
+    box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+#alumnosTable td:last-child {
+    background-color: #ffffff;
+    box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td:last-child {
+    background-color: var(--bs-table-striped-bg, #f2f2f2);
+}
+
+.table-hover > tbody > tr:hover > td:last-child {
+    background-color: var(--bs-table-hover-bg, #ececec);
+}
+
 .badge-pendiente {
     background-color: #6c757d;
 }
