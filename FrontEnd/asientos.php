@@ -76,139 +76,64 @@ if ($tipoUsuario === "admin") {
 <head>
   <meta charset="UTF-8">
   <title>Mapa de Asientos Teatro</title>
-  <link rel="stylesheet" href="css/estilos.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <link rel="stylesheet" href="css/asientos.css">
 </head>
 
 <body>
 
+  <!-- NavBar y Controles -->
+  <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
+    <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
+      <!-- Botón Volver -->
+      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'home.php'; ?>"
+        class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
+        <i class="bi bi-arrow-left"></i> <span class="d-none d-md-inline">Regresar al panel</span>
+      </a>
+
+      <!-- Titulo -->
+      <span class="navbar-brand mb-0 h1 fs-5 fw-bold m-0 p-0 text-white">
+        Mapa de Asientos
+      </span>
+
+      <!-- Selector Zonas (Transform Zoom) -->
+      <div class="m-0" style="width: auto;">
+        <select id="selectZona" class="form-select form-select-sm text-dark fw-bold border-0 shadow-sm"
+          style="border-radius: 8px; font-size: 0.85rem;">
+          <option value="todos">Ver Todo (Vista Aérea)</option>
+          <option value="superior">Zona Superior (Palcos/KLM)</option>
+          <option value="inferior">Planta Baja (General/VIP)</option>
+        </select>
+      </div>
+      <!-- Espaciador para centrar titulo en escritorio -->
+      <div class="d-none d-lg-block" style="width: 140px;"></div>
+    </div>
+  </nav>
+
 
 
   <!-- Contenedor con scroll -->
-  <div class="contenedor-scroll">
-    <h1>Asientos teatro</h1>
-    <div class="cabina">Cabina</div>
-    <div class="zona-superior"></div>
-    <div class="teatro"></div>
-    <div class="mesa">Mesa directiva</div>
+  <div class="contenedor-scroll shadow-inner">
+    <div class="mapa-envoltura">
+      <div class="cabina">Cabina</div>
+      <div class="zona-superior"></div>
+      <div class="teatro"></div>
+      <div class="mesa">Mesa directiva</div>
+    </div>
   </div>
 
-  <!--  PASAR DATOS A JS -->
+  <!--  PASAR DATOS A JS GLOBAL -->
   <script>
-    const tipoUsuario = "<?php echo $tipoUsuario; ?>";
-    const miAsiento = "<?php echo $miAsiento; ?>";
-    const asientosOcupados = <?php echo json_encode($asientosOcupados); ?>;
+    window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
+    window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
+    window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
   </script>
 
-  <!-- ZONA SUPERIOR -->
-  <script>
-    const zonaSuperior = document.querySelector('.zona-superior');
-    const letrasSuperior = "KLM";
+  <script src="js/asientos.js"></script>
 
-    letrasSuperior.split("").reverse().forEach(letra => {
-      const filaDiv = document.createElement('div');
-      filaDiv.classList.add('fila');
-
-      const secciones = [
-        { inicio: 1, fin: 11 },
-        { inicio: 12, fin: 27 },
-        { inicio: 28, fin: 38 }
-      ];
-
-      secciones.forEach(sec => {
-        const secDiv = document.createElement('div');
-        secDiv.classList.add('seccion');
-
-        for (let n = sec.inicio; n <= sec.fin; n++) {
-          const asiento = document.createElement('div');
-          const idAsiento = letra + n;
-
-          if ((letra === "M" && (n < 12 || n > 27)) ||
-            (letra === "L" && (n >= 17 && n <= 22)) ||
-            (letra === "M" && (n >= 16 && n <= 23))) {
-            asiento.classList.add('hueco');
-          } else {
-            asiento.classList.add('asiento');
-            asiento.textContent = idAsiento;
-
-            //  LÓGICA
-            if (tipoUsuario === "alumno") {
-              if (idAsiento === miAsiento) {
-                asiento.classList.add('confirmado');
-              }
-            }
-
-            if (tipoUsuario === "admin") {
-              if (asientosOcupados.includes(idAsiento)) {
-                asiento.classList.add('confirmado');
-              }
-            }
-          }
-
-          secDiv.appendChild(asiento);
-        }
-
-        filaDiv.appendChild(secDiv);
-      });
-
-      zonaSuperior.appendChild(filaDiv);
-    });
-  </script>
-
-  <!-- TEATRO -->
-
-
-  <script>
-    const teatro = document.querySelector('.teatro');
-    const filas = 10;
-    const letras = "JIHGFEDCBA";
-
-    for (let f = 0; f < filas; f++) {
-      const filaDiv = document.createElement('div');
-      filaDiv.classList.add('fila');
-
-      let secciones = [
-        { inicio: 1, fin: 7 },
-        { inicio: 8, fin: 23 },
-        { inicio: 24, fin: 30 }
-      ];
-
-      if (f === 0) {
-        secciones = [{ inicio: 1, fin: 34 }];
-      }
-
-      secciones.forEach(sec => {
-        const secDiv = document.createElement('div');
-        secDiv.classList.add('seccion');
-
-        for (let n = sec.inicio; n <= sec.fin; n++) {
-          const asiento = document.createElement('div');
-          const idAsiento = letras[f] + n;
-
-          asiento.classList.add('asiento');
-          asiento.textContent = idAsiento;
-
-          // LÓGICA
-          if (tipoUsuario === "alumno") {
-            if (idAsiento === miAsiento) {
-              asiento.classList.add('confirmado');
-            }
-          }
-
-          if (tipoUsuario === "admin") {
-            if (asientosOcupados.includes(idAsiento)) {
-              asiento.classList.add('confirmado');
-            }
-          }
-
-          secDiv.appendChild(asiento);
-        }
-
-        filaDiv.appendChild(secDiv);
-      });
-
-      teatro.appendChild(filaDiv);
-    }
-  </script>
 
 </body>
 

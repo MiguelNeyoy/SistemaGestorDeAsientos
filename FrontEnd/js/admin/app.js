@@ -1,4 +1,3 @@
-console.log(window.BASE_API_URL + " Desde APP.js");
 import { state } from './modules/state.js';
 import { fetchDashboardData } from './modules/api.js';
 import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js';
