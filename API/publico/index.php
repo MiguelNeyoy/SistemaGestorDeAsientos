@@ -1,10 +1,17 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
-
+require_once __DIR__ . '/../controladores/ControladorAdministrador.php';
 // Configurar CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -19,19 +26,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Definir las rutas
 $rutas = [
-    '/alumnos' => [
-        'GET' => ['ControladorAlumno', 'obtenerAlumnos']
+    '/admin/login' => [
+        'POST' => ['ControladorAdministrador', 'loginAdmin']
     ],
-    '/alumnos/{id}' => [
-        'GET' => ['ControladorAlumno', 'validarAlumno']
+    '/admin/alumnos' => [
+        'GET' => ['ControladorAdministrador', 'obtenerTodosAlumnos']
     ],
-    '/alumnos/{id}/asistencia' => [
+    '/admin/metricas' => [
+        'GET' => ['ControladorAdministrador', 'obtenerMetricas']
+    ],
+    '/admin/alumnos/editar' => [
+        'PUT' => ['ControladorAdministrador', 'editarAlumno']
+    ],
+    // Cambio: Para validar, usamos POST para no enviar datos sensibles y retornamos JWT
+    '/alumnos/validar' => [
+        'POST' => ['ControladorAlumno', 'validarAlumno']
+    ],
+    // Cambio: Removemos {id} de las rutas, se usará el JWT
+    '/alumnos/asistencia' => [
         'POST' => ['ControladorAlumno', 'confirmarAsistencia']
     ],
-    '/alumnos/{id}/correo' => [
+    '/alumnos/correo' => [
         'POST' => ['ControladorAlumno', 'actualizarCorreo']
     ],
-    '/alumnos/{id}/estado' => [
+    '/alumnos/estado' => [
         'GET' => ['ControladorAlumno', 'obtenerEstado']
     ],
     '/asientos/reiniciar' => [
@@ -71,6 +89,59 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
             $nombreMetodo = $accion[1];
 
             $parametros = array_values(array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY));
+
+            // ------------- VALIDACION JWT -------------
+            $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado'];
+            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar'];
+
+            if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
+                $headers = null;
+                if (isset($_SERVER['Authorization'])) {
+                    $headers = trim($_SERVER["Authorization"]);
+                } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+                    $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+                } elseif (function_exists('apache_request_headers')) {
+                    $requestHeaders = apache_request_headers();
+                    $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+                    if (isset($requestHeaders['Authorization'])) {
+                        $headers = trim($requestHeaders['Authorization']);
+                    }
+                }
+
+                if (!empty($headers)) {
+                    if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+                        $token = $matches[1];
+                        try {
+                            $secret_key = $_SERVER['JWT_KEY'];
+                            $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($secret_key, 'HS256'));
+                            if (in_array($rutaDefinida, $rutasProtegidasAdmin)) {
+                                if (!isset($decoded->data->role) || $decoded->data->role !== 'admin') {
+                                    http_response_code(403);
+                                    echo json_encode(["error" => "Acceso denegado. Permisos insuficientes."]);
+                                    exit;
+                                }
+                                $_SERVER['JWT_ADMIN_ID'] = $decoded->data->admin_id ?? null;
+                            } else {
+                                // Inyectar el número de cuenta en $_SERVER para que el controlador lo use
+                                $_SERVER['JWT_NUMERO_CUENTA'] = $decoded->data->numero_cuenta ?? null;
+                            }
+                        } catch (Exception $e) {
+                            http_response_code(401);
+                            echo json_encode(["error" => "Token inválido o expirado."]);
+                            exit;
+                        }
+                    } else {
+                        http_response_code(401);
+                        echo json_encode(["error" => "Formato de token no válido."]);
+                        exit;
+                    }
+                } else {
+                    http_response_code(401);
+                    echo json_encode(["error" => "Se requiere un token de autenticación (Authorization Bearer)."]);
+                    exit;
+                }
+            }
+            // ------------------------------------------
 
             if (class_exists($nombreControlador)) {
                 $controlador = new $nombreControlador();

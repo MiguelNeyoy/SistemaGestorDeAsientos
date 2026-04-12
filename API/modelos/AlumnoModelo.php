@@ -9,12 +9,14 @@ class AlumnoModel
     public function __construct()
     {
         require_once(__DIR__ . '/../configuracion/ConexionDB.php');
-        $this->db  = Conexion::Conectar();
+        $this->db = Conexion::Conectar();
     }
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT * FROM alumno';
+        $sql = 'SELECT a.*, asi.estado as asistencia_estado 
+                FROM alumno a 
+                LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -46,37 +48,43 @@ class AlumnoModel
         return $resultado !== false ? $resultado['estado'] : false;
     }
 
-    public function actualizarConfirmacion($idAlumno, $asistira, $numInvitados, $correo)
+    public function actualizarConfirmacion($idAlumno, $asistira, $numInvitados)
     {
         try {
             // Convertir asistira a estado: 1 = "confirmado", 0 = "no_asistira"
             $estado = $asistira ? 1 : 0;
 
-            // 1. Insertar/Actualizar registro en tabla asistencia
-            $sql = 'INSERT INTO asistencia (numCuenta, estado) 
-                    VALUES (?, ?)
-                    ON DUPLICATE KEY UPDATE 
-                    estado = VALUES(estado)';
+            // 1. Verificar si ya existe registro en asistencia
+            $stmtCheck = $this->db->prepare('SELECT COUNT(*) FROM asistencia WHERE numCuenta = ?');
+            $stmtCheck->execute([$idAlumno]);
+            $existe = $stmtCheck->fetchColumn() > 0;
 
-            $stmt = $this->db->prepare($sql);
-            $resultado = $stmt->execute([$idAlumno, $estado]);
+            if ($existe) {
+                $sql = 'UPDATE asistencia SET estado = ? WHERE numCuenta = ?';
+                $stmt = $this->db->prepare($sql);
+                $resultado = $stmt->execute([$estado, $idAlumno]);
+            } else {
+                $sql = 'INSERT INTO asistencia (numCuenta, estado) VALUES (?, ?)';
+                $stmt = $this->db->prepare($sql);
+                $resultado = $stmt->execute([$idAlumno, $estado]);
+            }
 
             if (!$resultado) {
                 return ['success' => false, 'error' => 'Error en asistencia'];
             }
 
             // 2. Si va a asistir, crear registros de invitados
-            if ($asistira && $numInvitados > 0) {
-                $sqlInvitado = 'INSERT INTO invitado (numCuenta) VALUES (?)';
-                $stmtInvitado = $this->db->prepare($sqlInvitado);
+            // if ($asistira && $numInvitados > 0) {
+            //     $sqlInvitado = 'INSERT INTO invitado (numCuenta) VALUES (?)';
+            //     $stmtInvitado = $this->db->prepare($sqlInvitado);
 
-                for ($i = 0; $i < $numInvitados; $i++) {
-                    $resultadoInvitado = $stmtInvitado->execute([$idAlumno]);
-                    if (!$resultadoInvitado) {
-                        return ['success' => false, 'error' => 'Error al insertar invitado'];
-                    }
-                }
-            }
+            //     for ($i = 0; $i < $numInvitados; $i++) {
+            //         $resultadoInvitado = $stmtInvitado->execute([$idAlumno]);
+            //         if (!$resultadoInvitado) {
+            //             return ['success' => false, 'error' => 'Error al insertar invitado'];
+            //         }
+            //     }
+            // }
 
             // 3. Actualizar cantidad de invitados en tabla alumno
             $sqlAlumno = 'UPDATE alumno SET cantInvitado = ? WHERE numCuenta = ?';

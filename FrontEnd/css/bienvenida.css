@@ -1,0 +1,433 @@
+<<<<<<< HEAD
+/* Fondo general */
+body{
+  font-family: 'Poppins', sans-serif;
+  margin:0;
+  padding:0;
+
+  background-image: url("../img/logo.png");
+  background-repeat: repeat;
+  background-size: 1300px;
+}
+
+/* CONTENEDOR PRINCIPAL (CLAVE) */
+.contenedor-principal{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:30px;
+  min-height:100vh;
+  padding:20px;
+}
+
+/* FORMULARIO */
+.form-box{
+  max-width:450px;
+  width:100%;
+  background:white;
+  color:black;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+}
+
+/* Título facultad */
+.titulo-facultad{
+  display:block;
+  text-align:center;
+  font-size:24px;
+}
+
+/* Título del evento */
+.titulo-evento{
+  text-align:center;
+  color:#0b1f3a;
+  font-size:27px;
+  margin-bottom:5px;
+}
+
+/* Subtítulo */
+.subtitulo{
+  text-align:center;
+  color:#555;
+  font-size:20px;
+  font-weight:normal;
+  margin-bottom:20px;
+}
+
+/* Inputs */
+input, select{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+
+/* Botón */
+button{
+  background:#0b1f3a;
+  color:white;
+  border:none;
+  padding:10px;
+  width:100%;
+  margin-top:15px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#123a6d;
+}
+
+/* Mensajes */
+.error{
+  color:red;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.ok{
+  color:green;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+/* LEYENDA */
+.leyenda{
+  max-width:400px;
+}
+
+
+
+/* Responsive */
+@media (max-width:768px){
+  .contenedor-principal{
+    flex-direction:column;
+  }
+
+  .form-box{
+    width:95%;
+  }
+}
+=======
+/* Reset de box-sizing para evitar desbordamiento en inputs */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+/* Fondo general */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url("../img/logo.png");
+  background-repeat: repeat;
+  background-size: 1300px;
+}
+
+
+/* Contenedor principal */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  min-height: 100vh;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+/* FORMULARIO */
+.form-box {
+  max-width: 450px;
+  width: 100%;
+  background: white;
+  color: black;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Título del evento */
+
+.titulo-escuela {
+  text-align: center;
+  color: #020202;
+  font-size: 27px;
+  margin-bottom: 5px;
+}
+
+
+/* Subtítulo */
+
+.subtitulo {
+  text-align: center;
+  color: #555;
+  font-size: 20px;
+  font-weight: normal;
+  margin-bottom: 20px;
+}
+
+
+/* Inputs */
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  /* Evita zoom automático en iOS */
+}
+
+
+/* Botones */
+
+button {
+  background: #0b1f3a;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #123a6d;
+}
+
+
+/* Mensajes */
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.ok {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+/* Estado del alumno */
+
+.estado {
+  background: #e8f0ff;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+
+/* Radios */
+
+label {
+  margin-right: 10px;
+}
+
+
+/* Mensaje indicativo para ingresar correo */
+
+.mensaje-correo {
+  margin-top: 15px;
+  color: #555;
+  font-style: italic;
+}
+
+/* Formulario de actualizar correo */
+
+.form-correo {
+  margin-top: 10px;
+}
+
+/* Campos extras (ocultos por defecto) */
+
+.extra-campos {
+  display: none;
+}
+
+/* Mensajes de confirmación */
+
+.mensaje-ok {
+  color: green;
+}
+
+.mensaje-error {
+  color: red;
+}
+
+/* Enlace de regresar */
+
+.enlace-regresar {
+  text-align: center;
+}
+
+
+/* ============================
+   Responsive: Tablets y móviles grandes (≤600px)
+   ============================ */
+
+@media (max-width: 600px) {
+
+  body {
+    background-size: 600px;
+  }
+
+  .container {
+    margin-top: 30px;
+    padding: 20px;
+    width: 94%;
+  }
+
+  .titulo-evento {
+    font-size: 22px;
+  }
+
+  .subtitulo {
+    font-size: 17px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 17px;
+  }
+
+  .estado {
+    padding: 12px;
+  }
+}
+
+
+/* ============================
+   Responsive: Móviles pequeños (≤420px)
+   iPhone 7 (375px), Galaxy Note 9 (414px), etc.
+   ============================ */
+
+@media (max-width: 420px) {
+
+  body {
+    background-size: 400px;
+  }
+
+  .container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 96%;
+    border-radius: 8px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  .titulo-evento {
+    font-size: 20px;
+  }
+
+  .subtitulo {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  input,
+  select {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .estado {
+    padding: 10px;
+    margin-top: 15px;
+  }
+
+  .mensaje-correo {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  label {
+    font-size: 14px;
+  }
+}
+
+/*estilos aviso header*/
+.avisoHeader {
+  color: white;
+  background-color: #90CAF9;
+}
+
+/* Ajuste para la leyenda */
+.leyenda {
+  max-width: 400px;
+  width: 100%;
+}
+
+.leyenda .alert {
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+}
+
+.form-box .alert-info {
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 15px;
+
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .form-box,
+  .leyenda {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.card,
+.aviso {
+  width: 100%;
+  max-width: 350px;
+}
+>>>>>>> Feature/Admin
