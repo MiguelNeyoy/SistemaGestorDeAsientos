@@ -113,14 +113,12 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     <span class="text-secondary d-none d-md-block small fw-bold">Sistema Gestor de Asientos</span>
                     <div class="d-flex align-items-center gap-3">
                         <button id="btnEscanearQR" class="btn btn-primary btn-sm"><i
-                                class="bi bi-qr-code-scan me-1"></i>Escanear QR</button>
+                                class="bi bi-qr-code-scan me-1"></i><span class="d-none d-md-inline">Escanear QR</span></button>
                         <button id="btnEnviarCorreos" class="btn btn-success btn-sm"
                             onclick="alert('Función de Enviar Correos masivos en desarrollo')"><i
-                                class="bi bi-envelope-paper me-1"></i>Enviar QRs</button>
-                        <a href="view_registroAdmin.php" class="btn btn-outline-primary btn-sm"><i
-                                class="bi bi-person-plus me-1"></i>Nuevo Admin</a>
+                                class="bi bi-envelope-paper me-1"></i><span class="d-none d-md-inline">Enviar QRs</span></button>
                         <button id="btnLogout" class="btn btn-outline-danger btn-sm"><i
-                                class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión</button>
+                                class="bi bi-box-arrow-right me-1"></i><span class="d-none d-md-inline">Cerrar Sesión</span></button>
                     </div>
                 </div>
             </nav>
@@ -231,16 +229,17 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                         </div>
                     </div>
                       <div class="col-6 col-md-4 col-lg-2">
-                        <a href="asientos.php" style="text-decoration: none;">
+                        <a href="asientos.php" style="text-decoration: none; display: block; height: 100%;">
                         <div class="card metric-card bg-black h-100">
                             <div class="card-body text-center d-flex flex-column justify-content-center">
                                <i class="bi bi-grid-3x3-gap-fill metric-icon"></i>
                                <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Mapa de asientos</h6>
-     
+                             
                             </div>
                         </div>
-                    </div>
                         </a>
+                    </div>
+                       
                 </div>
 
                 <div class="card shadow rounded-3 mb-4"
@@ -270,7 +269,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                             Utiliza la barra de búsqueda o toca alguna tarjeta métrica arriba para mostrar alumnos.
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover m-0 align-middle" id="alumnosTable">
+                            <table class="table table-striped table-hover m-0 align-middle text-nowrap" id="alumnosTable">
                                 <thead style="background-color: #f1f5f9; color: #475569;">
                                     <tr>
                                         <th class="ps-3 border-bottom-0">No. Cuenta</th>

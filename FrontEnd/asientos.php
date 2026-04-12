@@ -2,17 +2,12 @@
 session_start();
 
 require_once "config.php";
+require_once "auth_middleware.php";
 
-if (!isset($_SESSION['jwt_token'])) {
-  header("Location: index.php");
-  exit;
-}
+$authData = verify_access(['alumno', 'admin']);
 
-$token = $_SESSION['jwt_token'];
-
-//  DEFINIR TIPO DE USUARIO
-//  esto debes guardarlo desde el login
-$tipoUsuario = $_SESSION['tipo'] ?? "alumno";
+$token = $authData['token'];
+$tipoUsuario = $authData['tipo'];
 
 //  OBTENER DATOS DEL ALUMNO (solo si es alumno)
 $miAsiento = null;
