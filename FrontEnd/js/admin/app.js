@@ -5,6 +5,7 @@ import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js'
 import { renderTable, setFilterType } from './modules/table.js';
 import { openEditModal, setupModalFormListener } from './modules/modal.js';
 import { initQRModule } from './modules/qrscanner.js';
+import { setupEmailFormListener } from './modules/emails.js';
 
 let pollInterval = null;
 
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         initQRModule();
+        setupEmailFormListener();
     }
 });
 

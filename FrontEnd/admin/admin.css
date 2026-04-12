@@ -1,7 +1,8 @@
 /* Estilos complementarios para la vista de administrador */
 body {
-    /* Aprovechamos el background ya definido en bienvenida.css, 
-       pero aseguramos que ocupe al menos el 100% en pantallas largas */
+    background-image: url("../../img/logo.png");
+    background-repeat: repeat;
+    background-size: 1300px;
     min-height: 100vh;
 }
 
@@ -55,7 +56,6 @@ body {
 }
 
 #alumnosTable {
-    min-width: 900px; /* Fuerza scroll horizontal fluido en celulares */
     width: 100%;
 }
 
