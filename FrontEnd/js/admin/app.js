@@ -4,6 +4,7 @@ import { fetchDashboardData } from './modules/api.js';
 import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js';
 import { renderTable, setFilterType } from './modules/table.js';
 import { openEditModal, setupModalFormListener } from './modules/modal.js';
+import { initQRModule } from './modules/qrscanner.js';
 
 let pollInterval = null;
 
@@ -36,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setupModalFormListener(async () => {
             await loadDashboardData(window.ADMIN_TOKEN);
         });
+
+        initQRModule();
     }
 });
 

@@ -95,3 +95,45 @@ body {
         display: none !important;
     }
 }
+
+#qrReaderContainer {
+    border-radius: 0;
+    overflow: hidden;
+}
+
+#qrReaderContainer video {
+    border-radius: 0;
+}
+
+#qrDesktopWarning {
+    border-left: 4px solid #ffc107;
+}
+
+#qrResultModal .list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+#qrResultModal .list-group-item:first-child {
+    border-top: none;
+}
+
+#qrResultModal .list-group-item:last-child {
+    border-bottom: none;
+}
+
+#btnQrConfirmar {
+    border-radius: 10px;
+}
+
+@media (max-width: 575.98px) {
+    #qrScannerModal .modal-dialog {
+        max-width: 100%;
+        margin: 0;
+        min-height: 100vh;
+    }
+    #qrScannerModal .modal-content {
+        border-radius: 0;
+        min-height: 100vh;
+    }
+}

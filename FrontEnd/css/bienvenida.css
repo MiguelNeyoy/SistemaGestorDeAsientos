@@ -1,3 +1,116 @@
+<<<<<<< HEAD
+/* Fondo general */
+body{
+  font-family: 'Poppins', sans-serif;
+  margin:0;
+  padding:0;
+
+  background-image: url("../img/logo.png");
+  background-repeat: repeat;
+  background-size: 1300px;
+}
+
+/* CONTENEDOR PRINCIPAL (CLAVE) */
+.contenedor-principal{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:30px;
+  min-height:100vh;
+  padding:20px;
+}
+
+/* FORMULARIO */
+.form-box{
+  max-width:450px;
+  width:100%;
+  background:white;
+  color:black;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+}
+
+/* Título facultad */
+.titulo-facultad{
+  display:block;
+  text-align:center;
+  font-size:24px;
+}
+
+/* Título del evento */
+.titulo-evento{
+  text-align:center;
+  color:#0b1f3a;
+  font-size:27px;
+  margin-bottom:5px;
+}
+
+/* Subtítulo */
+.subtitulo{
+  text-align:center;
+  color:#555;
+  font-size:20px;
+  font-weight:normal;
+  margin-bottom:20px;
+}
+
+/* Inputs */
+input, select{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+
+/* Botón */
+button{
+  background:#0b1f3a;
+  color:white;
+  border:none;
+  padding:10px;
+  width:100%;
+  margin-top:15px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#123a6d;
+}
+
+/* Mensajes */
+.error{
+  color:red;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.ok{
+  color:green;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+/* LEYENDA */
+.leyenda{
+  max-width:400px;
+}
+
+
+
+/* Responsive */
+@media (max-width:768px){
+  .contenedor-principal{
+    flex-direction:column;
+  }
+
+  .form-box{
+    width:95%;
+  }
+}
+=======
 /* Reset de box-sizing para evitar desbordamiento en inputs */
 
 *,
@@ -21,24 +134,25 @@ body {
 
 /* Contenedor principal */
 
-.container{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:20px;
-  min-height:100vh;
-  padding:20px;
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  min-height: 100vh;
+  padding: 20px;
   flex-wrap: wrap;
 }
+
 /* FORMULARIO */
-.form-box{
-  max-width:450px;
-  width:100%;
-  background:white;
-  color:black;
-  padding:30px;
-  border-radius:10px;
-  box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+.form-box {
+  max-width: 450px;
+  width: 100%;
+  background: white;
+  color: black;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
 }
 
 
@@ -277,6 +391,7 @@ label {
   color: white;
   background-color: #90CAF9;
 }
+
 /* Ajuste para la leyenda */
 .leyenda {
   max-width: 400px;
@@ -288,12 +403,14 @@ label {
   display: flex;
   align-items: center;
 }
+
 .form-box .alert-info {
   border-radius: 10px;
   padding: 20px;
   font-size: 15px;
-  
+
 }
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column !important;
@@ -307,28 +424,10 @@ label {
     max-width: 100%;
   }
 }
-.card, .aviso {
+
+.card,
+.aviso {
   width: 100%;
   max-width: 350px;
 }
-
-
-/* Responsive */
-
-@media (max-width:600px){
-
-.container{
-margin-top:40px;
-padding:20px;
-width:95%;
-}
-
-.titulo-evento{
-font-size:22px;
-}
-
-.subtitulo{
-font-size:18px;
-}
-
-}
+>>>>>>> Feature/Admin

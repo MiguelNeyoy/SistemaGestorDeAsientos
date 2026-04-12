@@ -112,8 +112,7 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
                     </span>
                     <span class="text-secondary d-none d-md-block small fw-bold">Sistema Gestor de Asientos</span>
                     <div class="d-flex align-items-center gap-3">
-                        <button id="btnEscanearQR" class="btn btn-primary btn-sm"
-                            onclick="alert('Función de Escanear QR en desarrollo')"><i
+                        <button id="btnEscanearQR" class="btn btn-primary btn-sm"><i
                                 class="bi bi-qr-code-scan me-1"></i>Escanear QR</button>
                         <button id="btnEnviarCorreos" class="btn btn-success btn-sm"
                             onclick="alert('Función de Enviar Correos masivos en desarrollo')"><i
@@ -369,9 +368,88 @@ $tieneSesion = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'
         <?php
     endif; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="js/admin/app.js">
-    </script>
+        <!-- Modales de Escáner QR -->
+        <!-- 1. Modal del Escáner -->
+        <div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="qrScannerModalLabel"><i class="bi bi-qr-code-scan me-2"></i>Escanear QR Alumno</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="btnCerrarScanner"></button>
+                    </div>
+                    <div class="modal-body p-0 bg-light">
+                        <div id="qrDesktopWarning" class="alert alert-warning m-3 shadow-sm d-none">
+                            <i class="bi bi-laptop me-2"></i><strong>Recomendación:</strong> Para una mejor experiencia, usa este escáner desde un dispositivo móvil.
+                        </div>
+                        <div id="qrReaderContainer" style="width: 100%; min-height: 300px; background: #000;"></div>
+                        <div class="p-3 text-center">
+                            <p id="qrScannerStatus" class="mb-0 text-secondary small fw-bold">Alinea el código QR dentro del recuadro</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Modal de Resultado del Alumno -->
+        <div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="qrResultModalLabel"><i class="bi bi-person-badge-fill me-2"></i>Alumno Identificado</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="display-6 fw-bold text-primary mb-1" id="qrResNombre">-</div>
+                            <span class="badge bg-light text-dark border p-2" id="qrResNumCuenta">-</span>
+                        </div>
+                        
+                        <div class="list-group list-group-flush border rounded-3 mb-4">
+                            <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <div><i class="bi bi-grid-3x3-gap me-2 text-muted"></i>Asiento</div>
+                                <span class="fw-bold fs-5" id="qrResAsiento">-</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <div><i class="bi bi-people me-2 text-muted"></i>Invitados</div>
+                                <span class="fw-bold fs-5" id="qrResInvitados">0</span>
+                            </div>
+                        </div>
+
+                        <div class="form-check form-switch mb-4 p-3 bg-light rounded-3 border">
+                            <input class="form-check-input ms-0 me-3" type="checkbox" role="switch" id="qrToggleInvitado" style="width: 3em; height: 1.5em; cursor: pointer;">
+                            <label class="form-check-label fw-bold" for="qrToggleInvitado" style="cursor: pointer;">¿Llega con acompañante?</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary btn-lg py-3 fw-bold" id="btnQrConfirmar">
+                                <i class="bi bi-check-circle-fill me-2"></i>Confirmar Llegada
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="btnQrRescan">
+                                <i class="bi bi-arrow-repeat me-1"></i>Volver a Escanear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Modal Endpoint en Proceso -->
+        <div class="modal fade" id="qrEndpointModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content text-center p-4 border-0 shadow">
+                    <div class="mb-3">
+                        <i class="bi bi-tools text-warning display-1"></i>
+                    </div>
+                    <h4 class="fw-bold">Endpoint en proceso</h4>
+                    <p class="text-muted">La integración con el servidor está siendo finalizada.</p>
+                    <button type="button" class="btn btn-dark w-100" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="module" src="js/admin/app.js"></script>
 </body>
 
 </html>
