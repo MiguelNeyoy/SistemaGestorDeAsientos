@@ -1,8 +1,33 @@
 # SistemaGestorDeAsientos
 
-Sistema para gestionar la asistencia y asignación de asientos en ceremonias de graduación.
+## ¿Qué es este sistema?
 
-## Requisitos
+Es una aplicación web diseñada para gestionar la ceremonia de graduación de la Facultad de Informática. Su objetivo es facilitar el control de asistencia y la organización de los asientos para el evento de clausura.
+
+### ¿Para quién sirve?
+
+- **Para los estudiantes**: Les permite confirmar si asistirán a la graduación, indicar cuántos invitados traerán y proporcionar un correo de contacto. También pueden ver el asiento que les fue asignado.
+- **Para los administradores**: Permite llevar un registro de todos los alumnos confirmados, ver estadísticas en tiempo real (cuántos confirmaron, cuántos invitados, distribución por carrera y turno), editar información de los estudiantes y escanear códigos QR el día del evento para registrar quién llegó.
+
+### ¿Qué puede hacer un estudiante?
+
+1. **Ingresar con su número de cuenta**: El sistema valida que sea estudiante activo.
+2. **Confirmar asistencia**: Puede decir si asistirá o no a la ceremonia.
+3. **Indicar invitados**: Puede llevar hasta 5 invitados.
+4. **Proporcionar correo**: Para recibir información sobre el evento.
+5. **Ver su asiento**: Una vez confirmada la asistencia, puede ver en un mapa visual cuál es su asiento asignado en el teatro.
+
+### ¿Qué puede hacer un administrador?
+
+1. **Iniciar sesión**: Con credenciales exclusivas para personal autorizado.
+2. **Ver dashboard con métricas**: Estadísticas generales del evento (confirmados, rechazados, total de invitados, distribución por turno y carrera).
+3. **Buscar y editar alumnos**: Modificar datos de estudiantes si es necesario.
+4. **Escanear QR**: El día del evento, escanear el código QR del estudiante para confirmar su llegada.
+5. **Ver mapa de asientos**: Visualizar qué asientos están ocupados.
+
+---
+
+## Requisitos técnicos
 
 - PHP 8.x
 - MySQL
@@ -22,15 +47,7 @@ Sistema para gestionar la asistencia y asignación de asientos en ceremonias de 
    - Importar el esquema (si existe)
 
 3. **Configurar variables de entorno:**
-   Copiar `API/.env.example` a `API/.env` y completar:
-   ```
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASS=
-   DB_NAME=gestion_asientos
-   DB_PORT=3306
-   JWT_KEY=tu_clave_secreta_jwt
-   ```
+   Copiar `API/.env.example` a `API/.env` y completar los datos de conexión.
 
 4. **Iniciar servicios:**
    - Apache y MySQL (XAMPP/LAMP)
@@ -57,20 +74,19 @@ Sistema para gestionar la asistencia y asignación de asientos en ceremonias de 
 ```
 API/
 ├── configuracion/
-│   ├── ConexionDB.php    # Conexión PDO a MySQL
-│   └── variables.php     # Carga de variables de entorno
+│   ├── ConexionDB.php    # Conexión a la base de datos
+│   └── variables.php     # Carga de configuración
 ├── controladores/
 │   ├── ControladorAlumno.php       # Lógica de estudiantes
 │   ├── ControladorAdministrador.php # Lógica de admin
-│   └── ControladorAsientos.php     # Gestión de asientos (reservado)
+│   └── ControladorAsientos.php     # Gestión de asientos
 ├── servicios/
 │   ├── ServicioAlumno.php
 │   └── ServicioAdministrador.php
 ├── modelos/
 │   └── AlumnoModelo.php
-├── publico/
-│   └── index.php         # Entry point de la API
-└── .env                  # Variables de entorno
+└── publico/
+    └── index.php         # Punto de entrada de la API
 ```
 
 ---
@@ -89,52 +105,33 @@ API/
 | `bienvenida.php` | Página de bienvenida general |
 | `view_teatro.php` | Vista alternativa del mapa de asientos |
 
-### Archivos JS
-
-```
-FrontEnd/js/
-├── script.js           # Funciones generales del frontend
-└── admin/
-    ├── app.js          # Lógica del panel admin (tabla, métricas, modales)
-    └── modules/
-        ├── api.js      # Consumos a la API
-        ├── metrics.js  # Manejo de métricas
-        ├── modal.js    # Lógica de modales
-        ├── qrscanner.js # Escáner QR
-        ├── state.js    # Estado de la aplicación
-        └── table.js    # Renderizado de tabla de alumnos
-```
-
 ### Flujo típico (Estudiante)
 
-1. Estudiante accede a `index.php`
-2. Ingresa número de cuenta (sin último dígito)
-3. API valida y retorna JWT
-4. Si ya confirmó asistencia → `asientos.php` (muestra su asiento)
-5. Si no ha confirmado → `view_confirmacion.php` (formulario de confirmación)
-6. Después de confirmar → redirigido a `asientos.php`
+1. Estudiante accede a la página principal
+2. Ingresa su número de cuenta (sin el último dígito)
+3. El sistema valida sus datos y le da acceso
+4. Si ya confirmó asistencia → ve su asiento asignado
+5. Si no ha confirmado → completa el formulario de confirmación
+6. Después de confirmar → puede ver su asiento
 
 ### Flujo (Administrador)
 
-1. Accede a `view_admin.php`
-2. Inicia sesión con credenciales admin
-3. Puede ver métricas, buscar/editAR alumnos, escanear QR
-4. Acceso al mapa de asientos en `asientos.php` (modo admin)
+1. Accede a la página de administración
+2. Inicia sesión con sus credenciales
+3. Puede ver métricas, buscar y editar alumnos, escanear QR
+4. Acceso al mapa de asientos general
 
 ---
 
 ## Notas de desarrollo
 
-- **SSL**: En desarrollo local, las peticiones cURL usan `CURLOPT_SSL_VERIFYPEER => false`
-- **JWT**: Los tokens expiran en 1 hora. El payload incluye `numero_cuenta` (estudiante) o `role: admin` + `admin_id` (admin)
-- **Sesiones**: El token JWT se guarda en `$_SESSION['jwt_token']` para el estudiante y `$_SESSION['admin_token']` para el admin
-- **Configuración**: La URL base de la API se define en `FrontEnd/config.php` y detecta automáticamente el entorno (local/producción)
+- Los tokens de acceso expiran en 1 hora
+- El sistema detecta automáticamente si está en modo local o producción
+- El día del evento, los administradores pueden escanear códigos QR para registrar la llegada de los estudiantes
 
 ---
 
-## Puertos típicos
+## Acceso a la aplicación
 
-- Apache: 80
-- MySQL: 3306
-- Acceso frontend: `http://localhost/SistemaGestorDeAsientos/FrontEnd/`
-- Acceso API: `http://localhost/SistemaGestorDeAsientos/API/publico/`
+- **Frontend**: `http://localhost/SistemaGestorDeAsientos/FrontEnd/`
+- **API**: `http://localhost/SistemaGestorDeAsientos/API/publico/`

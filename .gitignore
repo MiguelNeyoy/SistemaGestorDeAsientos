@@ -1,6 +1,7 @@
 # Archivos de configuración sensibles
 .env
 .env.*.local
+Documentacion.md
 
 # Dependencias
 /vendor/
