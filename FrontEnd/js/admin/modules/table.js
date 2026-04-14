@@ -77,9 +77,13 @@ export function renderTable(filterText = "") {
             <td class="text-center text-muted">-</td>
             <td class="text-center">${estadoBadge}</td>
             <td class="text-center">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-outline-primary" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')"><i class="bi bi-pencil-square"></i> Editar</button>
-                    <button type="button" class="btn btn-sm btn-outline-success" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')"><i class="bi bi-envelope-paper"></i> Enviar</button>
+                <div class="btn-group shadow-sm" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-primary" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')">
+                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline ms-1">Editar</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')">
+                        <i class="bi bi-envelope-paper"></i> <span class="d-none d-md-inline ms-1">Enviar</span>
+                    </button>
                 </div>
             </td>
         `;
