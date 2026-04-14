@@ -72,6 +72,7 @@ if (isset($_POST['buscar'])) {
                 $error = "Error al consultar el estado del alumno.";
             }
         } else {
+            
             // Si la API dice que success es false, obtenemos su mensaje de error
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no encontrado";
         }
@@ -80,7 +81,7 @@ if (isset($_POST['buscar'])) {
         if ($response) {
             $data = json_decode($response, true);
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no válido o no encontrado";
-        } else {
+            } else {
             // Error general en caso de que la API este caída o haya fallado cURL
             $error = "No se pudo comunicar con el sistema. Intente de nuevo más tarde.";
         }

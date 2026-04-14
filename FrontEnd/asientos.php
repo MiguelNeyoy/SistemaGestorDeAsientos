@@ -14,62 +14,7 @@ $tipoUsuario = $authData['tipo'];
 //  OBTENER DATOS DEL ALUMNO (solo si es alumno)
 $miAsiento = null;
 
-if ($tipoUsuario === "alumno") {
-  $ch = curl_init();
-  curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/alumnos/estado",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-      'Authorization: Bearer ' . $token
-    ],
-    CURLOPT_SSL_VERIFYPEER => false
-  ]);
-
-  $response = curl_exec($ch);
-  curl_close($ch);
-
-  $data = json_decode($response, true);
-
-  if ($data['success']) {
-    $alumno = $data['data'];
-
-    // Ajusta según tu API
-    $miAsiento = $alumno['letra'] . $alumno['numero']; // ej: A5
-  }
-}
-
-//  OBTENER ASIENTOS CONFIRMADOS (solo admin)
-$asientosOcupados = [];
-
-if ($tipoUsuario === "admin") {
-  //  AQUÍ debes consumir tu endpoint real
-  // ejemplo:
-  /*
-  $ch = curl_init();
-  curl_setopt_array($ch, [
-      CURLOPT_URL => $BASE_API_URL . "/asientos/ocupados",
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_HTTPHEADER => [
-          'Authorization: Bearer ' . $token
-      ],
-      CURLOPT_SSL_VERIFYPEER => false
-  ]);
-
-  $response = curl_exec($ch);
-  curl_close($ch);
-
-  $data = json_decode($response, true);
-
-  if ($data['success']) {
-      $asientosOcupados = $data['data']; // ["A1","A2"]
-  }
-  */
-
-  //  TEMPORAL (PRUEBA)
-  $asientosOcupados = ["A1", "A2", "B5", "C10"];
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -89,7 +34,7 @@ if ($tipoUsuario === "admin") {
   <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
     <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
       <!-- Botón Volver -->
-      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'home.php'; ?>"
+      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'index.php'; ?>"
         class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
         <i class="bi bi-arrow-left"></i> <span class="d-none d-md-inline">Regresar al panel</span>
       </a>
