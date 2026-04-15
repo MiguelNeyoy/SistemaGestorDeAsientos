@@ -20,3 +20,27 @@ export async function updateAlumno(token, dataPayload) {
     });
     return response.json();
 }
+
+export async function validarQrToken(tokenQr, adminToken) {
+    const response = await fetch(`${window.BASE_API_URL}/qr/validar`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ token: tokenQr })
+    });
+    return response.json();
+}
+
+export async function confirmarLlegadaQr(numCuenta, adminToken) {
+    const response = await fetch(`${window.BASE_API_URL}/qr/confirmar`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ numero_cuenta: numCuenta })
+    });
+    return response.json();
+}
