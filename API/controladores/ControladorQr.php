@@ -1,13 +1,14 @@
 <?php
 
+require_once(__DIR__ . '/../servicios/ServicioQr.php');
+
 class ControladorQr
 {
+    private $servicioQr;
 
     public function __construct()
     {
-        // En el futuro, aquí se podría inicializar un servicio para QR
-        // require_once __DIR__ . '/../servicios/ServicioQr.php';
-        // $this->servicioQr = new ServicioQr();
+        $this->servicioQr = new ServicioQr();
     }
 
     /**
@@ -15,21 +16,50 @@ class ControladorQr
      */
     public function generarQr()
     {
-        // Lógica para generar un QR
-        http_response_code(200);
-        echo json_encode(["success" => true, "mensaje" => "QR generado."]);
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($input['numero_cuenta'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Número de cuenta requerido"]);
+            return;
+        }
+
+        $res = $this->servicioQr->generarQrAlumno($input);
+        echo json_encode($res);
     }
 
     /**
-     * Recibe la informacion del QR
+     * Recibe la informacion del QR (Token)
      * Manda a llamar al servicio que valida el qr
-     * Si la validacion es exitosa se llama a
-     * Asignar lugar
      */
     public function validarQr()
     {
-        // Lógica para validar un QR
-        http_response_code(200);
-        echo json_encode(["success" => true, "mensaje" => "QR validado."]);
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($input['token'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Token de QR no proporcionado"]);
+            return;
+        }
+
+        $res = $this->servicioQr->validarQrToken($input);
+        echo json_encode($res);
+    }
+
+    /**
+     * Registra la llegada de un alumno tras escanear y confirmar
+     */
+    public function confirmarLlegada()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($input['numero_cuenta'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Número de cuenta requerido"]);
+            return;
+        }
+
+        $res = $this->servicioQr->confirmarLlegadaQr($input);
+        echo json_encode($res);
     }
 }
