@@ -16,7 +16,8 @@ cp API/.env.example API/.env                    # Configure DB + JWT_KEY
 - **Frontend entry**: `FrontEnd/index.php` → `view_confirmacion.php` → `asientos.php`
 
 ## Rules
-- Reglas par crear un Enpoint usa el siguiente archivo: '/instrucciones/instruccionesEndPoint.md'
+- Reglas para crear un Enpoint usa el siguiente archivo: '/instrucciones/instruccionesEndPoint.md'
+- Regla para cualquier modificacion -> para crear un commit usa el archivo : '/instrucciones/instrucciones_git.md'
 
 ## API Auth
 - JWT tokens expire in 1 hour
