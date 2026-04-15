@@ -53,9 +53,8 @@ class ServicioQr
 
             $jwt = JWT::encode($payload, $this->SECRET_KEY, 'HS256');
 
-            // Generar Imagen QR (endroid/qr-code)
-            // Nota: Se asume que la librería está instalada
-            $qrCode = QrCode::create($jwt);
+            // Generar Imagen QR (endroid/qr-code v5+)
+            $qrCode = new QrCode($jwt);
             $writer = new PngWriter();
             $result = $writer->write($qrCode);
             

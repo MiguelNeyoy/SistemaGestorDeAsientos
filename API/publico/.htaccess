@@ -1,7 +1,12 @@
 RewriteEngine On
+
+# Pasar el header Authorization a PHP (XAMPP/Apache lo quita por defecto)
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
 # Si lo que piden no es un archivo real...
 RewriteCond %{REQUEST_FILENAME} !-f
 # Y tampoco es una carpeta real...
 RewriteCond %{REQUEST_FILENAME} !-d
-# ...mándalo TODO al index.php que está aquí mismo
+# ...mándalo TODO al index.php
 RewriteRule ^(.*)$ index.php [QSA,L]    

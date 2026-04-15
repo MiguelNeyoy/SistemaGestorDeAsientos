@@ -12,10 +12,10 @@ require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
 require_once __DIR__ . '/../controladores/ControladorAdministrador.php';
-// Configurar CORS
+// Configurar CORS al inicio para asegurar que siempre se envíen
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Content-Type: application/json; charset=UTF-8");
 
 // Si es una solicitud OPTIONS (preflight), terminar aquí
@@ -23,6 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
+
+// Global Error Handler para retornar JSON en lugar de texto plano (que rompe CORS/JSON)
+set_exception_handler(function($e) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false, 
+        "error" => "Error interno del servidor",
+        "details" => $e->getMessage()
+    ]);
+    exit;
+});
 
 // Definir las rutas
 $rutas = [
@@ -99,15 +110,21 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;
+                
+                // Intento robusto de obtener el header de Authorization
                 if (isset($_SERVER['Authorization'])) {
                     $headers = trim($_SERVER["Authorization"]);
                 } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
                     $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+                } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+                    $headers = trim($_SERVER["REDIRECT_HTTP_AUTHORIZATION"]);
                 } elseif (function_exists('apache_request_headers')) {
                     $requestHeaders = apache_request_headers();
-                    $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-                    if (isset($requestHeaders['Authorization'])) {
-                        $headers = trim($requestHeaders['Authorization']);
+                    foreach ($requestHeaders as $key => $value) {
+                        if (strtolower($key) === 'authorization') {
+                            $headers = trim($value);
+                            break;
+                        }
                     }
                 }
 
@@ -115,7 +132,10 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
                     if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                         $token = $matches[1];
                         try {
-                            $secret_key = $_SERVER['JWT_KEY'];
+                            $secret_key = $_SERVER['JWT_KEY'] ?? $_ENV['JWT_KEY'] ?? getenv('JWT_KEY');
+                            if (!$secret_key) {
+                                throw new Exception("JWT_KEY no configurada en el servidor.");
+                            }
                             $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($secret_key, 'HS256'));
                             if (in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                                 if (!isset($decoded->data->role) || $decoded->data->role !== 'admin') {
