@@ -62,4 +62,37 @@ class ControladorQr
         $res = $this->servicioQr->confirmarLlegadaQr($input);
         echo json_encode($res);
     }
+
+    /**
+     * Envía códigos QR por correo a los alumnos seleccionados
+     */
+    public function enviarQrs()
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($input['alumnos']) || empty($input['alumnos'])) {
+                http_response_code(400);
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Se requiere lista de alumnos"
+                ]);
+                return;
+            }
+
+            $alumnos = $input['alumnos'];
+            $resultado = $this->servicioQr->enviarQrsPorCorreo($alumnos);
+            
+            echo json_encode($resultado);
+            
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                "success" => false,
+                "message" => "Error en ControladorQr: " . $e->getMessage()
+            ]);
+        }
+    }
 }

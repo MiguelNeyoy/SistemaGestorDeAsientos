@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 require_once __DIR__ . '/../modelos/QrModelo.php';
+require_once __DIR__ . '/ServicioCorreo.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -194,5 +195,94 @@ class ServicioQr
             "message" => $message,
             "data" => $data
         ];
+    }
+
+    public function enviarQrsPorCorreo(array $alumnos): array
+    {
+        try {
+            if (empty($alumnos)) {
+                return [
+                    "success" => false,
+                    "message" => "No se proporcionaron alumnos",
+                    "data" => ["enviados" => [], "fallidos" => []]
+                ];
+            }
+
+            $servicioCorreo = new ServicioCorreo();
+            $enviados = [];
+            $fallidos = [];
+
+            foreach ($alumnos as $alumno) {
+                try {
+                    if (empty($alumno['email'])) {
+                        $fallidos[] = [
+                            'numCuenta' => $alumno['numCuenta'] ?? 'desconocido',
+                            'nombre' => $alumno['nombre'] ?? '',
+                            'error' => 'Sin correo registrado'
+                        ];
+                        continue;
+                    }
+
+                    $resultadoQr = $this->generarQrAlumno(['numero_cuenta' => $alumno['numCuenta']]);
+
+                    if (!$resultadoQr['success']) {
+                        $fallidos[] = [
+                            'numCuenta' => $alumno['numCuenta'],
+                            'nombre' => ($alumno['nombre'] ?? '') . ' ' . ($alumno['apellido'] ?? ''),
+                            'error' => $resultadoQr['message']
+                        ];
+                        continue;
+                    }
+
+                    $rutaQr = __DIR__ . '/../qr_images/' . $alumno['numCuenta'] . '.png';
+                    $envioExitoso = $servicioCorreo->enviarQrAlumno($alumno, $rutaQr);
+
+                    if ($envioExitoso) {
+                        $enviados[] = [
+                            'numCuenta' => $alumno['numCuenta'],
+                            'nombre' => ($alumno['nombre'] ?? '') . ' ' . ($alumno['apellido'] ?? ''),
+                            'email' => $alumno['email']
+                        ];
+
+                        /*
+                         * TODO: Descomentar cuando exista tabla qr_codigo
+                         * $this->qrModelo->guardarQrGenerado($alumno['numCuenta'], $resultadoQr['data']['token'], $rutaQr);
+                         * $this->qrModelo->marcarComoEnviado($alumno['numCuenta']);
+                         */
+                    } else {
+                        $fallidos[] = [
+                            'numCuenta' => $alumno['numCuenta'],
+                            'nombre' => ($alumno['nombre'] ?? '') . ' ' . ($alumno['apellido'] ?? ''),
+                            'error' => 'Error al enviar correo'
+                        ];
+                    }
+                } catch (Exception $e) {
+                    $fallidos[] = [
+                        'numCuenta' => $alumno['numCuenta'] ?? 'desconocido',
+                        'nombre' => ($alumno['nombre'] ?? '') . ' ' . ($alumno['apellido'] ?? ''),
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+
+            $total = count($enviados) + count($fallidos);
+            $mensaje = "Procesados: {$total} | Enviados: " . count($enviados) . " | Fallidos: " . count($fallidos);
+
+            return [
+                "success" => true,
+                "message" => $mensaje,
+                "data" => [
+                    "total" => $total,
+                    "enviados" => $enviados,
+                    "fallidos" => $fallidos
+                ]
+            ];
+        } catch (Exception $e) {
+            return [
+                "success" => false,
+                "message" => "Error en ServicioQr: " . $e->getMessage(),
+                "data" => ["enviados" => [], "fallidos" => []]
+            ];
+        }
     }
 }

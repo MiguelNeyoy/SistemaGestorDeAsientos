@@ -77,6 +77,9 @@ $rutas = [
     ],
     '/qr/confirmar' => [
         'POST' => ['ControladorQr', 'confirmarLlegada']
+    ],
+    '/admin/enviar-qrs' => [
+        'POST' => ['ControladorQr', 'enviarQrs']
     ]
 ];
 
@@ -106,7 +109,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado'];
-            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/qr/generar', '/qr/validar', '/qr/confirmar'];
+            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/qr/generar', '/qr/validar', '/qr/confirmar', '/admin/enviar-qrs'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;
