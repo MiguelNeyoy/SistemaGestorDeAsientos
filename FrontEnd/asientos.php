@@ -89,7 +89,7 @@ if ($tipoUsuario === "admin") {
   <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
     <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
       <!-- Botón Volver -->
-      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'bienvenida.php'; ?>"
+      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'index.php'; ?>"
         class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
         <i class="bi bi-arrow-left"></i> <span class="d-none d-md-inline">Regresar al panel</span>
       </a>
