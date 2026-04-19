@@ -115,8 +115,8 @@ if (isset($_POST['buscar'])) {
             </div>
 
             <!-- Bloque para mostrar errores si existen -->
-            <?php if ($error != "") { ?>
-                <p class="error"><?php echo htmlspecialchars($error); ?></p>
+                <?php if ($error != "") { ?>
+                    <p class="error"><?php echo htmlspecialchars($error); ?></p>
                 <?php
             } ?>
 
