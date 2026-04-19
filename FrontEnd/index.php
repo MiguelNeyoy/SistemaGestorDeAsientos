@@ -26,9 +26,9 @@ if (isset($_POST['buscar'])) {
     // Si la respuesta HTTP es 200 (OK), procesamos el éxito
     if ($httpCode == 200 && $response) {
         $data = json_decode($response, true);
+
         // Verificamos la bandera 'success' de la respuesta JSON
         if (isset($data['success']) && $data['success'] === true && !empty($data['token'])) {
-
             // Limpiar sesión de admin si existía previamente para evitar colisiones
             unset($_SESSION['admin_token']);
 
@@ -36,16 +36,13 @@ if (isset($_POST['buscar'])) {
             $_SESSION['jwt_token'] = $data['token'];
             $token = $data['token'];
 
-            //  CONSULTAR ESTADO DEL ALUMNO
+            // 2. CONSULTAR ESTADO DEL ALUMNO
             $apiEstado = $BASE_API_URL . "/alumnos/estado";
-
             $ch = curl_init();
             curl_setopt_array($ch, [
                 CURLOPT_URL => $apiEstado,
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => [
-                    'Authorization: Bearer ' . $token
-                ],
+                CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $token],
                 CURLOPT_SSL_VERIFYPEER => false
             ]);
 
@@ -60,37 +57,29 @@ if (isset($_POST['buscar'])) {
                     $alumno = $dataEstado['data'];
                     $estado = $alumno['asistencia']; // "Si", "No", "Pendiente"
 
+                    // Redirigir según el estado de asistencia
                     if ($estado == "Si") {
                         header("Location: asientos.php");
                     } else {
                         header("Location: view_confirmacion.php");
                     }
                     exit;
-
                 } else {
                     $error = "No se pudo obtener el estado del alumno.";
                 }
-
             } else {
                 $error = "Error al consultar el estado del alumno.";
             }
         } else {
-            // El alumno existe en el sistema, lo enviamos al siguiente paso
-            header("Location: view_confirmacion.php");
-            exit;
-        } else {
-            // Si la API dice que success es false, obtenemos su mensaje de error
+            // Si la API dice que success es false o no hay token
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no encontrado";
         }
     } else {
-    } else {
-        // Si el código HTTP trae error (ej. 404, 400), intentamos leer el mensaje que mandó la API
+        // Si el código HTTP trae error (ej. 404, 400) o falla cURL
         if ($response) {
             $data = json_decode($response, true);
             $error = isset($data['message']) ? $data['message'] : "Número de cuenta no válido o no encontrado";
         } else {
-        } else {
-            // Error general en caso de que la API este caída o haya fallado cURL
             $error = "No se pudo comunicar con el sistema. Intente de nuevo más tarde.";
         }
     }
@@ -123,15 +112,9 @@ if (isset($_POST['buscar'])) {
             </div>
 
             <!-- Bloque para mostrar errores si existen -->
-            <?php if ($error != "") { ?>
+            <?php if (!empty($error)) { ?>
                 <p class="error"><?php echo htmlspecialchars($error); ?></p>
-                <?php
-            } ?>
-        <!-- Bloque para mostrar errores si existen -->
-        <?php if ($error != "") { ?>
-            <p class="error"><?php echo htmlspecialchars($error); ?></p>
-            <?php
-        } ?>
+            <?php } ?>
 
             <form method="post">
                 <input type="text" name="numCuenta" placeholder="Número de cuenta" required>
