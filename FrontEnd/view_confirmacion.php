@@ -319,18 +319,8 @@ if (isset($_POST['actualizar_correo'])) {
                 <?php } ?>
 
                 <!-- Formulario para actualizar correo (CONSUMO 3) -->
-
-
-                <!-- Mensaje de resultado de actualización de correo -->
-                <?php if (!empty($mensajeCorreo)): ?>
-                    <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
-                        <?php echo htmlspecialchars($mensajeCorreo); ?>
-                    </p>
-                <?php endif; ?>
-
-
                 <br>
-                <p style="text-align: center;"><a href="bienvenida.php">Regresar al inicio</a></p>
+                <p style="text-align: center;"><a href="index.php">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>
