@@ -29,6 +29,9 @@ if (isset($_POST['buscar'])) {
         // Verificamos la bandera 'success' de la respuesta JSON
         if (isset($data['success']) && $data['success'] === true && !empty($data['token'])) {
 
+            // Limpiar sesión de admin si existía previamente para evitar colisiones
+            unset($_SESSION['admin_token']);
+
             // Guardamos el token en la sesión
             $_SESSION['jwt_token'] = $data['token'];
             $token = $data['token'];
