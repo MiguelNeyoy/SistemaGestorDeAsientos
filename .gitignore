@@ -2,6 +2,7 @@
 .env
 .env.*.local
 /SKILLS
+Documentacion.md
 
 # Dependencias
 /vendor/
