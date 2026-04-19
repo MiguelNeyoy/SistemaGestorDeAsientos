@@ -61,22 +61,53 @@ class ServicioAdministrador
         return $this->respuesta(true, "Métricas obtenidas", 200, $metricas);
     }
 
-    public function actualizarCorreoAlumno($data)
+    public function editarAlumno($data)
     {
-        if (empty($data['numCuenta']) || empty($data['correo'])) {
-            return $this->respuesta(false, "Número de cuenta y correo son requeridos", 400);
+        if (empty($data['numCuenta'])) {
+            return $this->respuesta(false, "Número de cuenta es requerido", 400);
         }
 
-        if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
-            return $this->respuesta(false, "Correo inválido", 400);
+        // 1. Validar e actualizar correo si fue proporcionado
+        if (isset($data['correo']) && trim($data['correo']) !== '') {
+            if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+                return $this->respuesta(false, "Correo inválido", 400);
+            }
+            $this->modeloAlumno->actualizarCorreo($data['numCuenta'], $data['correo']);
         }
 
-        $actualizado = $this->modeloAlumno->actualizarCorreo($data['numCuenta'], $data['correo']);
-        if ($actualizado) {
-            return $this->respuesta(true, "Correo actualizado correctamente", 200);
-        } else {
-            return $this->respuesta(false, "No se pudo actualizar el correo o el alumno no existe", 404);
+        // 2. Lógica de Asistencia y Número de invitados
+        if (isset($data['asistencia_estado']) && isset($data['num_invitados'])) {
+            $estado = (int) $data['asistencia_estado']; // 1 o 0
+            $invitados = (int) $data['num_invitados'];
+
+            if ($invitados < 0 || $invitados > 4) {
+                return $this->respuesta(false, "El límite de invitados es 4", 400);
+            }
+
+            if ($estado === 0) {
+                $invitados = 0;
+            }
+
+            // Actualizar la confirmación/estado y cantidad de invitados directamente en la BD
+            $resultado = $this->modeloAlumno->actualizarConfirmacion($data['numCuenta'], $estado, $invitados);
+
+            if (!$resultado || (is_array($resultado) && !$resultado['success'])) {
+                return $this->respuesta(false, "Error al actualizar la asistencia", 500);
+            }
+
+            // TODO: LOGICA DE ASIENTOS COMPENDIDA (PENDIENTE)
+            // Aqui se requerira instanciar el ServicioAsientos o llamar la logica
+            // para asignar o liberar el lugar del alumno y de sus invitados. 
+            // Esto depende del cambio de 'estado' (0 a 1 o viceversa), así que quedará en espera.
+            // Ejemplo de uso a futuro:
+            // if ($estado === 1) {
+            //     $this->reservarAsientosTeatro($data['numCuenta'], $invitados + 1);
+            // } else {
+            //     $this->liberarAsientosTeatro($data['numCuenta']);
+            // }
         }
+
+        return $this->respuesta(true, "Datos del alumno actualizados correctamente", 200);
     }
 
     private function respuesta($success, $message, $code, $data = null)
