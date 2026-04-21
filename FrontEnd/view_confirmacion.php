@@ -67,21 +67,18 @@ $mensajeConfirmacion = "";
 if (isset($_POST['confirmar'])) {
     $asiste = isset($_POST['asiste']) ? $_POST['asiste'] : '';
     $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
-    $invitados = isset($_POST['invitados']) ? (int) $_POST['invitados'] : 0;
 
     // Convertir "Si"/"No" a 1/0 para la API
     $asistira = ($asiste === "Si") ? 1 : 0;
 
-    // Si no asiste, forzar invitados a 0 y usar el correo del alumno por defecto
+    // Si no asiste, usar el correo del alumno por defecto
     if ($asistira === 0) {
-        $invitados = 0;
         $correo = !empty($alumno['email']) ? $alumno['email'] : 'no_asiste@sin-correo.com';
     }
 
     // Armar el arreglo de datos que espera la API
     $datosConfirmacion = [
         "asistira" => $asistira,
-        "num_invitados" => $invitados,
         "correo" => $correo
     ];
 
@@ -275,19 +272,8 @@ if (isset($_POST['actualizar_correo'])) {
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
                 <div id="extra" style="display:none">
                     <p>Correo</p>
-                    <!-- Por defecto lo cargamos del modelo -->
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
-
-
-                    <p>Selecciona la cantidad de invitados (Máximo 5)</p>
-                    <select name="invitados">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
                 </div>
 
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
@@ -311,10 +297,6 @@ if (isset($_POST['actualizar_correo'])) {
                 <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
 
                 <?php if ($estadoAsistencia == "Si") { ?>
-                    <!-- Se muestran los datos de confirmación -->
-                    <p>Invitados:
-                        <?php echo htmlspecialchars(isset($alumno['cantInvitado']) ? $alumno['cantInvitado'] : "0"); ?>
-                    </p>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
                 <?php } ?>
 
