@@ -280,7 +280,7 @@ if (isset($_POST['actualizar_correo'])) {
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
 
 
-                    <p>Selecciona la cantidad de invitados (Máximo 5)</p>
+                    <p>Selecciona la cantidad de invitados (Máximo 4)</p>
                     <select name="invitados">
                         <option value="0">0</option>
                         <option value="1">1</option>
