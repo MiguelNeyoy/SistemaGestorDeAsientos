@@ -2,6 +2,7 @@
 .env
 .env.*.local
 /SKILLS
+Documentacion.md
 
 # Dependencias
 /vendor/
@@ -12,6 +13,7 @@ node_modules/
 # Archivos del sistema
 .DS_Store
 .md
+/agents/
 Thumbs.db
 
 # IDEs

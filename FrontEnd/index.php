@@ -85,7 +85,6 @@ if (isset($_POST['buscar'])) {
                     } else {
                         $error = "No se pudo obtener el estado del alumno.";
                     }
-
                 } else {
                     $error = "Error al consultar el estado del alumno.";
                 }
@@ -133,10 +132,9 @@ if (isset($_POST['buscar'])) {
             </div>
 
             <!-- Bloque para mostrar errores si existen -->
-            <?php if ($error != "") { ?>
+            <?php if (!empty($error)) { ?>
                 <p class="error"><?php echo htmlspecialchars($error); ?></p>
-                <?php
-            } ?>
+            <?php } ?>
 
             <form method="post">
                 <input type="text" name="numCuenta" placeholder="Número de cuenta" required>

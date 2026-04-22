@@ -55,8 +55,8 @@ class ServicioAlumno
 
     public function confirmarAsistencia($data)
     {
-        // Validar datos
-        if (!isset($data['id_alumno'], $data['asistira'], $data['num_invitados'], $data['correo'])) {
+        // Validar datos obligatorios
+        if (!isset($data['id_alumno'], $data['asistira'], $data['correo'])) {
             return $this->respuesta(false, "Datos incompletos", 400);
         }
 
@@ -90,8 +90,7 @@ class ServicioAlumno
         }
 
         $asistira = $data['asistira'] ? 1 : 0;
-
-        $numInvitados = (int) $data['num_invitados'];
+        $numInvitados = isset($data['num_invitados']) ? (int) $data['num_invitados'] : 0;
 
         if ($numInvitados < 0 || $numInvitados > 6) {
             return $this->respuesta(false, "Máximo 6 invitados", 400);
