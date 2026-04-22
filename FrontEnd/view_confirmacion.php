@@ -274,6 +274,16 @@ if (isset($_POST['actualizar_correo'])) {
                     <p>Correo</p>
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php echo htmlspecialchars($alumno['email']); ?>">
+
+
+                    <p>Selecciona la cantidad de invitados (Máximo 4)</p>
+                    <select name="invitados">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
                 </div>
 
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
