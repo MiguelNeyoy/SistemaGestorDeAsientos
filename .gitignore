@@ -6,6 +6,7 @@
 # Dependencias
 /vendor/
 node_modules/
+/Instrucciones/
 /SKILL/
 /API/vendor/
 
