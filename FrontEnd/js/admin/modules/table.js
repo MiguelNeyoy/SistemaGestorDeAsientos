@@ -48,10 +48,10 @@ export function renderTable(filterText = "") {
         return true;
     });
 
-    // Ordenar Alfabéticamente: Asegura que la lista resultante siempre esté ordenada por nombre completo
+    // Ordenar Alfabéticamente: Asegura que la lista resultante siempre esté ordenada por apellido
     filtered.sort((a, b) => {
-        const nameA = (a.nombre + " " + a.apellido).toLowerCase();
-        const nameB = (b.nombre + " " + b.apellido).toLowerCase();
+        const nameA = (a.apellido + " " + a.nombre).toLowerCase();
+        const nameB = (b.apellido + " " + b.nombre).toLowerCase();
         return nameA.localeCompare(nameB);
     });
 
