@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { getGrupo } from './utils.js';
 
 /**
  * Función principal para renderizar la tabla de alumnos.
@@ -40,16 +41,8 @@ export function renderTable(filterText = "") {
             if (state.currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
             if (state.currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
             if (state.currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
-            if (state.currentFilterType === 'M' && !(isConfirmado && al.turno.toUpperCase() === 'M')) return false;
-            if (state.currentFilterType === 'V' && !(isConfirmado && al.turno.toUpperCase() === 'V')) return false;
-
-            if (state.currentFilterType === 'ING') {
-                const esIng = al.carrera.toLowerCase().includes("ingeniería") || al.carrera.toLowerCase().includes("sistemas");
-                if (!(isConfirmado && esIng)) return false;
-            }
-            if (state.currentFilterType === 'INF') {
-                const esInf = al.carrera.toLowerCase().includes("informática") || al.carrera.toLowerCase().includes("informatica");
-                if (!(isConfirmado && esInf)) return false;
+            if (['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(state.currentFilterType)) {
+                if (!(isConfirmado && getGrupo(al.carrera, al.turno) === state.currentFilterType)) return false;
             }
         }
         return true;
@@ -92,7 +85,7 @@ export function renderTable(filterText = "") {
         tr.innerHTML = `
             <td><strong>${al.numCuenta}</strong></td>
             <td>${al.nombre} ${al.apellido}</td>
-            <td><small>${carreraCorta} (${al.turno})</small></td>
+            <td><small>${getGrupo(al.carrera, al.turno)}</small></td>
             <td class="text-center fs-5">${al.cantInvitado || 0}</td>
             <td>${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
             <td class="text-center text-muted">-</td>
