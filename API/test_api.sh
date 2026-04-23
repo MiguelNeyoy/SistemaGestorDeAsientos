@@ -148,8 +148,8 @@ echo "----------------------------------------"
 # ==========================================
 # 7. Autenticar Administrador (POST)
 # ==========================================
-ADMIN_USER="admin"    # Ajustar a un usuario real para pruebas
-ADMIN_PASS="12345"    # Ajustar a contraseña real
+ADMIN_USER="One"    # Ajustar a un usuario real para pruebas
+ADMIN_PASS="123456"    # Ajustar a contraseña real
 echo -e "${YELLOW}Prueba 7: Autenticar administrador y obtener JWT...${NC}"
 HTTP_STATUS=$(curl -s -o /tmp/resp7.txt -w "%{http_code}" -X POST $BASE_URL/admin/login \
     -H "Content-Type: application/json" \
