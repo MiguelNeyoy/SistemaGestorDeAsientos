@@ -58,6 +58,9 @@ $rutas = [
     '/asientos/mapa' => [
         'GET' => ['ControladorAsientos', 'verMapaAsientos']
     ],
+    '/asientos/misAsiento' => [
+        'GET' => ['ControladorAsientos', 'verMiAsiento']
+    ],
     '/qr/generar' => [
         'POST' => ['ControladorQr', 'generarQr']
     ],
@@ -91,8 +94,8 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
             $parametros = array_values(array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY));
 
             // ------------- VALIDACION JWT -------------
-            $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado'];
-            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar'];
+            $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento'];
+            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/asientos/mapa'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;

@@ -11,9 +11,58 @@ $authData = verify_access(['alumno', 'admin']);
 $token = $authData['token'];
 $tipoUsuario = $authData['tipo'];
 
-//  OBTENER DATOS DEL ALUMNO (solo si es alumno)
+//  OBTENER MI ASIENTO (solo si es alumno)
 $miAsiento = null;
 
+if ($tipoUsuario === "alumno") {
+  $ch = curl_init();
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $BASE_API_URL . "/asientos/misAsiento",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . $token
+    ],
+    CURLOPT_SSL_VERIFYPEER => false
+  ]);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+  $data = json_decode($response, true);
+
+  if ($data['success']) {
+    $asientoData = $data['data'];
+    $miAsiento = $asientoData['letra'] . $asientoData['numero'];
+  }
+}
+
+//  OBTENER MAPA DE ASIENTOS (solo admin)
+$asientosOcupados = [];
+
+if ($tipoUsuario === "admin") {
+  $ch = curl_init();
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . $token
+    ],
+    CURLOPT_SSL_VERIFYPEER => false
+  ]);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+  $data = json_decode($response, true);
+
+  if ($data['success'] && isset($data['data']['asientos'])) {
+    foreach ($data['data']['asientos'] as $asiento) {
+      if ($asiento['ocupado']) {
+        $asientosOcupados[] = $asiento['asiento'];
+      }
+    }
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
