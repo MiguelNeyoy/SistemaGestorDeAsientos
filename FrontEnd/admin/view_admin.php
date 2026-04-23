@@ -93,59 +93,59 @@ if (!$tieneSesion) {
                 </div>
 
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card metric-card text-white bg-info h-100" onclick="setFilterType('M')"
-                        title="Filtrar por turno Matutino">
+                    <div class="card metric-card text-white bg-info h-100" onclick="setFilterType('LI4-1')"
+                        title="Filtrar por LI 4-1 (Matutino)">
                         <div class="card-body text-center d-flex flex-column justify-content-center">
-                            <i class="bi bi-sun-fill metric-icon"></i>
-                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Matutino
+                            <i class="bi bi-mortarboard-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">LI 4-1
                             </h6>
-                            <h2 class="card-text fw-bold m-0" id="metric-m">0</h2>
+                            <h2 class="card-text fw-bold m-0" id="metric-li41">0</h2>
                             <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span
-                                    id="guests-m">0</span> invitados</small>
+                                    id="guests-li41">0</span> invitados</small>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card metric-card text-white bg-secondary h-100"
-                        style="background-color: #6f42c1 !important;" onclick="setFilterType('V')"
-                        title="Filtrar por turno Vespertino">
+                    <div class="card metric-card text-white h-100"
+                        style="background-color: #6f42c1 !important;" onclick="setFilterType('LI4-2')"
+                        title="Filtrar por LI 4-2 (Vespertino)">
                         <div class="card-body text-center d-flex flex-column justify-content-center">
-                            <i class="bi bi-moon-stars-fill metric-icon"></i>
-                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Vespertino
+                            <i class="bi bi-mortarboard-fill metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">LI 4-2
                             </h6>
-                            <h2 class="card-text fw-bold m-0" id="metric-v">0</h2>
+                            <h2 class="card-text fw-bold m-0" id="metric-li42">0</h2>
                             <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span
-                                    id="guests-v">0</span> invitados</small>
+                                    id="guests-li42">0</span> invitados</small>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card metric-card bg-warning text-dark h-100" onclick="setFilterType('ING')"
-                        title="Filtrar por Ingeniería">
+                    <div class="card metric-card bg-warning text-dark h-100" onclick="setFilterType('LISI4-1')"
+                        title="Filtrar por LISI 4-1 (Matutino)">
                         <div class="card-body text-center d-flex flex-column justify-content-center">
-                            <i class="bi bi-gear-fill metric-icon"></i>
-                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">Ingeniería
+                            <i class="bi bi-pc-display metric-icon"></i>
+                            <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">LISI 4-1
                             </h6>
-                            <h2 class="card-text fw-bold m-0" id="metric-ing">0</h2>
+                            <h2 class="card-text fw-bold m-0" id="metric-lisi41">0</h2>
                             <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span
-                                    id="guests-ing">0</span> invitados</small>
+                                    id="guests-lisi41">0</span> invitados</small>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card metric-card text-white bg-danger h-100" onclick="setFilterType('INF')"
-                        title="Filtrar por Informática">
+                    <div class="card metric-card text-white bg-danger h-100" onclick="setFilterType('LISI4-2')"
+                        title="Filtrar por LISI 4-2 (Vespertino)">
                         <div class="card-body text-center d-flex flex-column justify-content-center">
                             <i class="bi bi-pc-display metric-icon"></i>
                             <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">
-                                Informática
+                                LISI 4-2
                             </h6>
-                            <h2 class="card-text fw-bold m-0" id="metric-inf">0</h2>
+                            <h2 class="card-text fw-bold m-0" id="metric-lisi42">0</h2>
                             <small class="d-block mt-1 opacity-75" style="font-size: 0.75rem;">+<span
-                                    id="guests-inf">0</span> invitados</small>
+                                    id="guests-lisi42">0</span> invitados</small>
                         </div>
                     </div>
                 </div>
