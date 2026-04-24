@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state } from './state.js?v=5';
 
 let html5QrCode = null;
 let qrScannerModal = null;

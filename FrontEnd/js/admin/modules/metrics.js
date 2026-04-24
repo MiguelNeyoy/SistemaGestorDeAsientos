@@ -1,4 +1,4 @@
-import { getGrupo } from './utils.js';
+import { getGrupo } from './utils.js?v=5';
 
 export function updateMetricsUI(metrics) {
     if(document.getElementById("metric-total")) 
