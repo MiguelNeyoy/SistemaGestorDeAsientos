@@ -97,9 +97,9 @@ class ServicioAdministrador
         $carLower = strtolower(trim($carrera));
         $turnoUpper = strtoupper(trim($turno));
 
-        $prefix = 'LI'; // Por defecto Licenciatura (Ingeniería/Sistemas)
+        $prefix = 'LISI'; // Por defecto Licenciatura en Ingeniería (Sistemas)
         if (strpos($carLower, 'informática') !== false || strpos($carLower, 'informatica') !== false) {
-            $prefix = 'LISI';
+            $prefix = 'LI';
         }
 
         $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';

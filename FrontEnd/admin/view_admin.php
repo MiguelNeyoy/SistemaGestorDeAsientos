@@ -249,7 +249,11 @@ if (!$tieneSesion) {
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<<<<<<< HEAD
     <script type="module" src="../js/admin/app.js?v=5"></script>
+=======
+    <script type="module" src="../js/admin/app.js?v=4"></script>
+>>>>>>> c5e56793e9149858119491f75a00b0ec927a7af7
 </body>
 
 </html>
