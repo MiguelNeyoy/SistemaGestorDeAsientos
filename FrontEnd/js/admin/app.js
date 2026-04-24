@@ -1,6 +1,6 @@
 import { state } from './modules/state.js';
 import { fetchDashboardData } from './modules/api.js';
-import { updateMetricsUI } from './modules/metrics.js';
+import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js';
 import { renderTable, setFilterType } from './modules/table.js';
 import { openEditModal, setupModalFormListener } from './modules/modal.js';
 import { initQRModule } from './modules/qrscanner.js';
@@ -75,7 +75,7 @@ async function loadDashboardData(token) {
             alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
             state.allStudentsCache = Array.from(unicos.values());
 
-            // updateCustomLocalMetrics(state.allStudentsCache);
+            updateCustomLocalMetrics(state.allStudentsCache);
 
             const searchInput = document.getElementById("searchInput");
             renderTable(searchInput ? searchInput.value : "");
