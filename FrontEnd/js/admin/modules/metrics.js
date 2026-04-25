@@ -1,63 +1,65 @@
-// Metrics UI Logic
+import { getGrupo } from './utils.js?v=5';
 
 export function updateMetricsUI(metrics) {
-    if(document.getElementById("metric-total")) 
+    // 1. Actualiza el Total Global de Invitados
+    if (document.getElementById("metric-total"))
         document.getElementById("metric-total").innerText = metrics.total_invitados || 0;
-        
-    if(document.getElementById("metric-m")) 
-        document.getElementById("metric-m").innerText = (metrics.por_turno && metrics.por_turno['M']) ? metrics.por_turno['M'] : 0;
-        
-    if(document.getElementById("metric-v")) 
-        document.getElementById("metric-v").innerText = (metrics.por_turno && metrics.por_turno['V']) ? metrics.por_turno['V'] : 0;
 
-    // Identificar las llaves en por_carrera considerando agrupamientos
-    let ing = 0, inf = 0;
-    if (metrics.por_carrera) {
-        for (const [key, value] of Object.entries(metrics.por_carrera)) {
-            if (key.toLowerCase().includes("ingeniería") || key.toLowerCase().includes("sistemas")) ing += value;
-            else if (key.toLowerCase().includes("informática") || key.toLowerCase().includes("informatica")) inf += value;
+    // 2. Actualiza los Contadores por Grupo (usando los datos del backend)
+    // Asumimos que la API envía el total combinado (Alumno + Invitado).
+    const grupos = ['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'];
+    grupos.forEach(g => {
+        const id = g.toLowerCase().replace('-', '');
+
+        // El ID principal de la tarjeta ej: 'metric-li41'
+        const elMetric = document.getElementById(`metric-${id}`);
+        if (elMetric) {
+            elMetric.innerText = (metrics.por_grupo && metrics.por_grupo[g]) ? metrics.por_grupo[g] : 0;
         }
-    }
-
-    if(document.getElementById("metric-ing")) document.getElementById("metric-ing").innerText = ing;
-    if(document.getElementById("metric-inf")) document.getElementById("metric-inf").innerText = inf;
+    });
 }
 
 export function updateCustomLocalMetrics(allStudentsCache) {
     let totalConfirmados = 0;
     let totalRechazados = 0;
-    let guestsM = 0;
-    let guestsV = 0;
-    let guestsIng = 0;
-    let guestsInf = 0;
+
+    // Contadores para separar invitados de los alumnos en la UI
+    let guestsLI41 = 0;
+    let guestsLI42 = 0;
+    let guestsLISI41 = 0;
+    let guestsLISI42 = 0;
 
     allStudentsCache.forEach(al => {
-        const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
-        const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
+        // Validación de seguridad (Soporta si el backend envía 'estado' o 'asistencia_estado')
+        const estadoActual = al.asistencia_estado !== undefined ? al.asistencia_estado : al.estado;
+        const isConfirmado = estadoActual === 1 || estadoActual === "1";
+        const isRechazado = estadoActual === 0 || estadoActual === "0";
 
         if (isConfirmado) {
             totalConfirmados++;
-            const cant = parseInt(al.cantInvitado) || 0;
-            if (al.turno.toUpperCase() === 'M') guestsM += cant;
-            if (al.turno.toUpperCase() === 'V') guestsV += cant;
 
-            const carLower = al.carrera.toLowerCase();
-            if (carLower.includes("ingeniería") || carLower.includes("sistemas")) {
-                guestsIng += cant;
-            } else if (carLower.includes("informática") || carLower.includes("informatica")) {
-                guestsInf += cant;
-            }
+            // Si el alumno está confirmado, sumamos sus invitados al contador de su grupo
+            const cantInvitados = parseInt(al.cantInvitado) || 0;
+            const grupo = getGrupo(al.carrera, al.turno);
+
+            if (grupo === 'LI4-1') guestsLI41 += cantInvitados;
+            else if (grupo === 'LI4-2') guestsLI42 += cantInvitados;
+            else if (grupo === 'LISI4-1') guestsLISI41 += cantInvitados;
+            else if (grupo === 'LISI4-2') guestsLISI42 += cantInvitados;
+
         } else if (isRechazado) {
             totalRechazados++;
         }
     });
 
-    if(document.getElementById("metric-confirmados")) document.getElementById("metric-confirmados").innerText = totalConfirmados;
-    if(document.getElementById("metric-rechazados")) document.getElementById("metric-rechazados").innerText = totalRechazados;
-    if(document.getElementById("metric-total-alumnos")) document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
+    // 1. Actualiza las tarjetas principales
+    if (document.getElementById("metric-confirmados")) document.getElementById("metric-confirmados").innerText = totalConfirmados;
+    if (document.getElementById("metric-rechazados")) document.getElementById("metric-rechazados").innerText = totalRechazados;
+    if (document.getElementById("metric-total-alumnos")) document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
 
-    if (document.getElementById("guests-m")) document.getElementById("guests-m").innerText = guestsM;
-    if (document.getElementById("guests-v")) document.getElementById("guests-v").innerText = guestsV;
-    if (document.getElementById("guests-ing")) document.getElementById("guests-ing").innerText = guestsIng;
-    if (document.getElementById("guests-inf")) document.getElementById("guests-inf").innerText = guestsInf;
+    // 2. Actualiza los 'sub-contadores' de invitados debajo de cada grupo
+    if (document.getElementById("guests-li41")) document.getElementById("guests-li41").innerText = guestsLI41;
+    if (document.getElementById("guests-li42")) document.getElementById("guests-li42").innerText = guestsLI42;
+    if (document.getElementById("guests-lisi41")) document.getElementById("guests-lisi41").innerText = guestsLISI41;
+    if (document.getElementById("guests-lisi42")) document.getElementById("guests-lisi42").innerText = guestsLISI42;
 }

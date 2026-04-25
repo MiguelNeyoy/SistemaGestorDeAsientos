@@ -6,12 +6,14 @@
 # Dependencias
 /vendor/
 node_modules/
+/Instrucciones/
 /SKILL/
-/instrucciones/
+/API/vendor/
 
 # Archivos del sistema
 .DS_Store
 .md
+/agents/
 Thumbs.db
 
 # IDEs
