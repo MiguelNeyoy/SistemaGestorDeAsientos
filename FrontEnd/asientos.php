@@ -115,7 +115,7 @@ if ($tipoUsuario === "admin") {
       <div class="cabina">Cabina</div>
       <div class="zona-superior"></div>
       <div class="teatro"></div>
-      <div class="mesa">Mesa directiva</div>
+      <div class="mesa">Escenario</div>
     </div>
   </div>
 

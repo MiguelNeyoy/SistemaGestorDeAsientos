@@ -104,14 +104,14 @@ if (isset($_POST['buscar'])) {
     <div class="container">
         <div class="form-box">
             <strong>
-                <h1 class="titulo-escuela">Facultad de informática</h1>
+                <h1 class="titulo-escuela">Facultad de Informática</h1>
             </strong>
             <h2 class="subtitulo">Confirmación de asistencia</h2>
 
 
             <div class="alert alert-info mt-3">
-                Ingresa tu número de cuenta <strong>sin el último dígito</strong>. En caso de no tenerlo, solicítalo en
-                ventanilla con control escolar.
+                Ingresa tu número de cuenta <strong>sin incluir el guion</strong>. En caso de no contar 
+                con dicha información, deberá solicitarla en la ventanilla del departamento de Control Escolar.
             </div>
 
             <!-- Bloque para mostrar errores si existen -->
@@ -129,10 +129,8 @@ if (isset($_POST['buscar'])) {
         </div>
         <div class="leyenda">
             <div class="alert alert-warning">
-                Este formulario es para registrar tu asistencia al evento de clausura 2022–2026.<br><br>
-                ⚠ La confirmación estará disponible hasta una semana antes del evento.
-                Después de esa fecha, el sistema se cerrará y no será posible registrar tu asistencia,
-                por lo que tendrás que acercarte a control escolar.
+               <br>
+                ⚠ El registro permanecerá abierto a partir del 22 de junio hasta el 10 de julio de 2026.
             </div>
         </div>
     </div>

@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 { inicio: 24, fin: 30 }
             ];
 
-            if (f === (letrasTeatro.length - 1)) {
+            if (f === (letrasTeatro.length - 10)) {
                 secciones = [{ inicio: 1, fin: 34 }];
             }
 
@@ -123,11 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     asiento.textContent = idAsiento;
 
                     if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                        asiento.classList.add('confirmado');
-                    }
-                    if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                        asiento.classList.add('confirmado');
-                    }
+    asiento.classList.add('mi-asiento'); // verde
+}
+
+if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
+    asiento.classList.add('ocupado'); // rojo
+}
 
                     secDiv.appendChild(asiento);
                 }
