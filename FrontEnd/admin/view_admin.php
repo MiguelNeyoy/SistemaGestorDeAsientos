@@ -107,9 +107,8 @@ if (!$tieneSesion) {
                 </div>
 
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card metric-card text-white h-100"
-                        style="background-color: #6f42c1 !important;" onclick="setFilterType('LI4-2')"
-                        title="Filtrar por LI 4-2 (Vespertino)">
+                    <div class="card metric-card text-white h-100" style="background-color: #6f42c1 !important;"
+                        onclick="setFilterType('LI4-2')" title="Filtrar por LI 4-2 (Vespertino)">
                         <div class="card-body text-center d-flex flex-column justify-content-center">
                             <i class="bi bi-mortarboard-fill metric-icon"></i>
                             <h6 class="card-title text-uppercase fw-bold mb-1" style="font-size: 0.8rem;">LI 4-2
@@ -249,11 +248,7 @@ if (!$tieneSesion) {
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<<<<<<< HEAD
     <script type="module" src="../js/admin/app.js?v=5"></script>
-=======
-    <script type="module" src="../js/admin/app.js?v=4"></script>
->>>>>>> c5e56793e9149858119491f75a00b0ec927a7af7
 </body>
 
 </html>
