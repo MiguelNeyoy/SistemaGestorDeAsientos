@@ -11,13 +11,13 @@ $authData = verify_access(['alumno', 'admin']);
 $token = $authData['token'];
 $tipoUsuario = $authData['tipo'];
 
-//  OBTENER DATOS DEL ALUMNO (solo si es alumno)
+//  OBTENER MI ASIENTO (solo si es alumno)
 $miAsiento = null;
 
 if ($tipoUsuario === "alumno") {
   $ch = curl_init();
   curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/alumnos/estado",
+    CURLOPT_URL => $BASE_API_URL . "/asientos/misAsiento",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
       'Authorization: Bearer ' . $token
@@ -30,29 +30,24 @@ if ($tipoUsuario === "alumno") {
 
   $data = json_decode($response, true);
 
-  if (isset($data['success']) && $data['success']) {
-    $alumno = $data['data'] ?? [];
-
-    // Ajusta según tu API
-    $miAsiento = ($alumno['letra'] ?? '') . ($alumno['numero'] ?? ''); // ej: A5
+  if ($data['success']) {
+    $asientoData = $data['data'];
+    $miAsiento = $asientoData['letra'] . $asientoData['numero'];
   }
 }
 
-//  OBTENER ASIENTOS CONFIRMADOS (solo admin)
+//  OBTENER MAPA DE ASIENTOS (solo admin)
 $asientosOcupados = [];
 
 if ($tipoUsuario === "admin") {
-  //  AQUÍ debes consumir tu endpoint real
-  // ejemplo:
-  /*
   $ch = curl_init();
   curl_setopt_array($ch, [
-      CURLOPT_URL => $BASE_API_URL . "/asientos/ocupados",
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_HTTPHEADER => [
-          'Authorization: Bearer ' . $token
-      ],
-      CURLOPT_SSL_VERIFYPEER => false
+    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . $token
+    ],
+    CURLOPT_SSL_VERIFYPEER => false
   ]);
 
   $response = curl_exec($ch);
@@ -60,13 +55,13 @@ if ($tipoUsuario === "admin") {
 
   $data = json_decode($response, true);
 
-  if ($data['success']) {
-      $asientosOcupados = $data['data']; // ["A1","A2"]
+  if ($data['success'] && isset($data['data']['asientos'])) {
+    foreach ($data['data']['asientos'] as $asiento) {
+      if ($asiento['ocupado']) {
+        $asientosOcupados[] = $asiento['asiento'];
+      }
+    }
   }
-  */
-
-  //  TEMPORAL (PRUEBA)
-  $asientosOcupados = ["A1", "A2", "B5", "C10"];
 }
 ?>
 
