@@ -236,7 +236,7 @@ if (!$tieneSesion) {
 
     <script>
         // Configuración global para JS
-        window.BASE_API_URL = "<?php echo $BASE_API_URL; ?>";
+        window.BASE_API_URL = "<?php echo $JS_BASE_API_URL; ?>";
         // Set secure token dynamically from PHP session
         window.ADMIN_TOKEN = "<?php echo $_SESSION['admin_token']; ?>";
     </script>
