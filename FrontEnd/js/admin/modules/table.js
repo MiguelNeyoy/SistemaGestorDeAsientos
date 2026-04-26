@@ -8,14 +8,14 @@ import { getGrupo } from './utils.js?v=5';
 export function renderTable(filterText = "") {
     // Obtener el cuerpo de la tabla donde se insertarán las filas
     const tbody = document.getElementById("alumnosTableBody");
-    if(!tbody) return;
-    
+    if (!tbody) return;
+
     // Limpiar el contenido actual de la tabla
     tbody.innerHTML = "";
 
     const lowerFilter = filterText.toLowerCase();
     const directorioCardBody = document.getElementById("directorioCardBody");
-    
+
     // Feedback visual: Si hay filtros activos, se agrega una clase CSS para resaltar el contenedor
     if (directorioCardBody) {
         if (state.currentFilterType !== 'ALL' || filterText.trim() !== "") {
@@ -84,7 +84,7 @@ export function renderTable(filterText = "") {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><strong>${al.numCuenta}</strong></td>
-            <td>${al.apellido}, ${al.nombre}</td>
+            <td>${al.apellido} ${al.nombre}</td>
             <td><small>${getGrupo(al.carrera, al.turno)}</small></td>
             <td class="text-center fs-5">${al.cantInvitado || 0}</td>
             <td>${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
