@@ -73,7 +73,21 @@ async function loadDashboardData(token) {
         if (alumnosData.success) {
             const unicos = new Map();
             alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
-            state.allStudentsCache = Array.from(unicos.values());
+            state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+                const apellidoA = (a.apellido || "").trim();
+                const apellidoB = (b.apellido || "").trim();
+
+                // Estandariza el ordenamiento para que iOS y PC lo procesen igual
+                const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
+
+                if (comparacionApellidos !== 0) {
+                    return comparacionApellidos;
+                }
+
+                const nombreA = (a.nombre || "").trim();
+                const nombreB = (b.nombre || "").trim();
+                return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
+            });
 
             updateCustomLocalMetrics(state.allStudentsCache);
 
