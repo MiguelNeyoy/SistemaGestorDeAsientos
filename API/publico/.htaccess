@@ -1,11 +1,4 @@
 RewriteEngine On
-# Si lo que piden no es un archivo real...
-RewriteCond %{REQUEST_FILENAME} !-f
-# Y tampoco es una carpeta real...
-RewriteCond %{REQUEST_FILENAME} !-d
-# ...mándalo TODO al index.php que está aquí mismo
-RewriteRule ^(.*)$ index.php [QSA,L]    
-
 <IfModule mod_headers.c>
     <FilesMatch "\.(js|mjs)$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
@@ -13,3 +6,9 @@ RewriteRule ^(.*)$ index.php [QSA,L]
         Header set Expires "0"
     </FilesMatch>
 </IfModule>
+# Si lo que piden no es un archivo real...
+RewriteCond %{REQUEST_FILENAME} !-f
+# Y tampoco es una carpeta real...
+RewriteCond %{REQUEST_FILENAME} !-d
+# ...mándalo TODO al index.php que está aquí mismo
+RewriteRule ^(.*)$ index.php [QSA,L]    
