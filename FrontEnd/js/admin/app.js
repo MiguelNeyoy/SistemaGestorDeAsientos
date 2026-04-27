@@ -51,8 +51,8 @@ async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
     if (statusText) {
         statusText.innerText = "Actualizando...";
-        statusText.classList.remove("bg-success", "bg-danger");
-        statusText.classList.add("bg-secondary");
+        // statusText.classList.remove("bg-success", "bg-danger");
+        // statusText.classList.add("bg-secondary");
     }
 
     try {
@@ -104,7 +104,7 @@ async function loadDashboardData(token) {
         console.error("Error obteniendo datos del dashboard:", err);
         if (statusText) {
             statusText.innerText = "Error de conexión";
-            statusText.classList.replace("bg-secondary", "bg-danger");
+            // statusText.classList.replace("bg-secondary", "bg-danger");
         }
     }
 }
