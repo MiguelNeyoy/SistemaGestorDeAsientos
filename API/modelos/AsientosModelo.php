@@ -30,36 +30,38 @@ class AsientoModel{
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-mostrarAsientos
+    }//fin-mostrarAsientosEventoLi
+
 
     //Consulta todos los asientos y muestra el estado del mismo
     public function mostrarAsientosEventoLiSi(){
 
         $sql = 'SELECT letra, numero, estado 
-                FROM asiento_evento_li';
+                FROM asiento_evento_lisi';
 
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-mostrarAsientos
+    }//fin-mostrarAsientosEventoLiSi
 
-    //Consulta el asiento al que pertenece un solo alumno
-    public function mostrarAsientoAlumno( $numCuenta ){
+
+    //Consulta el asiento al que pertenece un solo alumno del grupo Li
+    public function mostrarAsientoAlumnoLi( $numCuenta ){
         
-        $sql = 'SELECT alumno.numCuenta, alumno.apellido, asiento.letra, asiento.numero 
+        $sql = 'SELECT alumno.numCuenta, alumno.apellido, asiento_evento_li.letra, asiento_evento_li.numero 
                 FROM alumno
-                INNER JOIN asiento 
-                ON alumno.numCuenta = asiento.numCuenta
-                WHERE asiento.numCuenta = ?';
+                INNER JOIN asiento_evento_li 
+                ON alumno.numCuenta = asiento_evento_li.numCuenta
+                WHERE asiento_evento_li.numCuenta = ?';
 
         $stmt = $this->db->prepare( $sql );
         $stmt->execute( [$numCuenta] );
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-mostrarAsientoAlumno
+    }//fin-mostrarAsientoAlumnoLi
 
 
     //Actualiza el estado del asiento cuando el alumno confirma la asistencia
