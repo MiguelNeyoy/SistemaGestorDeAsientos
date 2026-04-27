@@ -32,6 +32,18 @@ class AsientoModel{
 
     }//fin-mostrarAsientos
 
+    //Consulta todos los asientos y muestra el estado del mismo
+    public function mostrarAsientosEventoLiSi(){
+
+        $sql = 'SELECT letra, numero, estado 
+                FROM asiento_evento_li';
+
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-mostrarAsientos
 
     //Consulta el asiento al que pertenece un solo alumno
     public function mostrarAsientoAlumno( $numCuenta ){
