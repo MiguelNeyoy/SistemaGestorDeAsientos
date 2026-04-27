@@ -6,6 +6,7 @@
 @import '../css/admin/variables.css';
 @import '../css/admin/layout.css';
 @import '../css/admin/components.css';
+@import '../css/admin/responsive.css';
 /* Reset base */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

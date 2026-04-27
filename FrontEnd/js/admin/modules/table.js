@@ -83,14 +83,14 @@ export function renderTable(filterText = "") {
         // Crear el elemento de fila (tr) e insertar el HTML con los datos
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><strong>${al.numCuenta}</strong></td>
-            <td>${al.apellido} ${al.nombre}</td>
-            <td>${getGrupo(al.carrera, al.turno)}</td>
-            <td class="text-center fs-5">${al.cantInvitado || 0}</td>
-            <td class="admin-table__email">${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
-            <td class="text-center text-muted">-</td>
-            <td class="text-center">${estadoBadge}</td>
-            <td class="text-center">
+            <td data-label="No. Cuenta"><strong>${al.numCuenta}</strong></td>
+            <td data-label="Nombre">${al.apellido} ${al.nombre}</td>
+            <td data-label="Grupo">${getGrupo(al.carrera, al.turno)}</td>
+            <td data-label="Invitados" class="text-center fs-5">${al.cantInvitado || 0}</td>
+            <td data-label="Correo" class="admin-table__email">${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
+            <td data-label="Asiento" class="text-center">${al.asiento || "-"}</td>
+            <td data-label="Estado" class="text-center">${estadoBadge}</td>
+            <td data-label="Acciones" class="text-center">
                 <div class="btn-group shadow-sm" role="group">
                     <button type="button" class="btn btn-sm btn-outline-primary" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')">
                         <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline ms-1">Editar</span>

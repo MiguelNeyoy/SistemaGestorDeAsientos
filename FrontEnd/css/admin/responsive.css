@@ -1,0 +1,186 @@
+/* Responsive Styles for Admin Dashboard - MVAdmin1.2.5 inspiration */
+
+@media (max-width: 768px) {
+    /* Layout Adjustments */
+    .admin-content {
+        padding: 1rem;
+    }
+
+    /* Topbar compact */
+    .admin-topbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        align-items: stretch;
+    }
+
+    .admin-topbar__title-wrapper {
+        text-align: center;
+    }
+
+    .admin-topbar__actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .admin-btn span {
+        display: none; /* Only icons on mobile buttons */
+    }
+
+    .admin-btn {
+        padding: 0.75rem;
+        justify-content: center;
+        flex: 1;
+        min-width: 50px;
+    }
+
+    /* Metrics Grid 2x2 */
+    .admin-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .admin-metric-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .admin-metric-card__icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .admin-metric-card__value {
+        font-size: 2.5rem;
+    }
+
+    /* Search bar width */
+    .admin-search {
+        width: 100%;
+    }
+
+    /* Directory Header */
+    .admin-directory__header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .admin-directory__controls {
+        flex-direction: column;
+    }
+
+    /* Table to Cards Transformation */
+    .admin-table-wrapper {
+        border: none;
+    }
+
+    .admin-table thead {
+        display: none; /* Hide headers */
+    }
+
+    .admin-table, 
+    .admin-table tbody, 
+    .admin-table tr, 
+    .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .admin-table tr {
+        background-color: var(--color-surface);
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--color-border);
+        overflow: hidden;
+        position: relative;
+        padding: 1rem;
+    }
+
+    /* Status indicator bar like MVAdmin */
+    .admin-table tr::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background-color: var(--color-secondary);
+    }
+
+    /* Change color if confirmed */
+    .admin-table tr:has(.badge-confirmado)::before {
+        background-color: var(--color-gold);
+    }
+    
+    .admin-table tr:has(.badge-rechazado)::before {
+        background-color: var(--color-error);
+    }
+
+    .admin-table td {
+        text-align: right;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 2.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .admin-table td:last-child {
+        border-bottom: none;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    .admin-table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 700;
+        color: var(--color-text-sub);
+        font-size: 1.8rem;
+        text-transform: uppercase;
+    }
+
+    /* Special handling for Name and Account Number */
+    .admin-table td[data-label="Nombre"] {
+        display: block;
+        text-align: left;
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: var(--color-navy);
+        border-bottom: 2px solid var(--color-border);
+        margin-bottom: 0.5rem;
+        padding-bottom: 1rem;
+    }
+    
+    .admin-table td[data-label="Nombre"]::before {
+        display: none;
+    }
+
+    .admin-table td[data-label="No. Cuenta"] {
+        background: #f8fafc;
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 0.75rem 1rem;
+        font-size: 1.8rem;
+    }
+
+    /* Button group in cards */
+    .admin-table td[data-label="Acciones"]::before {
+        display: none;
+    }
+    
+    .admin-table .btn-group {
+        width: 100%;
+    }
+    
+    .admin-table .btn-group .btn {
+        flex: 1;
+        padding: 0.8rem;
+        font-size: 2rem;
+    }
+}
