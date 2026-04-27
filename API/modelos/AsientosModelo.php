@@ -150,7 +150,7 @@ class AsientoModel{
 
 
     //Muestra el total de asientos que pertenezcan a la misma carrera y tuno
-    public function totalAsientosPorGrupo() {
+    public function totalAsientosPorGrupoEventoLi() {
 
         $sql = 'SELECT COUNT(*) as total_asientos_grupo
                 FROM alumno
