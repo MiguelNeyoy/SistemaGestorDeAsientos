@@ -1,127 +1,15 @@
-/* Estilos complementarios para la vista de administrador */
-body {
-    background-image: url("../../img/logo.png");
-    background-repeat: repeat;
-    background-size: 1300px;
-    min-height: 100vh;
-}
 
-.admin-navbar {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* Modificamos comportamiento del form en el panel de admin si es necesario */
-#loginForm button {
-    margin-top: 15px;
-}
+/* Design System Imports */
+@import '../css/admin/variables.css';
+@import '../css/admin/layout.css';
+@import '../css/admin/components.css';
+/* Reset base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-#loginForm input {
-    margin-bottom: 0;
-}
-
-/* Tarjetas de métricas */
-.metric-card {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease;
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    cursor: pointer;
-}
-
-.metric-card:hover {
-    transform: translateY(-5px);
-}
-
-.metric-icon {
-    font-size: 2rem;
-    opacity: 0.8;
-    margin-bottom: 10px;
-}
-
-.metric-card.bg-primary { background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-success { background: linear-gradient(135deg, rgba(25,135,84,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-info { background: linear-gradient(135deg, rgba(13,202,240,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-warning { background: linear-gradient(135deg, rgba(255,193,7,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-danger { background: linear-gradient(135deg, rgba(220,53,69,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-dark { background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(0,0,0,0.5)) !important; }
-.metric-card.bg-black { background: linear-gradient(135deg, rgba(240, 245, 135, 0.8), rgba(0,0,0,0.5)) !important; }
-
-/* Configuración de tabla */
-.table-dark {
-    background-color: rgba(33, 37, 41, 0.8) !important;
-}
-
-#alumnosTable {
-    width: 100%;
-}
-
-#alumnosTable th, #alumnosTable td {
-    vertical-align: middle;
-    white-space: nowrap; /* Evita que el texto de las celdas se aplaste como escalera */
-}
-
-/* Columna de acciones (última columna) posicionamiento sticky para responsive scroll */
-#alumnosTable th:last-child,
-#alumnosTable td:last-child {
-    position: sticky;
-    right: 0;
-    z-index: 10;
-}
-
-#alumnosTable th:last-child {
-    background-color: #f1f5f9; /* Color thead */
-    box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
-}
-
-#alumnosTable td:last-child {
-    background-color: #ffffff;
-    box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) > td:last-child {
-    background-color: var(--bs-table-striped-bg, #f2f2f2);
-}
-
-.table-hover > tbody > tr:hover > td:last-child {
-    background-color: var(--bs-table-hover-bg, #ececec);
-}
-
-.badge-pendiente {
-    background-color: #6c757d;
-}
-.badge-confirmado {
-    background-color: #198754;
-}
-.badge-rechazado {
-    background-color: #dc3545;
-}
-
-/* Estilos Responsive para el listado (Buscador y Métricas móviles) */
-@media (max-width: 767px) {
-    #directorioCardBody:not(.has-filter) .table-responsive {
-        display: none !important;
-    }
-    #directorioHintMobile {
-        display: block;
-        padding: 20px;
-        text-align: center;
-        color: #64748b;
-        font-size: 0.95rem;
-    }
-    #directorioCardBody.has-filter #directorioHintMobile {
-        display: none !important;
-    }
-}
-@media (min-width: 768px) {
-    #directorioHintMobile {
-        display: none !important;
-    }
-}
-
+/* Legacy overrides and specific logic */
 #qrReaderContainer {
     border-radius: 0;
     overflow: hidden;
@@ -131,35 +19,28 @@ body {
     border-radius: 0;
 }
 
-#qrDesktopWarning {
-    border-left: 4px solid #ffc107;
-}
-
 #qrResultModal .list-group-item {
     border-left: none;
     border-right: none;
 }
 
-#qrResultModal .list-group-item:first-child {
-    border-top: none;
-}
+/* Badge styles for the table (still used by JS) */
+.badge-pendiente { background-color: var(--color-secondary); }
+.badge-confirmado { background-color: var(--color-success); }
+.badge-rechazado { background-color: var(--color-error); }
 
-#qrResultModal .list-group-item:last-child {
-    border-bottom: none;
-}
-
-#btnQrConfirmar {
-    border-radius: 10px;
-}
-
-@media (max-width: 575.98px) {
-    #qrScannerModal .modal-dialog {
-        max-width: 100%;
-        margin: 0;
-        min-height: 100vh;
+/* Sticky columns for the directory table */
+@media (min-width: 768px) {
+    #alumnosTable th:last-child,
+    #alumnosTable td:last-child {
+        position: sticky;
+        right: 0;
+        z-index: 10;
+        background-color: var(--color-surface);
+        box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
     }
-    #qrScannerModal .modal-content {
-        border-radius: 0;
-        min-height: 100vh;
+    
+    #alumnosTable th:last-child {
+        background-color: #f1f5f9;
     }
 }
