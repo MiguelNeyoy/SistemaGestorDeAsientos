@@ -132,6 +132,23 @@ class AsientoModel{
     }//fin-grupoAsientosAlumnosEventosLi
 
 
+    //Consulta todos los asientos que pertenezcan al mismo turno
+    public function grupoAsientosAlumnosEventoLiSi(){
+
+        $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento_evento_lisi.letra, asiento_evento_lisi.numero, asiento_evento_lisi.estado
+                FROM alumno 
+                JOIN asiento_evento_lisi
+                ON alumno.numCuenta = asiento.numCuenta
+                WHERE alumno.turno = ? ';
+
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-grupoAsientosAlumnosEventosLiSi
+
+
     //Muestra el total de asientos que pertenezcan a la misma carrera y tuno
     public function totalAsientosPorGrupo() {
 
