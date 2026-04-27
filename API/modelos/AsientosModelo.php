@@ -63,6 +63,7 @@ class AsientoModel{
 
     }//fin-mostrarAsientoAlumnoLi
 
+
     //Consulta el asiento al que pertenece un solo alumno del grupo LiSi
     public function mostrarAsientoAlumnoLiSi( $numCuenta ){
         
@@ -80,7 +81,7 @@ class AsientoModel{
     }//fin-mostrarAsientoAlumnoLiSi
 
 
-    //Actualiza el estado del asiento cuando el alumno confirma la asistencia
+    //Actualiza el estado del asiento cuando el alumno del grupo Li confirma la asistencia
     public function actualizarAsientoEventoLi( $numCuenta ) {
 
         $sql = 'UPDATE asiento_evento_li
@@ -97,21 +98,38 @@ class AsientoModel{
     }//fin-actualizarAsientoEventoLi
 
 
-    //Consulta todos los asientos que pertenezcan a la misma carrera y turno
-    public function grupoAsientosAlumnos(){
+    //Actualiza el estado del asiento cuando el alumno del grupo LiSi confirma la asistencia
+    public function actualizarAsientoEventoLiSi( $numCuenta ) {
 
-        $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento.letra, asiento.numero, asiento.estado
+        $sql = 'UPDATE asiento_evento_lisi
+                JOIN asistencia 
+                ON asiento_evento_lisi.numCuenta = asistencia.numCuenta
+                SET asiento_evento_lisi.estado = 1
+                WHERE asistencia.numCuenta = ? AND asistencia.estado = 1';
+
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute( [$numCuenta ] );
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-actualizarAsientoEventoLiSi
+
+
+    //Consulta todos los asientos que pertenezcan al mismo turno
+    public function grupoAsientosAlumnosEventoLi(){
+
+        $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento_evento_li.letra, asiento_evento_li.numero, asiento_evento_li.estado
                 FROM alumno 
-                JOIN asiento
+                JOIN asiento_evento_li
                 ON alumno.numCuenta = asiento.numCuenta
-                WHERE alumno.carrera = ? AND alumno.turno = ? ';
+                WHERE alumno.turno = ? ';
 
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-grupoAsientosAlumnos
+    }//fin-grupoAsientosAlumnosEventosLi
 
 
     //Muestra el total de asientos que pertenezcan a la misma carrera y tuno
