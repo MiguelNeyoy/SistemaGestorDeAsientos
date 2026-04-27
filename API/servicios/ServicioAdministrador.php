@@ -69,7 +69,7 @@ class ServicioAdministrador
         $individual = [];
 
         foreach ($alumnosConfirmados as $alumno) {
-            $invitados = (int)$alumno['cantInvitado'];
+            $invitados = (int) $alumno['cantInvitado'];
             $total_invitados += $invitados;
 
             $grupo = $this->calcularGrupo($alumno['carrera'], $alumno['turno']);
@@ -141,7 +141,7 @@ class ServicioAdministrador
                 return $this->respuesta(false, "Error al actualizar la asistencia", 500);
             }
 
-            // TODO: LOGICA DE ASIENTOS COMPENDIDA (PENDIENTE)
+            // --- INICIO LOGICA DE ASIENTOS COMPENDIDA ---
             // Aqui se requerira instanciar el ServicioAsientos o llamar la logica
             // para asignar o liberar el lugar del alumno y de sus invitados. 
             // Esto depende del cambio de 'estado' (0 a 1 o viceversa), así que quedará en espera.

@@ -4,32 +4,46 @@ require_once __DIR__ . '/../servicios/ServicioAsientos.php';
 
 class ControladorAsientos
 {
+    private $servicioAsientos;
 
-    // private $servicioAsientos;
+    public function __construct()
+    {
+        $this->servicioAsientos = new ServicioAsientos();
+    }
 
-    // public function __construct()
-    // {
-    //     $this->servicioAsientos = new ServicioAsientos();
-    // }
+    public function verMapaAsientos()
+    {
+        try {
+            $res = $this->servicioAsientos->obtenerMapaAsientos();
+            echo json_encode($res);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                "success" => false,
+                "message" => "Error interno en el controlador de asientos"
+            ]);
+        }
+    }
 
-    // /**
-    //  * Reinicia todos los asientos SOLO PARA TEST
-    //  */
-    // public function reiniciarTeatro()
-    // {
-    //     // Lógica para reiniciar el teatro
-    //     http_response_code(200);
-    //     echo json_encode(["success" => true, "mensaje" => "Teatro reiniciado."]);
-    // }
+    public function verMiAsiento()
+    {
+        try {
+            $numCuenta = $_SERVER['JWT_NUMERO_CUENTA'] ?? null;
 
-    // /**
-    //  * para ver todos los asiento si es que exite el mapeo del teator
-    //  */
-    // public function verMapaAsientos()
-    // {
-    //     // Lógica para ver el mapa de asientos
-    //     $mapa = []; // Simulación de mapa de asientos
-    //     http_response_code(200);
-    //     echo json_encode(["success" => true, "mapa" => $mapa]);
-    // }
+            if (!$numCuenta) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "message" => "No autorizado"]);
+                return;
+            }
+
+            $res = $this->servicioAsientos->obtenerMiAsiento($numCuenta);
+            echo json_encode($res);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                "success" => false,
+                "message" => "Error interno en el controlador de asientos"
+            ]);
+        }
+    }
 }

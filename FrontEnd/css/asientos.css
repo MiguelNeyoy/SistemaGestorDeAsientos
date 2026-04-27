@@ -70,7 +70,7 @@ header {
   font-size: 10px;
   font-weight: bold;
   color: white;
-  user-select: none; /* Evita seleccion de texto al panear */
+  user-select: none;
   box-shadow: 
     0 4px 6px rgba(0,0,0,0.4),
     inset 0 2px 4px rgba(255,255,255,0.2);
@@ -140,10 +140,10 @@ header {
 
 .contenedor-scroll {
   width: 100%;
-  height: calc(100vh - 80px); /* Ajuste segun navbar */
-  overflow: hidden; /* IMPORTANTE: El visor es estatico */
+  height: calc(100vh - 80px);
+  overflow: hidden;
   position: relative;
-  background-color: transparent; /* Fondo transparente para mostrar el logo/fondo general */
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -156,32 +156,37 @@ header {
   align-items: center;
   min-width: max-content; 
   padding: 40px;
-  transform-origin: top center; /* Punto de pivote para el zoom */
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Transicion fluida */
+  transform-origin: top center;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
 /* Configuracion Base para escritorio */
 .teatro, .zona-superior {
-    transform: none !important; /* En desktop no queremos escalado individual */
+    transform: none !important;
 }
 
-/* Solo ajustes menores de tamaño en el mapa real */
+/* Ajustes para pantallas grandes */
 @media (max-width: 1200px) {
   .asiento { width: 34px; height: 34px; font-size: 9px; }
   .fila { gap: 15px; }
 }
 
+/* ========================= */
+/* 📱 RESPONSIVE TABLET       */
+/* ========================= */
 @media (max-width: 768px) {
   .asiento { width: 32px; height: 32px; font-size: 8px; }
   .fila { gap: 10px; }
   .mesa { width: 200px; }
 }
+
 .cabina {
-  text-align: center;    /* asegura que el texto “Cabina” quede centrado */
+  text-align: center;
   margin-bottom: 20px;
   font-weight: bold;
 }
+
 .asiento:hover {
   transform: translateY(-9px) scale(1.05);
   box-shadow: 
@@ -189,3 +194,72 @@ header {
     inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
+/* ========================= */
+/* 📱 RESPONSIVE MOBILE      */
+/* ========================= */
+@media (max-width: 576px) {
+  .contenedor-scroll {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    height: calc(100vh - 120px);
+  }
+  
+  .mapa-envoltura {
+    transform: scale(1.2) !important;
+    padding: 20px;
+  }
+  
+  .asiento {
+    width: 46px;
+    height: 46px;
+    font-size: 11px;
+  }
+  
+  .fila {
+    gap: 8px;
+  }
+  
+  .seccion {
+    gap: 3px;
+  }
+  
+  .teatro {
+    transform: none;
+    gap: 6px;
+  }
+  
+  .zona-superior {
+    transform: none;
+    margin-bottom: 40px;
+    gap: 6px;
+  }
+  
+  .mesa {
+    width: 100%;
+    max-width: 350px;
+    height: 50px;
+    font-size: 1em;
+  }
+  
+  .cabina {
+    margin-bottom: 15px;
+  }
+  
+  .hueco {
+    width: 30px;
+    height: 30px;
+  }
+  
+  #selectZona {
+    min-width: 120px;
+    font-size: 0.85rem;
+  }
+}
+
+.asiento:hover {
+  transform: translateY(-9px) scale(1.05);
+  box-shadow: 
+    0 12px 16px rgba(0,0,0,0.5),
+    inset 0 2px 4px rgba(255,255,255,0.3);
+}

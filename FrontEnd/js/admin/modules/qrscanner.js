@@ -3,7 +3,6 @@ import { state } from './state.js?v=5';
 let html5QrCode = null;
 let qrScannerModal = null;
 let qrResultModal = null;
-let qrEndpointModal = null;
 
 // Fake set of already scanned tokens
 const scannedTokens = new Set();
@@ -14,7 +13,6 @@ export function initQRModule() {
 
     qrScannerModal = new bootstrap.Modal(document.getElementById('qrScannerModal'));
     qrResultModal = new bootstrap.Modal(document.getElementById('qrResultModal'));
-    qrEndpointModal = new bootstrap.Modal(document.getElementById('qrEndpointModal'));
 
     const btnScanner = document.getElementById("btnEscanearQR");
     if (btnScanner) {
@@ -47,13 +45,9 @@ export function initQRModule() {
     if (btnConfirmar) {
         btnConfirmar.addEventListener("click", () => {
             qrResultModal.hide();
-            qrEndpointModal.show();
-            
-            // Simular cierre y auto-reinicio del escáner
             setTimeout(() => {
-                qrEndpointModal.hide();
                 openQRScanner();
-            }, 1500);
+            }, 300);
         });
     }
 }

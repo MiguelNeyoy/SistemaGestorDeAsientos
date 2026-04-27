@@ -1,60 +1,54 @@
 /**
- * LÓGICA DE RENDERIZADO Y ZOOM PAN DEL TEATRO
- * Desarrollado con JavaScript Vanilla - Enfoque Mobile-First
+ * LÓGICA DE RENDERIZADO Y SCROLL DEL TEATRO
+ * Desktop: Selector de zonas con zoom
+ * Móvil: Scroll nativo con asientos grandes
  */
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // --- 1. DICCIONARIO DE CALIBRACIÓN ---
-    // Aquí puedes ajustar manualmente los valores para centrar cada sección
-    // scale: Nivel de zoom (1.0 = 100%)
-    // x: Movimiento horizontal (px o %)
-    // y: Movimiento vertical (px o %)
+    const envoltura = document.querySelector('.mapa-envoltura');
+    const selectZona = document.getElementById('selectZona');
+
     const CONFIG_ZOOM = {
         "todos": {
-            scale: 0.35, // Se ve pequeño para que quepa todo el teatro
+            scale: 0.35,
             x: 0,
             y: 0
         },
         "superior": {
-            scale: 1.0,  // Zoom 1:1
-            x: 0,        // Centrado horizontal
-            y: 50        // Bajamos un poco la vista para ver KLM
+            scale: 1.0,
+            x: 0,
+            y: 50
         },
         "inferior": {
             scale: 0.8,
             x: 0,
-            y: -500      // Subimos el mapa para centrar el área de abajo (Teatro)
+            y: -500
         }
     };
 
-    const envoltura = document.querySelector('.mapa-envoltura');
-    const selectZona = document.getElementById('selectZona');
+    function esDispositivoMovil() {
+        return window.innerWidth <= 576;
+    }
 
-    /**
-     * Aplica la transformación fluida al contenedor del mapa
-     */
     function aplicarTransformacion(slug) {
+        if (esDispositivoMovil()) {
+            envoltura.style.transform = '';
+            return;
+        }
+
         const conf = CONFIG_ZOOM[slug] || CONFIG_ZOOM["todos"];
-        
-        // Aplicamos el transform: Combinamos escala y traslación
-        // Nota: La transición suave ya está definida en el CSS (.mapa-envoltura)
         envoltura.style.transform = `scale(${conf.scale}) translate(${conf.x}px, ${conf.y}px)`;
     }
 
-    // Escuchar cambios en el selector
     if (selectZona) {
         selectZona.addEventListener('change', (e) => {
             aplicarTransformacion(e.target.value);
         });
         
-        // Aplicar vista inicial por defecto
         aplicarTransformacion("todos");
     }
 
-    // --- 2. RENDERIZADO DINÁMICO DE ASIENTOS ---
-
-    // Zona Superior (KLM)
     const zonaSuperior = document.querySelector('.zona-superior');
     const letrasSuperior = "KLM";
 
@@ -85,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         asiento.classList.add('asiento');
                         asiento.textContent = idAsiento;
 
-                        // Lógica de estados (Uso de variables globales inyectadas desde PHP)
                         if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
                             asiento.classList.add('confirmado');
                         }
@@ -101,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Planta Baja (Teatro A-J)
     const teatro = document.querySelector('.teatro');
     const letrasTeatro = "JIHGFEDCBA";
 
@@ -116,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 { inicio: 24, fin: 30 }
             ];
 
-            if (f === (letrasTeatro.length - 1)) { // Fila A es especial
+            if (f === (letrasTeatro.length - 1)) {
                 secciones = [{ inicio: 1, fin: 34 }];
             }
 
