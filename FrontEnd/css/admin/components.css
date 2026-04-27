@@ -169,9 +169,10 @@
 
 .admin-icon--white,
 .admin-btn--primary .admin-icon,
+.admin-btn--secundary .admin-icon,
 .admin-sidebar__link .admin-icon,
 .bg-navy .admin-icon {
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(1) !important;
 }
 
 .admin-icon--edit {
