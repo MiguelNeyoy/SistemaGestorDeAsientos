@@ -3,11 +3,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="agregarAlumnoModalLabel"><i class="bi bi-person-plus-fill me-2"></i>Agregar Alumno</h5>
+                <h5 class="modal-title" id="agregarAlumnoModalLabel">
+                    <span class="admin-icon admin-icon--add me-2" style="filter: brightness(0) invert(1);"></span>
+                    Agregar Alumno
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formAgregarAlumno">
                 <div class="modal-body">
+                    <!-- ... campos del formulario ... -->
                     <div class="mb-3">
                         <label for="addNumCuenta" class="form-label">Número de Cuenta</label>
                         <input type="text" class="form-control" id="addNumCuenta" placeholder="Ej: 20241234" required>
@@ -43,9 +47,9 @@
                     <div id="addAlert" class="alert d-none" role="alert"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarNuevo">
-                        <span class="spinner-border spinner-border-sm d-none me-2" id="spinnerAdd" role="status" aria-hidden="true"></span>
+                    <button type="button" class="admin-btn admin-btn--outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="admin-btn admin-btn--primary" id="btnGuardarNuevo">
+                        <div class="admin-loader admin-hidden me-2" id="spinnerAdd" style="width:14px;height:14px;border-width:2px;"></div>
                         Registrar Alumno
                     </button>
                 </div>

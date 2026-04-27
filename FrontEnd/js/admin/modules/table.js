@@ -64,11 +64,11 @@ export function renderTable(filterText = "") {
     // Generar las filas de la tabla para cada alumno filtrado
     filtered.forEach(al => {
         // Definir el badge visual basado en el estado de asistencia
-        let estadoBadge = `<span class="badge badge-pendiente">Pendiente</span>`;
+        let estadoBadge = `<span class="admin-badge admin-badge--pendiente">Pendiente</span>`;
         if (al.asistencia_estado === 1 || al.asistencia_estado === "1") {
-            estadoBadge = `<span class="badge badge-confirmado">Sí Asiste</span>`;
+            estadoBadge = `<span class="admin-badge admin-badge--confirmado">Confirmado</span>`;
         } else if (al.asistencia_estado === 0 || al.asistencia_estado === "0") {
-            estadoBadge = `<span class="badge badge-rechazado">No Asistirá</span>`;
+            estadoBadge = `<span class="admin-badge admin-badge--rechazado">Rechazado</span>`;
         }
 
         // Simplificar el nombre de la carrera para la visualización en la tabla
@@ -86,17 +86,17 @@ export function renderTable(filterText = "") {
             <td data-label="No. Cuenta"><strong>${al.numCuenta}</strong></td>
             <td data-label="Nombre">${al.apellido} ${al.nombre}</td>
             <td data-label="Grupo">${getGrupo(al.carrera, al.turno)}</td>
-            <td data-label="Invitados" class="text-center fs-5">${al.cantInvitado || 0}</td>
-            <td data-label="Correo" class="admin-table__email">${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
-            <td data-label="Asiento" class="text-center">${al.asiento || "-"}</td>
-            <td data-label="Estado" class="text-center">${estadoBadge}</td>
-            <td data-label="Acciones" class="text-center">
-                <div class="btn-group shadow-sm" role="group">
-                    <button type="button" class="btn btn-sm btn-outline-primary" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')">
-                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline ms-1">Editar</span>
+            <td data-label="Invitados" class="admin-text-center">${al.cantInvitado || 0}</td>
+            <td data-label="Correo" class="admin-table__email">${al.email || '<span class="admin-text-muted">Sin correo</span>'}</td>
+            <td data-label="Asiento" class="admin-text-center">${al.asiento || "-"}</td>
+            <td data-label="Estado" class="admin-text-center">${estadoBadge}</td>
+            <td data-label="Acciones" class="admin-text-center">
+                <div class="admin-action-group">
+                    <button type="button" class="admin-btn admin-btn--outline" style="padding: 0.5rem;" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')">
+                        <span class="admin-icon admin-icon--edit"></span> <span class="admin-hide-mobile ms-1">Editar</span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-success" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')">
-                        <i class="bi bi-envelope-paper"></i> <span class="d-none d-md-inline ms-1">Enviar</span>
+                    <button type="button" class="admin-btn admin-btn--outline" style="padding: 0.5rem;" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')">
+                        <span class="admin-icon admin-icon--send"></span> <span class="admin-hide-mobile ms-1">Enviar</span>
                     </button>
                 </div>
             </td>
@@ -116,9 +116,9 @@ export function setFilterType(type) {
     const btn = document.getElementById("btnMostrarTodo");
     if (btn) {
         if (type === 'ALL') {
-            btn.classList.add('d-none');
+            btn.classList.add('admin-hidden');
         } else {
-            btn.classList.remove('d-none');
+            btn.classList.remove('admin-hidden');
         }
     }
 

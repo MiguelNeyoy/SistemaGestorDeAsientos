@@ -2,21 +2,21 @@
     <div class="admin-topbar__title-wrapper">
         <h1 class="admin-topbar__title">Directorio de Alumnos</h1>
         <div class="admin-topbar__clock">
-            <i class="bi bi-clock"></i>
+            <span class="admin-icon admin-icon--chair" style="width: 16px; height: 16px;"></span>
             <span id="lastUpdated">Actualizado: --:--:--</span>
         </div>
     </div>
     <div class="admin-topbar__actions">
-        <button class="admin-btn admin-btn--secondary" onclick="abrirModalEscanerQR()">
-            <i class="bi bi-qr-code-scan"></i>
+        <button class="admin-btn admin-btn--secundary" onclick="abrirModalEscanerQR()">
+            <span class="admin-icon admin-icon--scan"></span>
             <span>Escanear QR</span>
         </button>
-        <button class="admin-btn admin-btn--primary" onclick="abrirModalEnviarQR()">
-            <i class="bi bi-envelope-at"></i>
+        <button class="admin-btn admin-btn--secundary" onclick="abrirModalEnviarQR()">
+            <span class="admin-icon admin-icon--send"></span>
             <span>Enviar QRs</span>
         </button>
         <button class="admin-btn admin-btn--accent" onclick="abrirModalAgregarAlumno()">
-            <i class="bi bi-person-plus"></i>
+            <span class="admin-icon admin-icon--add"></span>
             <span>Agregar Alumno</span>
         </button>
     </div>

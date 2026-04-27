@@ -1,37 +1,54 @@
 /* Responsive Styles for Admin Dashboard - MVAdmin1.2.5 inspiration */
 
+/* Mobile First Adjustments */
 @media (max-width: 768px) {
+    :root {
+        --font-headline-xl: var(--font-h-xl-mobile);
+        --font-headline-lg: var(--font-h-lg-mobile);
+        --font-headline-md: var(--font-h-md-mobile);
+        --font-body-md: var(--font-body-mobile);
+        --font-label-sm: var(--font-label-mobile);
+    }
+
     /* Layout Adjustments */
     .admin-content {
         padding: 1rem;
     }
 
-    /* Topbar compact */
+    /* Topbar compact - MVAdmin1.2.5 Style */
     .admin-topbar {
         flex-direction: column;
         gap: 1rem;
-        padding: 1rem;
+        padding: 1.25rem 1rem;
         align-items: stretch;
+        position: sticky;
+        top: 0;
+        z-index: 900;
     }
 
     .admin-topbar__title-wrapper {
         text-align: center;
     }
 
+    .admin-topbar__title {
+        font-size: 1.5rem;
+    }
+
     .admin-topbar__actions {
-        justify-content: center;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
     }
 
     .admin-btn span {
-        display: none; /* Only icons on mobile buttons */
+        display: none; /* Solo iconos en botones móviles */
     }
 
     .admin-btn {
-        padding: 0.75rem;
+        padding: 0.875rem;
         justify-content: center;
-        flex: 1;
-        min-width: 50px;
+        min-width: unset;
+        border-radius: 8px;
     }
 
     /* Metrics Grid 2x2 */
@@ -54,12 +71,7 @@
     }
 
     .admin-metric-card__value {
-        font-size: 2.5rem;
-    }
-
-    /* Search bar width */
-    .admin-search {
-        width: 100%;
+        font-size: 1.5rem;
     }
 
     /* Directory Header */
@@ -67,19 +79,20 @@
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
+        padding: 1rem;
     }
 
     .admin-directory__controls {
         flex-direction: column;
     }
 
-    /* Table to Cards Transformation */
-    .admin-table-wrapper {
-        border: none;
+    .admin-search {
+        width: 100%;
     }
 
+    /* Table to Cards Transformation */
     .admin-table thead {
-        display: none; /* Hide headers */
+        display: none;
     }
 
     .admin-table, 
@@ -92,7 +105,7 @@
 
     .admin-table tr {
         background-color: var(--color-surface);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         border-radius: 12px;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--color-border);
@@ -108,13 +121,12 @@
         left: 0;
         top: 0;
         bottom: 0;
-        width: 6px;
+        width: 4px;
         background-color: var(--color-secondary);
     }
 
-    /* Change color if confirmed */
     .admin-table tr:has(.badge-confirmado)::before {
-        background-color: var(--color-gold);
+        background-color: var(--color-success);
     }
     
     .admin-table tr:has(.badge-rechazado)::before {
@@ -123,9 +135,9 @@
 
     .admin-table td {
         text-align: right;
-        padding: 0.75rem 0;
+        padding: 0.5rem 0;
         border-bottom: 1px solid #f1f5f9;
-        font-size: 2.2rem;
+        font-size: 0.9rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -134,28 +146,30 @@
     .admin-table td:last-child {
         border-bottom: none;
         justify-content: center;
-        margin-top: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 1rem;
     }
 
     .admin-table td::before {
         content: attr(data-label);
         float: left;
-        font-weight: 700;
+        font-weight: 600;
         color: var(--color-text-sub);
-        font-size: 1.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    /* Special handling for Name and Account Number */
+    /* Special handling for Name */
     .admin-table td[data-label="Nombre"] {
         display: block;
         text-align: left;
-        font-size: 2.8rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: var(--color-navy);
-        border-bottom: 2px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
         margin-bottom: 0.5rem;
-        padding-bottom: 1rem;
+        padding-bottom: 0.75rem;
     }
     
     .admin-table td[data-label="Nombre"]::before {
@@ -164,23 +178,26 @@
 
     .admin-table td[data-label="No. Cuenta"] {
         background: #f8fafc;
-        margin: -1rem -1rem 1rem -1rem;
-        padding: 0.75rem 1rem;
-        font-size: 1.8rem;
+        margin: -1rem -1rem 0.5rem -1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
     }
 
-    /* Button group in cards */
+    /* Actions buttons in card */
     .admin-table td[data-label="Acciones"]::before {
         display: none;
     }
     
     .admin-table .btn-group {
         width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
     }
     
     .admin-table .btn-group .btn {
-        flex: 1;
-        padding: 0.8rem;
-        font-size: 2rem;
+        padding: 0.6rem;
+        font-size: 0.85rem;
+        border-radius: 6px !important;
     }
 }

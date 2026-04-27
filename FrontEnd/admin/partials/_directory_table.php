@@ -1,12 +1,12 @@
 <section class="admin-directory">
     <div class="admin-directory__header">
         <h2 class="admin-directory__title">
-            <i class="bi bi-list-check"></i> Directorio de Asistencia
+            <span class="admin-icon admin-icon--chair"></span> Directorio de Asistencia
         </h2>
         
         <div class="admin-directory__controls">
-            <button id="btnMostrarTodo" class="admin-btn admin-btn--outline d-none" onclick="setFilterType('ALL')">
-                <i class="bi bi-funnel-fill"></i> Mostrar Todo
+            <button id="btnMostrarTodo" class="admin-btn admin-btn--outline admin-hidden" onclick="window.setFilterType('ALL')">
+                <span class="admin-icon admin-icon--chair" style="width:14px;height:14px;"></span> Mostrar Todo
             </button>
             <div class="admin-search">
                 <i class="bi bi-search admin-search__icon"></i>
@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="admin-directory__body">
+    <div class="admin-directory__body" id="directorioCardBody">
         <div id="directorioHintMobile" class="admin-directory__hint" style="display: none;">
             <i class="bi bi-info-circle"></i>
             <p>Utiliza la barra de búsqueda o toca alguna tarjeta métrica para mostrar alumnos.</p>
@@ -28,18 +28,18 @@
                         <th>No. Cuenta</th>
                         <th>Nombre Completo</th>
                         <th>Carrera/Turno</th>
-                        <th class="text-center">Invitados</th>
+                        <th class="admin-text-center">Invitados</th>
                         <th>Correo Contacto</th>
-                        <th class="text-center">Asiento</th>
-                        <th class="text-center">Estado</th>
-                        <th class="text-center">Acciones</th>
+                        <th class="admin-text-center">Asiento</th>
+                        <th class="admin-text-center">Estado</th>
+                        <th class="admin-text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="alumnosTableBody">
                     <tr>
                         <td colspan="8" class="admin-table__loading">
-                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                            Cargando datos del servidor...
+                            <div class="admin-loader"></div>
+                            <span>Cargando datos del servidor...</span>
                         </td>
                     </tr>
                 </tbody>
