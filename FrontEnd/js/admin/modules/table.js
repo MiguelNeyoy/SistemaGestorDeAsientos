@@ -85,9 +85,9 @@ export function renderTable(filterText = "") {
         tr.innerHTML = `
             <td><strong>${al.numCuenta}</strong></td>
             <td>${al.apellido} ${al.nombre}</td>
-            <td><small>${getGrupo(al.carrera, al.turno)}</small></td>
+            <td>${getGrupo(al.carrera, al.turno)}</td>
             <td class="text-center fs-5">${al.cantInvitado || 0}</td>
-            <td>${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
+            <td class="admin-table__email">${al.email || '<span class="text-muted fst-italic">Sin correo</span>'}</td>
             <td class="text-center text-muted">-</td>
             <td class="text-center">${estadoBadge}</td>
             <td class="text-center">

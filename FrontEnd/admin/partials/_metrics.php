@@ -83,14 +83,4 @@
         </div>
     </div>
 
-    <!-- Acceso Mapa (Shortcut) -->
-    <a href="../asientos.php" class="admin-metric-card admin-metric-card--link">
-        <div class="admin-metric-card__icon admin-metric-card__icon--black">
-            <i class="bi bi-grid-3x3-gap-fill"></i>
-        </div>
-        <div class="admin-metric-card__content">
-            <span class="admin-metric-card__label">Mapa de Asientos</span>
-            <span class="admin-metric-card__link-text">Ver Mapa</span>
-        </div>
-    </a>
 </div>

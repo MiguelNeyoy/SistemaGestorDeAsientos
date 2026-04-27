@@ -22,10 +22,11 @@
 
   /* Typography — Poppins (Escalado +1.5rem aprox) */
   --font-family: 'Poppins', sans-serif;
-  --font-headline-xl: 700 4.5rem/5rem var(--font-family);
-  --font-headline-md: 600 3rem/3.5rem var(--font-family);
-  --font-body-md: 400 2rem/2.5rem var(--font-family);
-  --font-label-sm: 600 1.8rem/2.2rem var(--font-family);
+  --font-headline-xl: 700 6rem/6.5rem var(--font-family);
+  --font-headline-lg: 700 5rem/5.5rem var(--font-family);
+  --font-headline-md: 600 3.5rem/4rem var(--font-family);
+  --font-body-md: 400 2.5rem/3rem var(--font-family);
+  --font-label-sm: 600 2rem/2.4rem var(--font-family);
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
