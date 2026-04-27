@@ -49,11 +49,6 @@ function handleLogout() {
 
 async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
-    if (statusText) {
-        statusText.innerText = "Actualizando...";
-        // statusText.classList.remove("bg-success", "bg-danger");
-        // statusText.classList.add("bg-secondary");
-    }
 
     try {
         const { metricasRes, alumnosRes } = await fetchDashboardData(token);
@@ -98,13 +93,11 @@ async function loadDashboardData(token) {
         if (statusText) {
             const now = new Date();
             statusText.innerText = `Actualizado: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            statusText.classList.replace("bg-secondary", "bg-success");
         }
     } catch (err) {
         console.error("Error obteniendo datos del dashboard:", err);
         if (statusText) {
             statusText.innerText = "Error de conexión";
-            // statusText.classList.replace("bg-secondary", "bg-danger");
         }
     }
 }

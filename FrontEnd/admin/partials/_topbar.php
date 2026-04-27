@@ -7,11 +7,11 @@
         </div>
     </div>
     <div class="admin-topbar__actions">
-        <button class="admin-btn admin-btn--secondary" onclick="window.location.href='modals/modal_escaner_qr.php'">
+        <button class="admin-btn admin-btn--secondary" onclick="abrirModalEscanerQR()">
             <i class="bi bi-qr-code-scan"></i>
             <span>Escanear QR</span>
         </button>
-        <button class="admin-btn admin-btn--primary" onclick="window.location.href='modals/modal_enviar_qr.php'">
+        <button class="admin-btn admin-btn--primary" onclick="abrirModalEnviarQR()">
             <i class="bi bi-envelope-at"></i>
             <span>Enviar QRs</span>
         </button>

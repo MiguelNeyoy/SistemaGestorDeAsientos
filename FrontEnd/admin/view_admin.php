@@ -55,6 +55,16 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
             const modal = new bootstrap.Modal(document.getElementById('agregarAlumnoModal'));
             modal.show();
         }
+
+        function abrirModalEscanerQR() {
+            const modal = new bootstrap.Modal(document.getElementById('qrScannerModal'));
+            modal.show();
+        }
+
+        function abrirModalEnviarQR() {
+            const modal = new bootstrap.Modal(document.getElementById('enviarQRModal'));
+            modal.show();
+        }
     </script>
 
     <!-- Modals -->
