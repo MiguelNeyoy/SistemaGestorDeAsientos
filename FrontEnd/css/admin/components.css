@@ -167,6 +167,13 @@
     background-size: contain;
 }
 
+.admin-icon--white,
+.admin-btn--primary .admin-icon,
+.admin-sidebar__link .admin-icon,
+.bg-navy .admin-icon {
+    filter: brightness(0) invert(1);
+}
+
 .admin-icon--edit {
     background-image: var(--icon-edit);
 }
@@ -193,6 +200,18 @@
 
 .admin-icon--send {
     background-image: var(--icon-send-email);
+}
+
+.admin-icon--menu {
+    background-image: var(--icon-menu);
+}
+
+.admin-icon--student {
+    background-image: var(--icon-student);
+}
+
+.admin-icon--student-disable {
+    background-image: var(--icon-student-disable);
 }
 
 /* Badges */

@@ -27,7 +27,7 @@
     <!-- LI 4-1 -->
     <div class="admin-metric-card" onclick="window.setFilterType('LI4-1')" title="Filtrar por LI 4-1 (Matutino)">
         <div class="admin-metric-card__icon admin-metric-card__icon--info">
-            <span class="admin-icon admin-icon--chair"></span>
+            <span class="admin-icon admin-icon--student"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">LI 4-1</span>
@@ -39,7 +39,7 @@
     <!-- LI 4-2 -->
     <div class="admin-metric-card" onclick="window.setFilterType('LI4-2')" title="Filtrar por LI 4-2 (Vespertino)">
         <div class="admin-metric-card__icon admin-metric-card__icon--purple">
-            <span class="admin-icon admin-icon--chair"></span>
+            <span class="admin-icon admin-icon--student"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">LI 4-2</span>
@@ -51,7 +51,7 @@
     <!-- LISI 4-1 -->
     <div class="admin-metric-card" onclick="window.setFilterType('LISI4-1')" title="Filtrar por LISI 4-1 (Matutino)">
         <div class="admin-metric-card__icon admin-metric-card__icon--warning">
-            <span class="admin-icon admin-icon--chair"></span>
+            <span class="admin-icon admin-icon--student"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">LISI 4-1</span>
@@ -63,7 +63,7 @@
     <!-- LISI 4-2 -->
     <div class="admin-metric-card" onclick="window.setFilterType('LISI4-2')" title="Filtrar por LISI 4-2 (Vespertino)">
         <div class="admin-metric-card__icon admin-metric-card__icon--danger">
-            <span class="admin-icon admin-icon--chair"></span>
+            <span class="admin-icon admin-icon--student"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">LISI 4-2</span>
@@ -75,7 +75,7 @@
     <!-- No Asistirán -->
     <div class="admin-metric-card" onclick="window.setFilterType('RECHAZADOS')" title="Filtrar por Rechazados">
         <div class="admin-metric-card__icon admin-metric-card__icon--dark">
-            <span class="admin-icon admin-icon--logout"></span>
+            <span class="admin-icon admin-icon--student-disable"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">No Asistirán</span>

@@ -36,13 +36,16 @@
     .admin-sidebar {
         width: 80px;
     }
+
     .admin-main {
         margin-left: 80px;
     }
+
     .admin-sidebar__logo {
         width: 40px !important;
     }
-    .admin-sidebar__link span, 
+
+    .admin-sidebar__link span,
     .admin-sidebar__logout span {
         display: none;
     }
@@ -52,11 +55,22 @@
     .admin-layout {
         flex-direction: column;
     }
+
     .admin-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        display: none;
+        width: 260px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1050;
+        box-shadow: var(--shadow-lg);
     }
+
+    .admin-sidebar--active {
+        display: flex;
+    }
+
     .admin-main {
         margin-left: 0;
     }

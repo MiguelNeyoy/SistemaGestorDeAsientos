@@ -52,6 +52,10 @@
   --icon-logout: url('../../img/icon_logOut.svg');
   --icon-scan-qr: url('../../img/icon_scanerQR.svg');
   --icon-send-email: url('../../img/icon_sendEmail.svg');
+  --icon-menu: url('../../img/icon_menu.svg');
+  --icon-student: url('../../img/icon_student.svg');
+  --icon-student-disable: url('../../img/icon_student_disable.icon');
+  --icon-update: url('../../img/icon_update.svg');
 
   /* Border & Spacing */
   --radius-sm: 4px;

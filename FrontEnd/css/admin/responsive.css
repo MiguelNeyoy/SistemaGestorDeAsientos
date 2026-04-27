@@ -26,8 +26,16 @@
         z-index: 900;
     }
 
+    .admin-topbar__header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        width: 100%;
+    }
+
     .admin-topbar__title-wrapper {
-        text-align: center;
+        text-align: left;
     }
 
     .admin-topbar__title {
@@ -41,7 +49,8 @@
     }
 
     .admin-btn span {
-        display: none; /* Solo iconos en botones móviles */
+        display: none;
+        /* Solo iconos en botones móviles */
     }
 
     .admin-btn {
@@ -95,9 +104,9 @@
         display: none;
     }
 
-    .admin-table, 
-    .admin-table tbody, 
-    .admin-table tr, 
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
     .admin-table td {
         display: block;
         width: 100%;
@@ -128,7 +137,7 @@
     .admin-table tr:has(.badge-confirmado)::before {
         background-color: var(--color-success);
     }
-    
+
     .admin-table tr:has(.badge-rechazado)::before {
         background-color: var(--color-error);
     }
@@ -171,7 +180,7 @@
         margin-bottom: 0.5rem;
         padding-bottom: 0.75rem;
     }
-    
+
     .admin-table td[data-label="Nombre"]::before {
         display: none;
     }
@@ -187,14 +196,14 @@
     .admin-table td[data-label="Acciones"]::before {
         display: none;
     }
-    
+
     .admin-table .btn-group {
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 0.5rem;
     }
-    
+
     .admin-table .btn-group .btn {
         padding: 0.6rem;
         font-size: 0.85rem;
