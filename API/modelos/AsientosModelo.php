@@ -81,12 +81,12 @@ class AsientoModel{
 
 
     //Actualiza el estado del asiento cuando el alumno confirma la asistencia
-    public function actualizarAsiento( $numCuenta ) {
+    public function actualizarAsientoEventoLi( $numCuenta ) {
 
-        $sql = 'UPDATE asiento
+        $sql = 'UPDATE asiento_evento_li
                 JOIN asistencia 
-                ON asiento.numCuenta = asistencia.numCuenta
-                SET asiento.estado = 1
+                ON asiento_evento_li.numCuenta = asistencia.numCuenta
+                SET asiento_evento_li.estado = 1
                 WHERE asistencia.numCuenta = ? AND asistencia.estado = 1';
 
         $stmt = $this->db->prepare( $sql );
@@ -94,7 +94,7 @@ class AsientoModel{
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-actualizarAsiento
+    }//fin-actualizarAsientoEventoLi
 
 
     //Consulta todos los asientos que pertenezcan a la misma carrera y turno
