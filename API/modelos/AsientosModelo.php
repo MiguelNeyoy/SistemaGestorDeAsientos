@@ -20,10 +20,10 @@ class AsientoModel{
 
 
     //Consulta todos los asientos y muestra el estado del mismo
-    public function mostrarAsientos(){
+    public function mostrarAsientosEventoLi(){
 
         $sql = 'SELECT letra, numero, estado 
-                FROM asiento';
+                FROM asiento_evento_li';
 
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
