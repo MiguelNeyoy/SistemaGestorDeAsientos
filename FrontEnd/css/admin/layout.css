@@ -22,14 +22,14 @@
     color: var(--color-white);
     display: flex;
     flex-direction: column;
-    position: sticky;
-    top: 0;
+    position: fixed;
     height: 100vh;
     z-index: 1000;
 }
 
 .admin-main {
     flex: 1;
+    margin-left: 260px;
     display: flex;
     flex-direction: column;
 }
@@ -41,6 +41,10 @@
 @media (max-width: 991px) {
     .admin-sidebar {
         width: 80px;
+    }
+
+    .admin-main {
+        margin-left: 80px;
     }
 
     .admin-sidebar__logo {
@@ -81,5 +85,10 @@
 
     .admin-main {
         margin-left: 0;
+    }
+
+    .admin-sidebar__link span,
+    .admin-sidebar__logout span {
+        display: inline !important;
     }
 }

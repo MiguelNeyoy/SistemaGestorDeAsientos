@@ -10,6 +10,9 @@
                 <span id="lastUpdated">Actualizado: --:--:--</span>
             </div>
         </div>
+        <a href="?logout=true" class="admin-btn admin-btn--icon-only admin-hide-desktop" style="margin-left: auto; background: transparent; border: none; padding: 0.5rem;">
+            <span class="admin-icon admin-icon--logout" style="width: 24px; height: 24px; filter: brightness(0) invert(1);"></span>
+        </a>
     </div>
     <div class="admin-topbar__actions">
         <button class="admin-btn admin-btn--secundary" onclick="abrirModalEscanerQR()">
