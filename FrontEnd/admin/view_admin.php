@@ -83,6 +83,32 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                     }
                 });
             }
+
+            // Lógica para visibilidad de la tabla en versión móvil
+            const searchInput = document.getElementById('searchInput');
+            const tbody = document.getElementById('alumnosTableBody');
+            const hint = document.getElementById('directorioHintMobile');
+
+            if (window.innerWidth <= 768 && hint) {
+                hint.style.display = 'block';
+            }
+
+            function showMobileTable() {
+                if (tbody) tbody.classList.add('has-results');
+                if (hint) hint.style.display = 'none';
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    if (searchInput.value.trim().length > 0) {
+                        showMobileTable();
+                    }
+                });
+            }
+
+            document.querySelectorAll('.admin-metric-card, #btnMostrarTodo').forEach(el => {
+                el.addEventListener('click', showMobileTable);
+            });
         });
     </script>
 

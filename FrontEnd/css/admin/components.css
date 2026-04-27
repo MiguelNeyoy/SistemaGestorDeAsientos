@@ -214,6 +214,10 @@
     background-image: var(--icon-student-disable);
 }
 
+.admin-icon--update {
+    background-image: var(--icon-update);
+}
+
 /* Badges */
 .admin-badge {
     display: inline-flex;

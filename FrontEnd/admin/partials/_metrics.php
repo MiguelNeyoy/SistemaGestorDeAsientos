@@ -2,7 +2,7 @@
     <!-- Alumnos Confirmados -->
     <div class="admin-metric-card" onclick="window.setFilterType('CONFIRMADOS')" title="Filtrar por Confirmados">
         <div class="admin-metric-card__icon admin-metric-card__icon--success">
-            <span class="admin-icon admin-icon--chair"></span>
+            <span class="admin-icon admin-icon--student"></span>
         </div>
         <div class="admin-metric-card__content">
             <span class="admin-metric-card__label">Alumnos Confirmados</span>

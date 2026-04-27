@@ -3,11 +3,17 @@
     font-family: var(--font-family);
     font-size: var(--font-body-md);
     color: var(--color-text-main);
+    overflow-x: hidden;
 }
 
 .admin-layout {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.admin-hide-desktop {
+    display: none !important;
 }
 
 .admin-sidebar {
@@ -16,14 +22,14 @@
     color: var(--color-white);
     display: flex;
     flex-direction: column;
-    position: fixed;
+    position: sticky;
+    top: 0;
     height: 100vh;
     z-index: 1000;
 }
 
 .admin-main {
     flex: 1;
-    margin-left: 260px;
     display: flex;
     flex-direction: column;
 }
@@ -35,10 +41,6 @@
 @media (max-width: 991px) {
     .admin-sidebar {
         width: 80px;
-    }
-
-    .admin-main {
-        margin-left: 80px;
     }
 
     .admin-sidebar__logo {
@@ -56,8 +58,12 @@
         flex-direction: column;
     }
 
+    .admin-hide-desktop {
+        display: inline-flex !important;
+    }
+
     .admin-sidebar {
-        display: none;
+        display: flex;
         width: 260px;
         height: 100vh;
         position: fixed;
@@ -65,10 +71,12 @@
         top: 0;
         z-index: 1050;
         box-shadow: var(--shadow-lg);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
     }
 
     .admin-sidebar--active {
-        display: flex;
+        transform: translateX(0);
     }
 
     .admin-main {

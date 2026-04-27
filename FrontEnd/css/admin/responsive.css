@@ -24,6 +24,17 @@
         position: sticky;
         top: 0;
         z-index: 900;
+        background-color: var(--color-navy);
+        color: var(--color-white);
+    }
+    
+    .admin-topbar__title {
+        font-size: 1.5rem;
+        color: var(--color-white);
+    }
+    
+    .admin-topbar__clock {
+        color: rgba(255, 255, 255, 0.7);
     }
 
     .admin-topbar__header {
@@ -48,16 +59,22 @@
         gap: 0.5rem;
     }
 
-    .admin-btn span {
+    .admin-btn span:not(.admin-icon) {
         display: none;
         /* Solo iconos en botones móviles */
     }
 
-    .admin-btn {
+    .admin-btn.admin-btn--secundary {
         padding: 0.875rem;
         justify-content: center;
         min-width: unset;
         border-radius: 8px;
+        background-color: transparent;
+        border: none;
+    }
+    
+    .admin-btn.admin-btn--secundary .admin-icon {
+        filter: brightness(0) invert(1);
     }
 
     /* Metrics Grid 2x2 */
@@ -111,16 +128,21 @@
         display: block;
         width: 100%;
     }
+    
+    /* Hide the table initially in mobile, requires interaction */
+    #alumnosTableBody:not(.has-results) tr {
+        display: none;
+    }
 
     .admin-table tr {
         background-color: var(--color-surface);
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         border-radius: 12px;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--color-border);
         overflow: hidden;
         position: relative;
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     /* Status indicator bar like MVAdmin */
@@ -144,9 +166,9 @@
 
     .admin-table td {
         text-align: right;
-        padding: 0.5rem 0;
+        padding: 0.3rem 0;
         border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
