@@ -63,6 +63,22 @@ class AsientoModel{
 
     }//fin-mostrarAsientoAlumnoLi
 
+    //Consulta el asiento al que pertenece un solo alumno del grupo LiSi
+    public function mostrarAsientoAlumnoLiSi( $numCuenta ){
+        
+        $sql = 'SELECT alumno.numCuenta, alumno.apellido, asiento_evento_lisi.letra, asiento_evento_lisi.numero 
+                FROM alumno
+                INNER JOIN asiento_evento_lisi 
+                ON alumno.numCuenta = asiento_evento_lisi.numCuenta
+                WHERE asiento_evento_lisi.numCuenta = ?';
+
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute( [$numCuenta] );
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-mostrarAsientoAlumnoLiSi
+
 
     //Actualiza el estado del asiento cuando el alumno confirma la asistencia
     public function actualizarAsiento( $numCuenta ) {
