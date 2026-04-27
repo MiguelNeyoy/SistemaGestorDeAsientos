@@ -83,10 +83,14 @@ if ($tipoUsuario === "admin") {
   <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
     <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
       <!-- Botón Volver -->
-      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'index.php'; ?>"
-        class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
-        <i class="bi bi-arrow-left"></i> <span class="d-none d-md-inline">Regresar al panel</span>
-      </a>
+   <?php if ($tipoUsuario === 'admin'): ?>
+  <a id="btnRegresar" 
+     href="admin/view_admin.php"
+     class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
+     <i class="bi bi-arrow-left"></i> 
+     <span class="d-none d-md-inline">Regresar al panel</span>
+  </a>
+<?php endif; ?>
 
       <!-- Titulo -->
       <span class="navbar-brand mb-0 h1 fs-5 fw-bold m-0 p-0 text-white">
@@ -95,11 +99,11 @@ if ($tipoUsuario === "admin") {
 
       <!-- Selector Zonas (Transform Zoom) -->
       <div class="m-0" style="width: auto;">
-        <select id="selectZona" class="form-select form-select-sm text-dark fw-bold border-0 shadow-sm"
+        <select id="selectEvento" class="form-select form-select-sm text-dark fw-bold border-0 shadow-sm"
           style="border-radius: 8px; font-size: 0.85rem;">
-          <option value="todos">Ver Todo (Vista Aérea)</option>
-          <option value="superior">Zona Superior (Palcos/KLM)</option>
-          <option value="inferior">Planta Baja (General/VIP)</option>
+          <option value="todos">Seleccionar Evento</option>
+          <option value="superior">Evento 1</option>
+          <option value="inferior">Evento 2</option>
         </select>
       </div>
       <!-- Espaciador para centrar titulo en escritorio -->

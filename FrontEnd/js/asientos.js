@@ -1,54 +1,35 @@
-/**
- * LÓGICA DE RENDERIZADO Y SCROLL DEL TEATRO
- * Desktop: Selector de zonas con zoom
- * Móvil: Scroll nativo con asientos grandes
- */
-
 document.addEventListener("DOMContentLoaded", () => {
-    
     const envoltura = document.querySelector('.mapa-envoltura');
-    const selectZona = document.getElementById('selectZona');
+    const selectEvento = document.getElementById('selectEvento');
 
-    const CONFIG_ZOOM = {
-        "todos": {
-            scale: 0.35,
-            x: 0,
-            y: 0
-        },
-        "superior": {
-            scale: 1.0,
-            x: 0,
-            y: 50
-        },
-        "inferior": {
-            scale: 0.8,
-            x: 0,
-            y: -500
-        }
-    };
+    const CONFIG_ZOOM_COMPLETO = { scale: 0.6, x: 0, y: 0 };
 
     function esDispositivoMovil() {
         return window.innerWidth <= 576;
     }
 
-    function aplicarTransformacion(slug) {
+    function aplicarVistaCompleta() {
         if (esDispositivoMovil()) {
             envoltura.style.transform = '';
             return;
         }
-
-        const conf = CONFIG_ZOOM[slug] || CONFIG_ZOOM["todos"];
-        envoltura.style.transform = `scale(${conf.scale}) translate(${conf.x}px, ${conf.y}px)`;
+        envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
     }
 
-    if (selectZona) {
-        selectZona.addEventListener('change', (e) => {
-            aplicarTransformacion(e.target.value);
-        });
-        
-        aplicarTransformacion("todos");
+    if (selectEvento) {
+        if (window.TIPO_USUARIO === "admin") {
+            selectEvento.addEventListener('change', (e) => {
+                aplicarVistaCompleta();
+                console.log("Evento seleccionado:", e.target.value);
+            });
+        } else {
+            selectEvento.style.display = "none";
+        }
     }
 
+    aplicarVistaCompleta();
+
+    // === Renderizado de asientos ===
     const zonaSuperior = document.querySelector('.zona-superior');
     const letrasSuperior = "KLM";
 
@@ -80,10 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         asiento.textContent = idAsiento;
 
                         if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                            asiento.classList.add('confirmado');
+                            asiento.classList.add('mi-asiento');
                         }
                         if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                            asiento.classList.add('confirmado');
+                            asiento.classList.add('ocupado');
                         }
                     }
                     secDiv.appendChild(asiento);
@@ -123,12 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     asiento.textContent = idAsiento;
 
                     if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-    asiento.classList.add('mi-asiento'); // verde
-}
-
-if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-    asiento.classList.add('ocupado'); // rojo
-}
+                        asiento.classList.add('mi-asiento');
+                    }
+                    if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
+                        asiento.classList.add('ocupado');
+                    }
 
                     secDiv.appendChild(asiento);
                 }

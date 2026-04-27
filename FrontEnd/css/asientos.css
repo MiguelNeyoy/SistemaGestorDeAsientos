@@ -60,7 +60,7 @@ header {
   flex-shrink: 0;
   width: 38px;
   height: 38px;
-  background: linear-gradient(145deg, #5f8bd7, #1c6bb9);
+  background: #0909bd;
   border-radius: 12px 12px 6px 6px;
   position: relative;
   cursor: pointer;
@@ -95,7 +95,7 @@ header {
 }
 
 .libre {
-  background-color: #969796;
+  background-color: #454645;
 }
 
 .no-disponible {
@@ -264,8 +264,8 @@ header {
     inset 0 2px 4px rgba(255,255,255,0.3);
 }
 .asiento {
-    background-color: #ccc;
-    color: black;
+    background-color: #727171;
+    color: rgb(245, 243, 243);
 }
 
 .mi-asiento {
@@ -275,6 +275,7 @@ header {
 }
 
 .ocupado {
-  background: #dc3545 !important;
+  background: #2323e1 !important;
   color: white;
 }
+
