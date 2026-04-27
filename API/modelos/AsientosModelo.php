@@ -149,21 +149,38 @@ class AsientoModel{
     }//fin-grupoAsientosAlumnosEventosLiSi
 
 
-    //Muestra el total de asientos que pertenezcan a la misma carrera y tuno
+    //Muestra el total de asientos que pertenezcan al mismo turno
     public function totalAsientosPorGrupoEventoLi() {
 
         $sql = 'SELECT COUNT(*) as total_asientos_grupo
                 FROM alumno
-                JOIN asiento
-                ON alumno.numCuenta = asiento.numCuenta
-                WHERE alumno.carrera = ? AND alumno.turno = ?';
+                JOIN asiento_evento_li
+                ON alumno.numCuenta = asiento_evento_li.numCuenta
+                WHERE alumno.turno = ?';
                 
         $stmt = $this->db->prepare( $sql );
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }//fin-totalAsientosPorGrupo
+    }//fin-totalAsientosPorGrupoEventoLi
+
+
+    //Muestra el total de asientos que pertenezcan a la misma carrera y tuno
+    public function totalAsientosPorGrupoEventoLiSi() {
+
+        $sql = 'SELECT COUNT(*) as total_asientos_grupo
+                FROM alumno
+                JOIN asiento_evento_lisi
+                ON alumno.numCuenta = asiento_evento_lisi.numCuenta
+                WHERE alumno.turno = ?';
+                
+        $stmt = $this->db->prepare( $sql );
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }//fin-totalAsientosPorGrupoEventoLisi
 
 
 }//fin-AsientoModel
