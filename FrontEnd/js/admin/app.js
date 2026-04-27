@@ -51,7 +51,7 @@ async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
 
     try {
-        const { metricasRes, alumnosRes } = await fetchDashboardData(token);
+        const { metricasRes, alumnosRes, asientosRes } = await fetchDashboardData(token);
 
         if (metricasRes.status === 401 || metricasRes.status === 403) {
             handleLogout();
@@ -61,34 +61,60 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
-        console.log(metricasData);
-        if (metricasData.success) {
+        let asientosData = { success: false };
+        try {
+            if (asientosRes.ok) {
+                asientosData = await asientosRes.json();
+            } else {
+                console.warn("No se pudo obtener el mapa de asientos:", asientosRes.status);
+            }
+        } catch (e) {
+            console.error("Error procesando JSON de asientos:", e);
+        }
+
+        // Crear mapa de asientos para búsqueda rápida: numCuenta -> idAsiento (e.g. "A12")
+        const seatMap = new Map();
+        if (asientosData.success && asientosData.data && asientosData.data.asientos) {
+            asientosData.data.asientos.forEach(s => {
+                if (s.numCuenta) {
+                    seatMap.set(s.numCuenta.toString(), s.asiento);
+                }
+            });
+        }
+
+        if (metricasData.success && metricasData.data) {
             updateMetricsUI(metricasData.data);
         }
-        if (alumnosData.success) {
-            const unicos = new Map();
-            alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
-            state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
-                const apellidoA = (a.apellido || "").trim();
-                const apellidoB = (b.apellido || "").trim();
 
-                // Estandariza el ordenamiento para que iOS y PC lo procesen igual
-                const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
-
-                if (comparacionApellidos !== 0) {
-                    return comparacionApellidos;
+        const unicos = new Map();
+        if (alumnosData.success && Array.isArray(alumnosData.data)) {
+            alumnosData.data.forEach(al => {
+                // Asignar el asiento si existe en el mapa
+                if (al.numCuenta) {
+                    al.asiento = seatMap.get(al.numCuenta.toString()) || "-";
+                    unicos.set(al.numCuenta, al);
                 }
-
-                const nombreA = (a.nombre || "").trim();
-                const nombreB = (b.nombre || "").trim();
-                return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
             });
-
-            updateCustomLocalMetrics(state.allStudentsCache);
-
-            const searchInput = document.getElementById("searchInput");
-            renderTable(searchInput ? searchInput.value : "");
+        } else {
+            console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
+
+        state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+            const apellidoA = (a.apellido || "").trim();
+            const apellidoB = (b.apellido || "").trim();
+            const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
+
+            if (comparacionApellidos !== 0) return comparacionApellidos;
+
+            const nombreA = (a.nombre || "").trim();
+            const nombreB = (b.nombre || "").trim();
+            return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
+        });
+
+        updateCustomLocalMetrics(state.allStudentsCache);
+
+        const searchInput = document.getElementById("searchInput");
+        renderTable(searchInput ? searchInput.value : "");
 
         if (statusText) {
             const now = new Date();
