@@ -14,14 +14,16 @@ window.openEditModal = openEditModal;
 window.handleLogout = handleLogout;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Manejador del menú colapsable (Sidebar)
-    const filterToggleBtn = document.querySelector('.admin-sidebar__section-toggle');
-    if (filterToggleBtn) {
-        filterToggleBtn.addEventListener('click', () => {
-            const section = filterToggleBtn.closest('.admin-sidebar__section--collapsible');
-            if (section) section.classList.toggle('admin-sidebar__section--collapsed');
-        });
-    }
+    // Manejador del menú colapsable (Sidebar) - todos los toggles
+    const filterToggleBtns = document.querySelectorAll('.admin-sidebar__section-toggle');
+    filterToggleBtns.forEach(filterToggleBtn => {
+        if (filterToggleBtn) {
+            filterToggleBtn.addEventListener('click', () => {
+                const section = filterToggleBtn.closest('.admin-sidebar__section--collapsible');
+                if (section) section.classList.toggle('admin-sidebar__section--collapsed');
+            });
+        }
+    });
 
     if (typeof window.ADMIN_TOKEN !== 'undefined' && window.ADMIN_TOKEN) {
         loadDashboardData(window.ADMIN_TOKEN);
