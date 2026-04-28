@@ -202,14 +202,14 @@ if [ -n "$ADMIN_TOKEN" ]; then
     echo "----------------------------------------"
 
     # ==========================================
-    # 10. Obtener mapa de asientos como admin (GET)
+    # 10. Obtener mapa de asientos como admin - Evento LI (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 10: Obtener mapa de asientos como Administrador...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp10.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa \
+    echo -e "${YELLOW}Prueba 10: Obtener mapa de asientos (evento li) como Administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp10.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/li \
         -H "Authorization: Bearer $ADMIN_TOKEN")
 
     if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo -e "${GREEN}✅ Éxito: Mapa de asientos obtenido correctamente.${NC}"
+        echo -e "${GREEN}✅ Éxito: Mapa de asientos del evento li obtenido correctamente.${NC}"
     else
         echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
         cat /tmp/resp10.txt
@@ -218,27 +218,59 @@ if [ -n "$ADMIN_TOKEN" ]; then
     echo "----------------------------------------"
 
     # ==========================================
-    # 11. Validar acceso denegado de alumno a mapa de asientos (GET)
+    # 11. Obtener mapa de asientos como admin - Evento LISI (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 11: Intentar obtener mapa de asientos con token de alumno (debe fallar)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp11.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa \
+    echo -e "${YELLOW}Prueba 11: Obtener mapa de asientos (evento lisi) como Administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp11.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/lisi \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Mapa de asientos del evento lisi obtenido correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp11.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+
+    # ==========================================
+    # 12. Validar acceso denegado de alumno a evento diferente (GET)
+    # ==========================================
+    echo -e "${YELLOW}Prueba 12: Intentar obtener mapa de evento lisi con token de alumno (evento li)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/lisi \
         -H "Authorization: Bearer $TOKEN")
 
     if [ "$HTTP_STATUS" -eq 403 ]; then
-        echo -e "${GREEN}✅ Éxito: La API bloqueó el acceso de alumno al mapa (HTTP 403).${NC}"
+        echo -e "${GREEN}✅ Éxito: La API bloqueó el acceso al evento diferente (HTTP 403).${NC}"
     else
         echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 403 Forbidden)${NC}"
-        cat /tmp/resp11.txt
+        cat /tmp/resp12.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+
+    # ==========================================
+    # 13. Obtener mapa con evento inválido (GET)
+    # ==========================================
+    echo -e "${YELLOW}Prueba 13: Intentar obtener mapa con evento inválido...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/invalido \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 400 ]; then
+        echo -e "${GREEN}✅ Éxito: La API rechazó el evento inválido (HTTP 400).${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 400 Bad Request)${NC}"
+        cat /tmp/resp13.txt
         echo ""
     fi
     echo "----------------------------------------"
 fi
 
 # ==========================================
-# 12. Obtener mi asiento como alumno (GET) - Fuera del bloque admin para probar con token de alumno
+# 14. Obtener mi asiento como alumno (GET)
 # ==========================================
-echo -e "${YELLOW}Prueba 12: Obtener mi asiento como alumno ($CUENTA_TEST)...${NC}"
-HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento \
+echo -e "${YELLOW}Prueba 14: Obtener mi asiento como alumno ($CUENTA_TEST)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp14.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento \
     -H "Authorization: Bearer $TOKEN")
 
 if [ "$HTTP_STATUS" -eq 200 ]; then
@@ -247,40 +279,40 @@ elif [ "$HTTP_STATUS" -eq 404 ]; then
     echo -e "${YELLOW}⚠️ Aviso: El alumno no tiene asiento asignado (HTTP 404).${NC}"
 else
     echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
-    cat /tmp/resp12.txt
+    cat /tmp/resp14.txt
     echo ""
 fi
 echo "----------------------------------------"
 
 # ==========================================
-# 13. Validar acceso denegado de admin a mi asiento (GET)
+# 15. Validar acceso denegado de admin a mi asiento (GET)
 # ==========================================
 if [ -n "$ADMIN_TOKEN" ]; then
-    echo -e "${YELLOW}Prueba 13: Intentar obtener mi asiento con token de admin (debe fallar)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento \
+    echo -e "${YELLOW}Prueba 15: Intentar obtener mi asiento con token de admin (debe fallar)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp15.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento \
         -H "Authorization: Bearer $ADMIN_TOKEN")
 
     if [ "$HTTP_STATUS" -eq 403 ]; then
         echo -e "${GREEN}✅ Éxito: La API bloqueó el acceso de admin a mi asiento (HTTP 403).${NC}"
     else
         echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 403 Forbidden)${NC}"
-        cat /tmp/resp13.txt
+        cat /tmp/resp15.txt
         echo ""
     fi
     echo "----------------------------------------"
 fi
 
 # ==========================================
-# 14. Intentar obtener mi asiento sin token (GET)
+# 16. Intentar obtener mi asiento sin token (GET)
 # ==========================================
-echo -e "${YELLOW}Prueba 14: Intentar obtener mi asiento sin token (debe fallar)...${NC}"
-HTTP_STATUS=$(curl -s -o /tmp/resp14.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento)
+echo -e "${YELLOW}Prueba 16: Intentar obtener mi asiento sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp16.txt -w "%{http_code}" -X GET $BASE_URL/asientos/misAsiento)
 
 if [ "$HTTP_STATUS" -eq 401 ]; then
-    echo -e "${GREEN}✅ Éxito: La API rechazó la petición sin token (HTTP 401).${NC}"
+    echo -e "${GREEN}✅ Éxito: La API rejected la petici\u00f3n sin token (HTTP 401).${NC}"
 else
     echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401 Unauthorized)${NC}"
-    cat /tmp/resp14.txt
+    cat /tmp/resp16.txt
     echo ""
 fi
 echo "----------------------------------------"
