@@ -1,10 +1,10 @@
-import { state } from './modules/state.js';
-import { fetchDashboardData } from './modules/api.js';
-import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js';
-import { renderTable, setFilterType } from './modules/table.js';
-import { openEditModal, setupModalFormListener } from './modules/modal.js';
-import { initQRModule } from './modules/qrscanner.js';
-import { setupEmailFormListener } from './modules/emails.js';
+import { state } from './modules/state.js?v=5';
+import { fetchDashboardData } from './modules/api.js?v=5';
+import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js?v=5';
+import { renderTable, setFilterType } from './modules/table.js?v=5';
+import { openEditModal, setupModalFormListener } from './modules/modal.js?v=5';
+import { initQRModule } from './modules/qrscanner.js?v=5';
+import { setupEmailFormListener } from './modules/emails.js?v=5';
 
 let pollInterval = null;
 
@@ -14,6 +14,15 @@ window.openEditModal = openEditModal;
 window.handleLogout = handleLogout;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Manejador del menú colapsable (Sidebar)
+    const filterToggleBtn = document.querySelector('.admin-sidebar__section-toggle');
+    if (filterToggleBtn) {
+        filterToggleBtn.addEventListener('click', () => {
+            const section = filterToggleBtn.closest('.admin-sidebar__section--collapsible');
+            if (section) section.classList.toggle('admin-sidebar__section--collapsed');
+        });
+    }
+
     if (typeof window.ADMIN_TOKEN !== 'undefined' && window.ADMIN_TOKEN) {
         loadDashboardData(window.ADMIN_TOKEN);
 
@@ -49,14 +58,9 @@ function handleLogout() {
 
 async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
-    if (statusText) {
-        statusText.innerText = "Actualizando...";
-        statusText.classList.remove("bg-success", "bg-danger");
-        statusText.classList.add("bg-secondary");
-    }
 
     try {
-        const { metricasRes, alumnosRes } = await fetchDashboardData(token);
+        const { metricasRes, alumnosRes, asientosLiRes, asientosLisiRes } = await fetchDashboardData(token);
 
         if (metricasRes.status === 401 || metricasRes.status === 403) {
             handleLogout();
@@ -66,31 +70,112 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
-        console.log(metricasData);
-        if (metricasData.success) {
+        // Combinar asientos de ambos eventos (LI y LISI)
+        const seatMap = new Map();
+
+        // Procesar asientos LI
+        try {
+            if (asientosLiRes.ok) {
+                const asientosLiData = await asientosLiRes.json();
+                if (asientosLiData.success && asientosLiData.data && asientosLiData.data.asientos) {
+                    asientosLiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn("Error procesando asientos LI:", e);
+        }
+
+        // Procesar asientos LISI
+        try {
+            if (asientosLisiRes.ok) {
+                const asientosLisiData = await asientosLisiRes.json();
+                if (asientosLisiData.success && asientosLisiData.data && asientosLisiData.data.asientos) {
+                    asientosLisiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn("Error procesando asientos LISI:", e);
+        }
+
+        if (metricasData.success && metricasData.data) {
             updateMetricsUI(metricasData.data);
         }
-        if (alumnosData.success) {
-            const unicos = new Map();
-            alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
-            state.allStudentsCache = Array.from(unicos.values());
 
-            updateCustomLocalMetrics(state.allStudentsCache);
-
-            const searchInput = document.getElementById("searchInput");
-            renderTable(searchInput ? searchInput.value : "");
+        const unicos = new Map();
+        if (alumnosData.success && Array.isArray(alumnosData.data)) {
+            alumnosData.data.forEach(al => {
+                // Asignar el asiento si existe en el mapa
+                if (al.numCuenta) {
+                    const numCuentaStr = String(al.numCuenta);
+                    al.asiento = seatMap.get(numCuentaStr) || "-";
+                    unicos.set(al.numCuenta, al);
+                }
+            });
+        } else {
+            console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
+
+        // Ordenar: si hay filtro de evento (LI o LISI), ordenar por asiento
+        const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
+
+        state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+            // Si hay filtro de evento activo, ordenar por asiento
+            if (filtroEvento) {
+                const seatA = a.asiento || "-";
+                const seatB = b.asiento || "-";
+
+                // Si no tienen asiento, ir al final
+                if (seatA === "-" && seatB === "-") return 0;
+                if (seatA === "-") return 1;
+                if (seatB === "-") return -1;
+
+                // Extraer letra y numero
+                const letraA = seatA.charAt(0);
+                const letraB = seatB.charAt(0);
+                const numA = parseInt(seatA.substring(1)) || 0;
+                const numB = parseInt(seatB.substring(1)) || 0;
+
+                // Comparar letras primero
+                if (letraA !== letraB) {
+                    return letraA.localeCompare(letraB);
+                }
+                // Luego numeros
+                return numA - numB;
+            }
+
+            // Default: ordenar por apellido
+            const apellidoA = (a.apellido || "").trim();
+            const apellidoB = (b.apellido || "").trim();
+            const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
+
+            if (comparacionApellidos !== 0) return comparacionApellidos;
+
+            const nombreA = (a.nombre || "").trim();
+            const nombreB = (b.nombre || "").trim();
+            return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
+        });
+
+        updateCustomLocalMetrics(state.allStudentsCache);
+
+        const searchInput = document.getElementById("searchInput");
+        renderTable(searchInput ? searchInput.value : "");
 
         if (statusText) {
             const now = new Date();
             statusText.innerText = `Actualizado: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            statusText.classList.replace("bg-secondary", "bg-success");
         }
     } catch (err) {
         console.error("Error obteniendo datos del dashboard:", err);
         if (statusText) {
             statusText.innerText = "Error de conexión";
-            statusText.classList.replace("bg-secondary", "bg-danger");
         }
     }
 }

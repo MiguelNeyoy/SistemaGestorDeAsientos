@@ -57,8 +57,54 @@ class ServicioAdministrador
 
     public function obtenerMetricas()
     {
-        $metricas = $this->modeloAdmin->obtenerMetricas();
-        return $this->respuesta(true, "Métricas obtenidas", 200, $metricas);
+        $alumnosConfirmados = $this->modeloAdmin->obtenerAlumnosConfirmados();
+
+        $total_invitados = 0;
+        $por_grupo = [
+            'LI4-1' => 0,
+            'LI4-2' => 0,
+            'LISI4-1' => 0,
+            'LISI4-2' => 0
+        ];
+        $individual = [];
+
+        foreach ($alumnosConfirmados as $alumno) {
+            $invitados = (int) $alumno['cantInvitado'];
+            $total_invitados += $invitados;
+
+            $grupo = $this->calcularGrupo($alumno['carrera'], $alumno['turno']);
+            if (isset($por_grupo[$grupo])) {
+                $por_grupo[$grupo] += $invitados;
+            }
+
+            $individual[] = [
+                'numCuenta' => $alumno['numCuenta'],
+                'nombre' => trim($alumno['nombre']) . ' ' . trim($alumno['apellido']),
+                'grupo' => $grupo,
+                'invitados' => $invitados
+            ];
+        }
+
+        return $this->respuesta(true, "Métricas obtenidas", 200, [
+            'total_invitados' => $total_invitados,
+            'por_grupo' => $por_grupo,
+            'individual' => $individual
+        ]);
+    }
+
+    private function calcularGrupo($carrera, $turno)
+    {
+        $carLower = strtolower(trim($carrera));
+        $turnoUpper = strtoupper(trim($turno));
+
+        $prefix = 'LISI'; // Por defecto Licenciatura en Ingeniería (Sistemas)
+        if (strpos($carLower, 'informática') !== false || strpos($carLower, 'informatica') !== false) {
+            $prefix = 'LI';
+        }
+
+        $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';
+
+        return "{$prefix}4-{$turnoNum}";
     }
 
     public function editarAlumno($data)
@@ -95,7 +141,7 @@ class ServicioAdministrador
                 return $this->respuesta(false, "Error al actualizar la asistencia", 500);
             }
 
-            // TODO: LOGICA DE ASIENTOS COMPENDIDA (PENDIENTE)
+            // --- INICIO LOGICA DE ASIENTOS COMPENDIDA ---
             // Aqui se requerira instanciar el ServicioAsientos o llamar la logica
             // para asignar o liberar el lugar del alumno y de sus invitados. 
             // Esto depende del cambio de 'estado' (0 a 1 o viceversa), así que quedará en espera.
