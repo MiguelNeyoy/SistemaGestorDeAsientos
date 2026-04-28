@@ -60,7 +60,7 @@ async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
 
     try {
-        const { metricasRes, alumnosRes, asientosRes } = await fetchDashboardData(token);
+        const { metricasRes, alumnosRes, asientosLiRes, asientosLisiRes } = await fetchDashboardData(token);
 
         if (metricasRes.status === 401 || metricasRes.status === 403) {
             handleLogout();
@@ -70,25 +70,39 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
-        let asientosData = { success: false };
+        // Combinar asientos de ambos eventos (LI y LISI)
+        const seatMap = new Map();
+
+        // Procesar asientos LI
         try {
-            if (asientosRes.ok) {
-                asientosData = await asientosRes.json();
-            } else {
-                console.warn("No se pudo obtener el mapa de asientos:", asientosRes.status);
+            if (asientosLiRes.ok) {
+                const asientosLiData = await asientosLiRes.json();
+                if (asientosLiData.success && asientosLiData.data && asientosLiData.data.asientos) {
+                    asientosLiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.asiento);
+                        }
+                    });
+                }
             }
         } catch (e) {
-            console.error("Error procesando JSON de asientos:", e);
+            console.warn("Error procesando asientos LI:", e);
         }
 
-        // Crear mapa de asientos para búsqueda rápida: numCuenta -> idAsiento (e.g. "A12")
-        const seatMap = new Map();
-        if (asientosData.success && asientosData.data && asientosData.data.asientos) {
-            asientosData.data.asientos.forEach(s => {
-                if (s.numCuenta) {
-                    seatMap.set(s.numCuenta.toString(), s.asiento);
+        // Procesar asientos LISI
+        try {
+            if (asientosLisiRes.ok) {
+                const asientosLisiData = await asientosLisiRes.json();
+                if (asientosLisiData.success && asientosLisiData.data && asientosLisiData.data.asientos) {
+                    asientosLisiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.asiento);
+                        }
+                    });
                 }
-            });
+            }
+        } catch (e) {
+            console.warn("Error procesando asientos LISI:", e);
         }
 
         if (metricasData.success && metricasData.data) {

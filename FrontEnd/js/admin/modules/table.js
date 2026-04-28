@@ -41,6 +41,17 @@ export function renderTable(filterText = "") {
             if (state.currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
             if (state.currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
             if (state.currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
+            
+            // Filtros por evento (LI o LISI)
+            if (state.currentFilterType === 'LI') {
+                const carLower = (al.carrera || '').toLowerCase();
+                if (!(carLower.includes('informática') || carLower.includes('informatica'))) return false;
+            }
+            if (state.currentFilterType === 'LISI') {
+                const carLower = (al.carrera || '').toLowerCase();
+                if (!(carLower.includes('ingeniería') || carLower.includes('sistemas'))) return false;
+            }
+            // Filtros por grupo específico
             if (['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(state.currentFilterType)) {
                 if (!(isConfirmado && getGrupo(al.carrera, al.turno) === state.currentFilterType)) return false;
             }
@@ -122,6 +133,8 @@ export function setFilterType(type) {
         'ALL': 'link-filter-all',
         'CONFIRMADOS': 'link-filter-confirmados',
         'INVITADOS': 'link-filter-invitados',
+        'LI': 'link-filter-li',
+        'LISI': 'link-filter-lisi',
         'LI4-1': 'link-filter-li41',
         'LI4-2': 'link-filter-li42',
         'LISI4-1': 'link-filter-lisi41',
