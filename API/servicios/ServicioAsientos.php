@@ -1,24 +1,26 @@
 <?php
 
 require_once __DIR__ . '/../modelos/ModeloAsiento.php';
+require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 
 class ServicioAsientos
 {
     private $modelo;
+    private $modeloAlumno;
 
     public function __construct()
     {
         $this->modelo = new ModeloAsiento();
+        $this->modeloAlumno = new AlumnoModel();
     }
 
-    public function obtenerMapaAsientos($evento)
+    public function obtenerMapaAsientos($evento, $numCuenta = null)
     {
         $evento = strtolower(trim($evento));
         if (!in_array($evento, ['li', 'lisi'])) {
             return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
         }
 
-        // Validar que el alumno solo pueda ver su propio evento
         $jwtEventoId = $_SERVER['JWT_EVENTO_ID'] ?? null;
         $jwtAdminId = $_SERVER['JWT_ADMIN_ID'] ?? null;
 
@@ -26,29 +28,67 @@ class ServicioAsientos
             return $this->respuesta(false, "No tienes acceso a este evento", 403);
         }
 
-        $tabla = "asiento_evento_" . $evento;
-
         try {
-            $asientos = $this->modelo->obtenerTodosLosAsientos($tabla);
+            $miAsiento = null;
+            $miGrupo = null;
 
-            $mapa = [];
-            foreach ($asientos as $asiento) {
+            if ($numCuenta) {
+                $alumno = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
+                if ($alumno) {
+                    $turno = $alumno['turno'];
+                    $carrera = $alumno['carrera'] ?? '';
+                    $miGrupo = $this->calcularGrupo($carrera, $turno);
+
+                    $asientosRaw = $this->modelo->obtenerAsientosPorEventoYTurno($evento, $turno);
+                } else {
+                    $asientosRaw = [];
+                }
+            } else {
+                $tabla = "asiento_evento_" . $evento;
+                $asientosRaw = $this->modelo->obtenerTodosLosAsientos($tabla);
+            }
+
+            $asientos = [];
+            foreach ($asientosRaw as $asiento) {
                 $idAsiento = $asiento['letra'] . $asiento['numero'];
-                $mapa[] = [
-                    'asiento' => $idAsiento,
-                    'letra' => $asiento['letra'],
+                $esAsignado = ($asiento['numCuenta'] !== null && $asiento['numCuenta'] === $numCuenta);
+
+                if ($esAsignado) {
+                    $miAsiento = $idAsiento;
+                }
+
+                $asientos[] = [
+                    'id_asiento' => $idAsiento,
+                    'fila' => $asiento['letra'],
                     'numero' => $asiento['numero'],
-                    'numCuenta' => $asiento['numCuenta'],
-                    'nombre' => $asiento['nombre'] ?? null,
-                    'apellido' => $asiento['apellido'] ?? null,
-                    'ocupado' => $asiento['numCuenta'] !== null
+                    'estado' => $asiento['numCuenta'] !== null ? 'ocupado' : 'libre',
+                    'asignado' => $esAsignado
                 ];
             }
 
-            return $this->respuesta(true, "Mapa de asientos obtenido", 200, ['asientos' => $mapa]);
+            return $this->respuesta(true, "Mapa de asientos obtenido", 200, [
+                'mi_grupo' => $miGrupo,
+                'mi_asiento' => $miAsiento,
+                'asientos' => $asientos
+            ]);
         } catch (Exception $e) {
             return $this->respuesta(false, "Error en ServicioAsientos: No se pudo obtener el mapa. Detalle: " . $e->getMessage(), 500);
         }
+    }
+
+    private function calcularGrupo($carrera, $turno)
+    {
+        $carLower = strtolower(trim($carrera));
+        $turnoUpper = strtoupper(trim($turno));
+
+        $prefix = 'LISI';
+        if (strpos($carLower, 'informática') !== false || strpos($carLower, 'informatica') !== false) {
+            $prefix = 'LI';
+        }
+
+        $turnoNum = ($turnoUpper === 'M' || $turnoUpper === 'V') ? 'M' : 'V';
+
+        return "{$prefix}4-{$turnoNum}";
     }
 
     public function obtenerMiAsiento($numCuenta)
