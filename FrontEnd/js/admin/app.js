@@ -5,6 +5,7 @@ import { renderTable, setFilterType } from './modules/table.js?v=5';
 import { openEditModal, setupModalFormListener } from './modules/modal.js?v=5';
 import { initQRModule } from './modules/qrscanner.js?v=5';
 import { setupEmailFormListener } from './modules/emails.js?v=5';
+import { getGrupo } from './modules/utils.js?v=5';
 
 let pollInterval = null;
 
@@ -122,7 +123,23 @@ async function loadDashboardData(token) {
             console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
 
+        // Ordenar alumnos: si hay filtro de evento (LI o LISI), ordenar por grupo primero
+        const gruposOrden = { 'LI4-1': 1, 'LI4-2': 2, 'LISI4-1': 3, 'LISI4-2': 4 };
+        
+        const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
+        
         state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+            // Si hay filtro de evento activo, primero ordenar por grupo (mañana → tarde)
+            if (filtroEvento) {
+                const grupoA = getGrupo(a.carrera, a.turno);
+                const grupoB = getGrupo(b.carrera, b.turno);
+                const ordenA = gruposOrden[grupoA] || 99;
+                const ordenB = gruposOrden[grupoB] || 99;
+                
+                if (ordenA !== ordenB) return ordenA - ordenB;
+            }
+            
+            // Luego ordenar por apellido
             const apellidoA = (a.apellido || "").trim();
             const apellidoB = (b.apellido || "").trim();
             const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
