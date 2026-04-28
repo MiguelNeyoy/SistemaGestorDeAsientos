@@ -22,7 +22,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <title>Panel de Administrador - Clausura</title>
     <!-- Se mantiene Bootstrap por compatibilidad con otras vistas y modales (Grid y JS) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href='./admin.css'>
+    <link rel="stylesheet" href='./admin.css?v=6'>
 </head>
 
 <body class="admin-body">
@@ -122,7 +122,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <!-- Scripts -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../js/admin/app.js?v=5"></script>
+    <script type="module" src="../js/admin/app.js?v=6"></script>
 </body>
 
 </html>
