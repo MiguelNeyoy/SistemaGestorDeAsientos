@@ -56,6 +56,7 @@ if ($tipoUsuario === "admin") {
 
   $data = json_decode($response, true);
 
+// Auto-merging FrontEnd/view_confirmacion.php
   if ($data['success'] && isset($data['data']['asientos'])) {
     foreach ($data['data']['asientos'] as $asiento) {
       if ($asiento['ocupado']) {
