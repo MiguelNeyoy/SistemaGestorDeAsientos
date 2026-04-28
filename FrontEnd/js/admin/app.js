@@ -14,6 +14,15 @@ window.openEditModal = openEditModal;
 window.handleLogout = handleLogout;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Manejador del menú colapsable (Sidebar)
+    const filterToggleBtn = document.querySelector('.admin-sidebar__section-toggle');
+    if (filterToggleBtn) {
+        filterToggleBtn.addEventListener('click', () => {
+            const section = filterToggleBtn.closest('.admin-sidebar__section--collapsible');
+            if (section) section.classList.toggle('admin-sidebar__section--collapsed');
+        });
+    }
+
     if (typeof window.ADMIN_TOKEN !== 'undefined' && window.ADMIN_TOKEN) {
         loadDashboardData(window.ADMIN_TOKEN);
 
@@ -49,14 +58,9 @@ function handleLogout() {
 
 async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
-    if (statusText) {
-        statusText.innerText = "Actualizando...";
-        statusText.classList.remove("bg-success", "bg-danger");
-        statusText.classList.add("bg-secondary");
-    }
 
     try {
-        const { metricasRes, alumnosRes } = await fetchDashboardData(token);
+        const { metricasRes, alumnosRes, asientosRes } = await fetchDashboardData(token);
 
         if (metricasRes.status === 401 || metricasRes.status === 403) {
             handleLogout();
@@ -66,31 +70,69 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
-        console.log(metricasData);
-        if (metricasData.success) {
+        let asientosData = { success: false };
+        try {
+            if (asientosRes.ok) {
+                asientosData = await asientosRes.json();
+            } else {
+                console.warn("No se pudo obtener el mapa de asientos:", asientosRes.status);
+            }
+        } catch (e) {
+            console.error("Error procesando JSON de asientos:", e);
+        }
+
+        // Crear mapa de asientos para búsqueda rápida: numCuenta -> idAsiento (e.g. "A12")
+        const seatMap = new Map();
+        if (asientosData.success && asientosData.data && asientosData.data.asientos) {
+            asientosData.data.asientos.forEach(s => {
+                if (s.numCuenta) {
+                    seatMap.set(s.numCuenta.toString(), s.asiento);
+                }
+            });
+        }
+
+        if (metricasData.success && metricasData.data) {
             updateMetricsUI(metricasData.data);
         }
-        if (alumnosData.success) {
-            const unicos = new Map();
-            alumnosData.data.forEach(al => unicos.set(al.numCuenta, al));
-            state.allStudentsCache = Array.from(unicos.values());
 
-            updateCustomLocalMetrics(state.allStudentsCache);
-
-            const searchInput = document.getElementById("searchInput");
-            renderTable(searchInput ? searchInput.value : "");
+        const unicos = new Map();
+        if (alumnosData.success && Array.isArray(alumnosData.data)) {
+            alumnosData.data.forEach(al => {
+                // Asignar el asiento si existe en el mapa
+                if (al.numCuenta) {
+                    al.asiento = seatMap.get(al.numCuenta.toString()) || "-";
+                    unicos.set(al.numCuenta, al);
+                }
+            });
+        } else {
+            console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
+
+        state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+            const apellidoA = (a.apellido || "").trim();
+            const apellidoB = (b.apellido || "").trim();
+            const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
+
+            if (comparacionApellidos !== 0) return comparacionApellidos;
+
+            const nombreA = (a.nombre || "").trim();
+            const nombreB = (b.nombre || "").trim();
+            return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
+        });
+
+        updateCustomLocalMetrics(state.allStudentsCache);
+
+        const searchInput = document.getElementById("searchInput");
+        renderTable(searchInput ? searchInput.value : "");
 
         if (statusText) {
             const now = new Date();
             statusText.innerText = `Actualizado: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            statusText.classList.replace("bg-secondary", "bg-success");
         }
     } catch (err) {
         console.error("Error obteniendo datos del dashboard:", err);
         if (statusText) {
             statusText.innerText = "Error de conexión";
-            statusText.classList.replace("bg-secondary", "bg-danger");
         }
     }
 }

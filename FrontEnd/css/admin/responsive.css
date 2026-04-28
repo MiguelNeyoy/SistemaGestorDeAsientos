@@ -1,0 +1,241 @@
+/* Responsive Styles for Admin Dashboard - MVAdmin1.2.5 inspiration */
+
+/* Mobile First Adjustments */
+@media (max-width: 768px) {
+    :root {
+        --font-headline-xl: var(--font-h-xl-mobile);
+        --font-headline-lg: var(--font-h-lg-mobile);
+        --font-headline-md: var(--font-h-md-mobile);
+        --font-body-md: var(--font-body-mobile);
+        --font-label-sm: var(--font-label-mobile);
+    }
+
+    /* Layout Adjustments */
+    .admin-content {
+        padding: 1rem;
+    }
+
+    /* Topbar compact - MVAdmin1.2.5 Style */
+    .admin-topbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.25rem 1rem;
+        align-items: stretch;
+        position: sticky;
+        top: 0;
+        z-index: 900;
+        background-color: var(--color-navy);
+        color: var(--color-white);
+    }
+    
+    .admin-topbar__title {
+        font-size: 1.5rem;
+        color: var(--color-white);
+    }
+    
+    .admin-topbar__clock {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .admin-topbar__header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .admin-topbar__title-wrapper {
+        text-align: left;
+    }
+
+    .admin-topbar__title {
+        font-size: 1.5rem;
+    }
+
+    .admin-topbar__actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .admin-btn span:not(.admin-icon) {
+        display: none;
+        /* Solo iconos en botones móviles */
+    }
+
+    .admin-btn.admin-btn--secundary {
+        padding: 0.875rem;
+        justify-content: center;
+        min-width: unset;
+        border-radius: 8px;
+        background-color: transparent;
+        border: none;
+    }
+    
+    .admin-btn.admin-btn--secundary .admin-icon {
+        filter: brightness(0) invert(1);
+    }
+
+    /* Metrics Carousel - MVAdmin1.2.5 Style */
+    .admin-metrics-grid {
+        display: flex;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-metrics-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .admin-metric-card {
+        flex: 0 0 85%;
+        scroll-snap-align: center;
+        padding: 1.25rem;
+        flex-direction: row;
+        text-align: left;
+        gap: 1rem;
+    }
+
+    .admin-metric-card__icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .admin-metric-card__value {
+        font-size: 1.5rem;
+    }
+
+    /* Directory Header */
+    .admin-directory__header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding: 1rem;
+    }
+
+    .admin-directory__controls {
+        flex-direction: column;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    /* Table to Cards Transformation */
+    .admin-table thead {
+        display: none;
+    }
+
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
+    .admin-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    /* Hide the table initially in mobile, requires interaction */
+    #alumnosTableBody:not(.has-results) tr {
+        display: none;
+    }
+
+    .admin-table tr {
+        background-color: var(--color-surface);
+        margin-bottom: 1rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--color-border);
+        overflow: hidden;
+        position: relative;
+        padding: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.5rem;
+    }
+
+    /* Status indicator bar like MVAdmin */
+    .admin-table tr::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: var(--color-secondary);
+    }
+
+    .admin-table tr:has(.badge-confirmado)::before {
+        background-color: var(--color-success);
+    }
+
+    .admin-table tr:has(.badge-rechazado)::before {
+        background-color: var(--color-error);
+    }
+
+    .admin-table td {
+        text-align: left;
+        padding: 0.25rem 0;
+        border-bottom: none;
+        font-size: 0.85rem;
+        display: block;
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .admin-table td:last-child {
+        border-bottom: none;
+        justify-content: center;
+        margin-top: 0.75rem;
+        padding-top: 1rem;
+    }
+
+    .admin-table td::before {
+        display: none !important;
+    }
+
+    /* Name Header in Card */
+    .admin-table td[data-label="Nombre"] {
+        flex: 0 0 100%;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-navy);
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .admin-table td[data-label="No. Cuenta"] {
+        flex: 0 0 100%;
+        background: #f8fafc;
+        margin: 0 -1.25rem 0.5rem -1.25rem;
+        padding: 0.5rem 1.25rem;
+        font-size: 0.8rem;
+        color: var(--color-text-sub);
+    }
+
+    /* Actions at bottom */
+    .admin-table td[data-label="Acciones"] {
+        flex: 0 0 100%;
+        border-top: 1px solid var(--color-border);
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+    }
+
+    .admin-table .btn-group {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .admin-table .btn-group .btn {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+        border-radius: 8px !important;
+    }
+}

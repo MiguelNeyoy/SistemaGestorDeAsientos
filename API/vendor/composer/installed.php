@@ -14,10 +14,8 @@
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '4ad1a3b19a5a0b37217f67ecde1665a418a2c233',
+            'reference' => '6e1503955c1e139175c437addb9657ddde42fcd4',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'dev_requirement' => false,
         ),
         'firebase/php-jwt' => array(
             'pretty_version' => 'v7.0.5',

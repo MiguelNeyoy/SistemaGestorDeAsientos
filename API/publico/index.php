@@ -52,10 +52,10 @@ $rutas = [
     '/alumnos/estado' => [
         'GET' => ['ControladorAlumno', 'obtenerEstado']
     ],
-    '/asientos/reiniciar' => [
+    '/asientos/reiniciar/{evento}' => [
         'POST' => ['ControladorAsientos', 'reiniciarTeatro']
     ],
-    '/asientos/mapa' => [
+    '/asientos/mapa/{evento}' => [
         'GET' => ['ControladorAsientos', 'verMapaAsientos']
     ],
     '/asientos/misAsiento' => [
@@ -94,8 +94,8 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
             $parametros = array_values(array_filter($coincidencias, 'is_string', ARRAY_FILTER_USE_KEY));
 
             // ------------- VALIDACION JWT -------------
-            $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento'];
-            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/asientos/mapa'];
+            $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento', '/asientos/mapa/{evento}'];
+            $rutasProtegidasAdmin = ['/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/asientos/mapa/{evento}', '/asientos/reiniciar/{evento}'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;
@@ -127,6 +127,8 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
                             } else {
                                 // Inyectar el número de cuenta en $_SERVER para que el controlador lo use
                                 $_SERVER['JWT_NUMERO_CUENTA'] = $decoded->data->numero_cuenta ?? null;
+                                // Inyectar el evento_id del alumno
+                                $_SERVER['JWT_EVENTO_ID'] = $decoded->data->evento_id ?? null;
                             }
                         } catch (Exception $e) {
                             http_response_code(401);
