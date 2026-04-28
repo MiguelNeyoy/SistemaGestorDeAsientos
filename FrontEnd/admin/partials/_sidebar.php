@@ -27,14 +27,14 @@
             </div>
             <ul class="admin-sidebar__list">
                 <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-li"
+                    <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-li"
                         onclick="window.setFilterType('LI')">
                         <span class="admin-icon admin-icon--chair"></span>
                         <span>LI (Informática)</span>
                     </a>
                 </li>
                 <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-lisi"
+                    <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-lisi"
                         onclick="window.setFilterType('LISI')">
                         <span class="admin-icon admin-icon--chair"></span>
                         <span>LISI (Sistemas)</span>

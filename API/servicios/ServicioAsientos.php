@@ -52,18 +52,26 @@ class ServicioAsientos
             foreach ($asientosRaw as $asiento) {
                 $idAsiento = $asiento['letra'] . $asiento['numero'];
                 $esAsignado = ($asiento['numCuenta'] !== null && $asiento['numCuenta'] === $numCuenta);
+                $tieneNumCuenta = ($asiento['numCuenta'] !== null);
 
                 if ($esAsignado) {
                     $miAsiento = $idAsiento;
                 }
 
-                $asientos[] = [
+                $dataAsiento = [
                     'id_asiento' => $idAsiento,
                     'fila' => $asiento['letra'],
                     'numero' => $asiento['numero'],
-                    'estado' => $asiento['numCuenta'] !== null ? 'ocupado' : 'libre',
+                    'estado' => $tieneNumCuenta ? 'ocupado' : 'libre',
                     'asignado' => $esAsignado
                 ];
+                
+                // Solo incluir numCuenta si hay admin pidiendo (para mapear en frontend)
+                if ($jwtAdminId !== null && $tieneNumCuenta) {
+                    $dataAsiento['numCuenta'] = $asiento['numCuenta'];
+                }
+                
+                $asientos[] = $dataAsiento;
             }
 
             return $this->respuesta(true, "Mapa de asientos obtenido", 200, [

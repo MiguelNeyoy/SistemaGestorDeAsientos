@@ -5,7 +5,6 @@ import { renderTable, setFilterType } from './modules/table.js?v=5';
 import { openEditModal, setupModalFormListener } from './modules/modal.js?v=5';
 import { initQRModule } from './modules/qrscanner.js?v=5';
 import { setupEmailFormListener } from './modules/emails.js?v=5';
-import { getGrupo } from './modules/utils.js?v=5';
 
 let pollInterval = null;
 
@@ -81,7 +80,7 @@ async function loadDashboardData(token) {
                 if (asientosLiData.success && asientosLiData.data && asientosLiData.data.asientos) {
                     asientosLiData.data.asientos.forEach(s => {
                         if (s.numCuenta) {
-                            seatMap.set(s.numCuenta.toString(), s.asiento);
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
                         }
                     });
                 }
@@ -97,7 +96,7 @@ async function loadDashboardData(token) {
                 if (asientosLisiData.success && asientosLisiData.data && asientosLisiData.data.asientos) {
                     asientosLisiData.data.asientos.forEach(s => {
                         if (s.numCuenta) {
-                            seatMap.set(s.numCuenta.toString(), s.asiento);
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
                         }
                     });
                 }
@@ -115,7 +114,8 @@ async function loadDashboardData(token) {
             alumnosData.data.forEach(al => {
                 // Asignar el asiento si existe en el mapa
                 if (al.numCuenta) {
-                    al.asiento = seatMap.get(al.numCuenta.toString()) || "-";
+                    const numCuentaStr = String(al.numCuenta);
+                    al.asiento = seatMap.get(numCuentaStr) || "-";
                     unicos.set(al.numCuenta, al);
                 }
             });
@@ -123,23 +123,35 @@ async function loadDashboardData(token) {
             console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
 
-        // Ordenar alumnos: si hay filtro de evento (LI o LISI), ordenar por grupo primero
-        const gruposOrden = { 'LI4-1': 1, 'LI4-2': 2, 'LISI4-1': 3, 'LISI4-2': 4 };
-        
+        // Ordenar: si hay filtro de evento (LI o LISI), ordenar por asiento
         const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
-        
+
         state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
-            // Si hay filtro de evento activo, primero ordenar por grupo (mañana → tarde)
+            // Si hay filtro de evento activo, ordenar por asiento
             if (filtroEvento) {
-                const grupoA = getGrupo(a.carrera, a.turno);
-                const grupoB = getGrupo(b.carrera, b.turno);
-                const ordenA = gruposOrden[grupoA] || 99;
-                const ordenB = gruposOrden[grupoB] || 99;
-                
-                if (ordenA !== ordenB) return ordenA - ordenB;
+                const seatA = a.asiento || "-";
+                const seatB = b.asiento || "-";
+
+                // Si no tienen asiento, ir al final
+                if (seatA === "-" && seatB === "-") return 0;
+                if (seatA === "-") return 1;
+                if (seatB === "-") return -1;
+
+                // Extraer letra y numero
+                const letraA = seatA.charAt(0);
+                const letraB = seatB.charAt(0);
+                const numA = parseInt(seatA.substring(1)) || 0;
+                const numB = parseInt(seatB.substring(1)) || 0;
+
+                // Comparar letras primero
+                if (letraA !== letraB) {
+                    return letraA.localeCompare(letraB);
+                }
+                // Luego numeros
+                return numA - numB;
             }
-            
-            // Luego ordenar por apellido
+
+            // Default: ordenar por apellido
             const apellidoA = (a.apellido || "").trim();
             const apellidoB = (b.apellido || "").trim();
             const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
