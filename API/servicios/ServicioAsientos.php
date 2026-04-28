@@ -17,6 +17,15 @@ class ServicioAsientos
         if (!in_array($evento, ['li', 'lisi'])) {
             return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
         }
+
+        // Validar que el alumno solo pueda ver su propio evento
+        $jwtEventoId = $_SERVER['JWT_EVENTO_ID'] ?? null;
+        $jwtAdminId = $_SERVER['JWT_ADMIN_ID'] ?? null;
+
+        if ($jwtAdminId === null && $jwtEventoId !== null && $jwtEventoId !== $evento) {
+            return $this->respuesta(false, "No tienes acceso a este evento", 403);
+        }
+
         $tabla = "asiento_evento_" . $evento;
 
         try {
