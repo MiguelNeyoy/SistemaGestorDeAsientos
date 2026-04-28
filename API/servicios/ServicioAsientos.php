@@ -11,10 +11,16 @@ class ServicioAsientos
         $this->modelo = new ModeloAsiento();
     }
 
-    public function obtenerMapaAsientos()
+    public function obtenerMapaAsientos($evento)
     {
+        $evento = strtolower(trim($evento));
+        if (!in_array($evento, ['li', 'lisi'])) {
+            return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
+        }
+        $tabla = "asiento_evento_" . $evento;
+
         try {
-            $asientos = $this->modelo->obtenerTodosLosAsientos();
+            $asientos = $this->modelo->obtenerTodosLosAsientos($tabla);
 
             $mapa = [];
             foreach ($asientos as $asiento) {
@@ -55,6 +61,22 @@ class ServicioAsientos
             ]);
         } catch (Exception $e) {
             return $this->respuesta(false, "Error en ServicioAsientos: No se pudo obtener tu asiento. Detalle: " . $e->getMessage(), 500);
+        }
+    }
+
+    public function reiniciarTeatro($evento)
+    {
+        $evento = strtolower(trim($evento));
+        if (!in_array($evento, ['li', 'lisi'])) {
+            return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
+        }
+        $tabla = "asiento_evento_" . $evento;
+
+        try {
+            $this->modelo->reiniciarTeatro($tabla);
+            return $this->respuesta(true, "Teatro reiniciado correctamente para el evento " . strtoupper($evento), 200);
+        } catch (Exception $e) {
+            return $this->respuesta(false, "Error en ServicioAsientos: No se pudo reiniciar el teatro. Detalle: " . $e->getMessage(), 500);
         }
     }
 
