@@ -112,6 +112,28 @@ export function renderTable(filterText = "") {
 export function setFilterType(type) {
     state.currentFilterType = type;
 
+    // Actualizar estado activo en el sidebar
+    document.querySelectorAll('.admin-sidebar__link').forEach(link => {
+        link.classList.remove('admin-sidebar__link--active');
+    });
+
+    // Mapear el tipo a ID de link para activar el correcto
+    const filterMap = {
+        'ALL': 'link-filter-all',
+        'CONFIRMADOS': 'link-filter-confirmados',
+        'INVITADOS': 'link-filter-invitados',
+        'LI4-1': 'link-filter-li41',
+        'LI4-2': 'link-filter-li42',
+        'LISI4-1': 'link-filter-lisi41',
+        'LISI4-2': 'link-filter-lisi42',
+        'RECHAZADOS': 'link-filter-rechazados'
+    };
+
+    const activeLinkId = filterMap[type];
+    if (activeLinkId && document.getElementById(activeLinkId)) {
+        document.getElementById(activeLinkId).classList.add('admin-sidebar__link--active');
+    }
+
     // Mostrar/Ocultar el botón de "Mostrar Todo" dependiendo del filtro
     const btn = document.getElementById("btnMostrarTodo");
     if (btn) {
