@@ -65,7 +65,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
         document.addEventListener('DOMContentLoaded', () => {
             const btnToggle = document.getElementById('btnToggleSidebar');
             const sidebar = document.querySelector('.admin-sidebar');
-            
+
             if (btnToggle && sidebar) {
                 btnToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -73,8 +73,8 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                 });
 
                 document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 767 && 
-                        sidebar.classList.contains('admin-sidebar--active') && 
+                    if (window.innerWidth <= 767 &&
+                        sidebar.classList.contains('admin-sidebar--active') &&
                         !sidebar.contains(e.target)) {
                         sidebar.classList.remove('admin-sidebar--active');
                     }

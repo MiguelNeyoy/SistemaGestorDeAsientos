@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (section) section.classList.toggle('admin-sidebar__section--collapsed');
         });
     }
+
     if (typeof window.ADMIN_TOKEN !== 'undefined' && window.ADMIN_TOKEN) {
         loadDashboardData(window.ADMIN_TOKEN);
 
