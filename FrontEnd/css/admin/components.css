@@ -18,10 +18,9 @@
 
 .admin-sidebar__section-title {
     padding: 1.5rem 1.5rem 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 800;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
+    color: whitesmoke;
     letter-spacing: 0.1em;
 }
 
