@@ -121,7 +121,7 @@ class AsientoModel{
         $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento_evento_li.letra, asiento_evento_li.numero, asiento_evento_li.estado
                 FROM alumno 
                 JOIN asiento_evento_li
-                ON alumno.numCuenta = asiento.numCuenta
+                ON alumno.numCuenta = asiento_evento_li.numCuenta
                 WHERE alumno.turno = ? ';
 
         $stmt = $this->db->prepare( $sql );
@@ -138,7 +138,7 @@ class AsientoModel{
         $sql = 'SELECT alumno.carrera, alumno.turno, alumno.numCuenta, alumno.apellido, alumno.nombre, asiento_evento_lisi.letra, asiento_evento_lisi.numero, asiento_evento_lisi.estado
                 FROM alumno 
                 JOIN asiento_evento_lisi
-                ON alumno.numCuenta = asiento.numCuenta
+                ON alumno.numCuenta = asiento_evento_lisi.numCuenta
                 WHERE alumno.turno = ? ';
 
         $stmt = $this->db->prepare( $sql );
