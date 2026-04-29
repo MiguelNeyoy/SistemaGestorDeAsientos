@@ -20,6 +20,29 @@
             </li>
         </ul>
 
+        <section class="admin-sidebar__section--collapsible">
+            <div class="admin-sidebar__section-header admin-sidebar__section-toggle">
+                <p class="admin-sidebar__section-title">Evento</p>
+                <span class="admin-sidebar__chevron"></span>
+            </div>
+            <ul class="admin-sidebar__list">
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-li"
+                        onclick="window.setFilterType('LI')">
+                        <span class="admin-icon admin-icon--chair"></span>
+                        <span>LI (Informática)</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-lisi"
+                        onclick="window.setFilterType('LISI')">
+                        <span class="admin-icon admin-icon--chair"></span>
+                        <span>LISI (Sistemas)</span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+
         <section class="admin-sidebar__section--collapsible admin-sidebar__section--collapsed">
             <div class="admin-sidebar__section-header admin-sidebar__section-toggle">
                 <p class="admin-sidebar__section-title">Estadísticas y Filtros</p>

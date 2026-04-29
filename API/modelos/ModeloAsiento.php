@@ -26,6 +26,23 @@ class ModeloAsiento
         }
     }
 
+    public function obtenerAsientosPorEventoYTurno($evento, $turno)
+    {
+        try {
+            $tabla = "asiento_evento_" . $evento;
+            $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado
+                    FROM {$tabla} a
+                    JOIN alumno al ON a.numCuenta = al.numCuenta
+                    WHERE al.turno = ?
+                    ORDER BY a.letra, a.numero";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$turno]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Error en ModeloAsiento: Fallo al obtener asientos por grupo - " . $e->getMessage());
+        }
+    }
+
     public function obtenerAsientoPorAlumno($numCuenta)
     {
         try {

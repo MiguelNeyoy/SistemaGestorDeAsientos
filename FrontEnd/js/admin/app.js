@@ -60,7 +60,7 @@ async function loadDashboardData(token) {
     const statusText = document.getElementById("lastUpdated");
 
     try {
-        const { metricasRes, alumnosRes, asientosRes } = await fetchDashboardData(token);
+        const { metricasRes, alumnosRes, asientosLiRes, asientosLisiRes } = await fetchDashboardData(token);
 
         if (metricasRes.status === 401 || metricasRes.status === 403) {
             handleLogout();
@@ -70,25 +70,39 @@ async function loadDashboardData(token) {
         const metricasData = await metricasRes.json();
         const alumnosData = await alumnosRes.json();
 
-        let asientosData = { success: false };
+        // Combinar asientos de ambos eventos (LI y LISI)
+        const seatMap = new Map();
+
+        // Procesar asientos LI
         try {
-            if (asientosRes.ok) {
-                asientosData = await asientosRes.json();
-            } else {
-                console.warn("No se pudo obtener el mapa de asientos:", asientosRes.status);
+            if (asientosLiRes.ok) {
+                const asientosLiData = await asientosLiRes.json();
+                if (asientosLiData.success && asientosLiData.data && asientosLiData.data.asientos) {
+                    asientosLiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
+                        }
+                    });
+                }
             }
         } catch (e) {
-            console.error("Error procesando JSON de asientos:", e);
+            console.warn("Error procesando asientos LI:", e);
         }
 
-        // Crear mapa de asientos para búsqueda rápida: numCuenta -> idAsiento (e.g. "A12")
-        const seatMap = new Map();
-        if (asientosData.success && asientosData.data && asientosData.data.asientos) {
-            asientosData.data.asientos.forEach(s => {
-                if (s.numCuenta) {
-                    seatMap.set(s.numCuenta.toString(), s.asiento);
+        // Procesar asientos LISI
+        try {
+            if (asientosLisiRes.ok) {
+                const asientosLisiData = await asientosLisiRes.json();
+                if (asientosLisiData.success && asientosLisiData.data && asientosLisiData.data.asientos) {
+                    asientosLisiData.data.asientos.forEach(s => {
+                        if (s.numCuenta) {
+                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
+                        }
+                    });
                 }
-            });
+            }
+        } catch (e) {
+            console.warn("Error procesando asientos LISI:", e);
         }
 
         if (metricasData.success && metricasData.data) {
@@ -100,7 +114,8 @@ async function loadDashboardData(token) {
             alumnosData.data.forEach(al => {
                 // Asignar el asiento si existe en el mapa
                 if (al.numCuenta) {
-                    al.asiento = seatMap.get(al.numCuenta.toString()) || "-";
+                    const numCuentaStr = String(al.numCuenta);
+                    al.asiento = seatMap.get(numCuentaStr) || "-";
                     unicos.set(al.numCuenta, al);
                 }
             });
@@ -108,7 +123,35 @@ async function loadDashboardData(token) {
             console.warn("No se recibieron alumnos o el formato es incorrecto");
         }
 
+        // Ordenar: si hay filtro de evento (LI o LISI), ordenar por asiento
+        const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
+
         state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
+            // Si hay filtro de evento activo, ordenar por asiento
+            if (filtroEvento) {
+                const seatA = a.asiento || "-";
+                const seatB = b.asiento || "-";
+
+                // Si no tienen asiento, ir al final
+                if (seatA === "-" && seatB === "-") return 0;
+                if (seatA === "-") return 1;
+                if (seatB === "-") return -1;
+
+                // Extraer letra y numero
+                const letraA = seatA.charAt(0);
+                const letraB = seatB.charAt(0);
+                const numA = parseInt(seatA.substring(1)) || 0;
+                const numB = parseInt(seatB.substring(1)) || 0;
+
+                // Comparar letras primero
+                if (letraA !== letraB) {
+                    return letraA.localeCompare(letraB);
+                }
+                // Luego numeros
+                return numA - numB;
+            }
+
+            // Default: ordenar por apellido
             const apellidoA = (a.apellido || "").trim();
             const apellidoB = (b.apellido || "").trim();
             const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });

@@ -14,7 +14,8 @@ class ControladorAsientos
     public function verMapaAsientos($evento = 'li')
     {
         try {
-            $res = $this->servicioAsientos->obtenerMapaAsientos($evento);
+            $numCuenta = $_SERVER['JWT_NUMERO_CUENTA'] ?? null;
+            $res = $this->servicioAsientos->obtenerMapaAsientos($evento, $numCuenta);
             echo json_encode($res);
         } catch (Exception $e) {
             http_response_code(500);

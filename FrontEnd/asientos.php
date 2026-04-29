@@ -41,15 +41,38 @@ if ($tipoUsuario === "alumno") {
   }
 }
 
-//  OBTENER MAPA DE ASIENTOS (solo admin)
-$asientosInfo = [];
+//  OBTENER MAPA DE ASIENTOS (solo admin) - Llamar a ambos eventos
+$asientosOcupados = [];
 
 if ($tipoUsuario === "admin") {
-  $eventoSeleccionado = $_GET['evento'] ?? 'li'; //por defecto Li
-
+  // Llamar a evento LI
   $ch = curl_init();
   curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa/" . $eventoSeleccionado,
+    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa/li",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . $token
+    ],
+    CURLOPT_SSL_VERIFYPEER => false
+  ]);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+  $data = json_decode($response, true);
+
+  if ($data['success'] && isset($data['data']['asientos'])) {
+    foreach ($data['data']['asientos'] as $asiento) {
+      if ($asiento['ocupado']) {
+        $asientosOcupados[] = $asiento['asiento'];
+      }
+    }
+  }
+
+  // Llamar a evento LISI
+  $ch = curl_init();
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa/lisi",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
       'Authorization: Bearer ' . $token
