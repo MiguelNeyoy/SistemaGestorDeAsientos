@@ -24,7 +24,6 @@ header {
   margin: 15px auto;
   color: #333;
   background-color: #ccc;
-
   width: 400px;
   height: 60px;
   display: flex;
@@ -55,12 +54,11 @@ header {
   gap: 4px;
 }
 
-/* ASIENTOS */
+/* ASIENTOS BASE */
 .asiento {
   flex-shrink: 0;
   width: 38px;
   height: 38px;
-  background: linear-gradient(145deg, #5f8bd7, #1c6bb9);
   border-radius: 12px 12px 6px 6px;
   position: relative;
   cursor: pointer;
@@ -74,8 +72,8 @@ header {
   box-shadow: 
     0 4px 6px rgba(0,0,0,0.4),
     inset 0 2px 4px rgba(255,255,255,0.2);
-
   transition: transform 0.25s ease, background 0.3s;
+  background-color: #727171; /* gris base */
 }
 
 .asiento::after {
@@ -89,19 +87,33 @@ header {
   border-radius: 2px;
 }
 
-/* ESTADOS */
-.confirmado {
-  background-color: #4CAF50;
+/* ========================= */
+/*  ESTADOS CORREGIDOS */
+/* ========================= */
+
+.asiento.disponible {
+  background-color: #727171 !important; /* gris */
 }
 
-.libre {
-  background-color: #969796;
+.asiento.ocupado {
+  background-color: #111167 !important; /* rojo */
+  color: white;
+  
 }
 
-.no-disponible {
-  background-color: #d32f2f;
-  cursor: not-allowed;
+.mi-asiento {
+  background-color: #28a745 !important; /* verde */
+  color: white;
+  font-weight: bold;
 }
+.asiento.grupo {
+  background-color: #1d1174 !important; /* azul */
+  color: white;
+}
+/* (Se mantienen por compatibilidad si los usas en otro lado) */
+.confirmado { background-color: #4CAF50; }
+.libre { background-color: #454645; }
+.no-disponible { background-color: #eb0e0e;  }
 
 /* ZONA SUPERIOR */
 .zona-superior {
@@ -115,29 +127,11 @@ header {
 }
 
 /* OTROS */
-.sin-asiento {
-  background: transparent !important;
-  box-shadow: none !important;
-}
+.sin-asiento { background: transparent !important; box-shadow: none !important; }
+.pasillo { width: 60px; }
+.hueco { width: 35px; height: 35px; visibility: hidden; }
 
-.pasillo {
-  width: 60px;
-}
-
-.hueco {
-  width: 35px;
-  height: 35px;
-  visibility: hidden;
-}
-
-/* ========================= */
-/* 📱 RESPONSIVE (VISOR ZOOM) */
-/* ========================= */
-
-#selectZona {
-    min-width: 150px;
-}
-
+/* SCROLL */
 .contenedor-scroll {
   width: 100%;
   height: calc(100vh - 80px);
@@ -161,20 +155,16 @@ header {
   will-change: transform;
 }
 
-/* Configuracion Base para escritorio */
-.teatro, .zona-superior {
-    transform: none !important;
-}
+/* Configuración base escritorio */
+.teatro, .zona-superior { transform: none !important; }
 
-/* Ajustes para pantallas grandes */
+/* Pantallas grandes */
 @media (max-width: 1200px) {
   .asiento { width: 34px; height: 34px; font-size: 9px; }
   .fila { gap: 15px; }
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE TABLET       */
-/* ========================= */
+/* TABLET */
 @media (max-width: 768px) {
   .asiento { width: 32px; height: 32px; font-size: 8px; }
   .fila { gap: 10px; }
@@ -187,6 +177,7 @@ header {
   font-weight: bold;
 }
 
+/* HOVER */
 .asiento:hover {
   transform: translateY(-9px) scale(1.05);
   box-shadow: 
@@ -194,9 +185,7 @@ header {
     inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE MOBILE      */
-/* ========================= */
+/* MOBILE */
 @media (max-width: 576px) {
   .contenedor-scroll {
     overflow: auto;
@@ -210,56 +199,12 @@ header {
     padding: 20px;
   }
   
-  .asiento {
-    width: 46px;
-    height: 46px;
-    font-size: 11px;
-  }
-  
-  .fila {
-    gap: 8px;
-  }
-  
-  .seccion {
-    gap: 3px;
-  }
-  
-  .teatro {
-    transform: none;
-    gap: 6px;
-  }
-  
-  .zona-superior {
-    transform: none;
-    margin-bottom: 40px;
-    gap: 6px;
-  }
-  
-  .mesa {
-    width: 100%;
-    max-width: 350px;
-    height: 50px;
-    font-size: 1em;
-  }
-  
-  .cabina {
-    margin-bottom: 15px;
-  }
-  
-  .hueco {
-    width: 30px;
-    height: 30px;
-  }
-  
-  #selectZona {
-    min-width: 120px;
-    font-size: 0.85rem;
-  }
-}
-
-.asiento:hover {
-  transform: translateY(-9px) scale(1.05);
-  box-shadow: 
-    0 12px 16px rgba(0,0,0,0.5),
-    inset 0 2px 4px rgba(255,255,255,0.3);
+  .asiento { width: 46px; height: 46px; font-size: 11px; }
+  .fila { gap: 8px; }
+  .seccion { gap: 3px; }
+  .teatro { transform: none; gap: 6px; }
+  .zona-superior { transform: none; margin-bottom: 40px; gap: 6px; }
+  .mesa { width: 100%; max-width: 350px; height: 50px; font-size: 1em; }
+  .cabina { margin-bottom: 15px; }
+  .hueco { width: 30px; height: 30px; }
 }
