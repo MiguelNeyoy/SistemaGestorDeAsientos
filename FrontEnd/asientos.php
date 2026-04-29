@@ -123,31 +123,6 @@ if ($tipoUsuario === "admin") {
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <a href="admin/view_admin.php" class="btn btn-outline-light btn-sm">
-      ← Regresar
-    </a>
-    <?php endif; ?>
-
-    <span class="navbar-brand fw-bold text-white">
-      Mapa de Asientos
-    </span>
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <!-- SELECT EVENTO (solo visible para admin) -->
-    <select id="selectEvento" class="form-select form-select-sm" style="width: 150px;">
-      <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
-      <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
-    </select>
-    <?php endif; ?>
-
-  </div>
-</nav>
-
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
