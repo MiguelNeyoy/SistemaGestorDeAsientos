@@ -11,6 +11,11 @@ $authData = verify_access(['alumno', 'admin']);
 $token = $authData['token'];
 $tipoUsuario = $authData['tipo'];
 
+//Mostrar token para pruebas 
+if ($tipoUsuario === "admin" && isset($_SESSION['admin_token'])) {
+  echo "<pre>Token actual: " . $_SESSION['admin_token'] . "</pre>";
+}
+
 //  OBTENER MI ASIENTO (solo si es alumno)
 $miAsiento = null;
 
@@ -37,12 +42,14 @@ if ($tipoUsuario === "alumno") {
 }
 
 //  OBTENER MAPA DE ASIENTOS (solo admin)
-$asientosOcupados = [];
+$asientosInfo = [];
 
 if ($tipoUsuario === "admin") {
+  $eventoSeleccionado = $_GET['evento'] ?? 'li'; //por defecto Li
+
   $ch = curl_init();
   curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa",
+    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa/" . $eventoSeleccionado,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
       'Authorization: Bearer ' . $token
@@ -56,14 +63,11 @@ if ($tipoUsuario === "admin") {
   $data = json_decode($response, true);
 
   if ($data['success'] && isset($data['data']['asientos'])) {
-    foreach ($data['data']['asientos'] as $asiento) {
-      if ($asiento['ocupado']) {
-        $asientosOcupados[] = $asiento['asiento'];
-      }
-    }
+    $asientosInfo = $data['data']['asientos'];
   }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -127,7 +131,7 @@ if ($tipoUsuario === "admin") {
   <script>
     window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
     window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
-    window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
+    window.ASIENTOS_INFO = <?php echo json_encode($asientosInfo); ?>;
   </script>
 
   <script src="js/asientos.js"></script>
