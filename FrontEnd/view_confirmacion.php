@@ -274,8 +274,7 @@ if (isset($_POST['actualizar_correo'])) {
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
                         value="<?php ; ?>">
 
-<<<<<<< HEAD
-=======
+
 
                     <p>Selecciona la cantidad de invitados (Máximo 4)</p>
                     <select name="invitados">
@@ -285,7 +284,7 @@ if (isset($_POST['actualizar_correo'])) {
                         <option value="3">3</option>
                         <option value="4">4</option>
                     </select>
->>>>>>> 0ac1723b87eff0b307a1ff811963136962da157c
+
                 </div>
 
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
