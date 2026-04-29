@@ -16,15 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
         envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
     }
 
-    if (selectEvento) {
-        if (window.TIPO_USUARIO === "admin") {
-            selectEvento.addEventListener('change', (e) => {
-                aplicarVistaCompleta();
-                console.log("Evento seleccionado:", e.target.value);
-            });
-        } else {
-            selectEvento.style.display = "none";
-        }
+    if (selectEvento && window.TIPO_USUARIO === "admin") {
+        selectEvento.addEventListener('change', (e) => {
+            let evento = "li"; // por defecto
+            if (e.target.value === "superior") {
+                evento = "li";   // Evento 1 = LI
+            } else if (e.target.value === "inferior") {
+                evento = "lisi"; // Evento 2 = LISI
+            }
+            window.location.href = "asientos.php?evento=" + evento;
+        });
     }
 
     aplicarVistaCompleta();
@@ -63,8 +64,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
                             asiento.classList.add('mi-asiento');
                         }
-                        if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                            asiento.classList.add('ocupado');
+
+                        if (window.TIPO_USUARIO === "admin") {
+                            const info = window.ASIENTOS_INFO.find(a => a.id_asiento === idAsiento);
+                            if (info) {
+                                if (info.estado === "ocupado") {
+                                    if (info.id_asiento.startsWith("A") || info.id_asiento.startsWith("B")) {
+                                        asiento.classList.add('grupo-li');   // azul
+                                    } else {
+                                        asiento.classList.add('grupo-lisi'); // naranja
+                                    }
+                                }
+                                if (info.asignado) {
+                                    asiento.classList.add('mi-asiento'); // verde para el asiento propio
+                                }
+                            }
                         }
                     }
                     secDiv.appendChild(asiento);
@@ -106,8 +120,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
                         asiento.classList.add('mi-asiento');
                     }
-                    if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                        asiento.classList.add('ocupado');
+
+                    if (window.TIPO_USUARIO === "admin") {
+                        const info = window.ASIENTOS_INFO.find(a => a.id_asiento === idAsiento);
+                        if (info) {
+                            if (info.estado === "ocupado") {
+                                if (info.id_asiento.startsWith("A") || info.id_asiento.startsWith("B")) {
+                                    asiento.classList.add('grupo-li');   // azul
+                                } else {
+                                    asiento.classList.add('grupo-lisi'); // naranja
+                                }
+                            }
+                            if (info.asignado) {
+                                asiento.classList.add('mi-asiento'); // verde para el asiento propio
+                            }
+                        }
                     }
 
                     secDiv.appendChild(asiento);
@@ -118,3 +145,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+

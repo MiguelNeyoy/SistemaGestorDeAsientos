@@ -24,7 +24,6 @@ header {
   margin: 15px auto;
   color: #333;
   background-color: #ccc;
-
   width: 400px;
   height: 60px;
   display: flex;
@@ -60,7 +59,6 @@ header {
   flex-shrink: 0;
   width: 38px;
   height: 38px;
-  background: #0909bd;
   border-radius: 12px 12px 6px 6px;
   position: relative;
   cursor: pointer;
@@ -74,8 +72,8 @@ header {
   box-shadow: 
     0 4px 6px rgba(0,0,0,0.4),
     inset 0 2px 4px rgba(255,255,255,0.2);
-
   transition: transform 0.25s ease, background 0.3s;
+  background-color: #727171; /* gris base */
 }
 
 .asiento::after {
@@ -90,18 +88,9 @@ header {
 }
 
 /* ESTADOS */
-.confirmado {
-  background-color: #4CAF50;
-}
-
-.libre {
-  background-color: #454645;
-}
-
-.no-disponible {
-  background-color: #d32f2f;
-  cursor: not-allowed;
-}
+.confirmado { background-color: #4CAF50; }
+.libre { background-color: #454645; }
+.no-disponible { background-color: #d32f2f; cursor: not-allowed; }
 
 /* ZONA SUPERIOR */
 .zona-superior {
@@ -115,28 +104,12 @@ header {
 }
 
 /* OTROS */
-.sin-asiento {
-  background: transparent !important;
-  box-shadow: none !important;
-}
+.sin-asiento { background: transparent !important; box-shadow: none !important; }
+.pasillo { width: 60px; }
+.hueco { width: 35px; height: 35px; visibility: hidden; }
 
-.pasillo {
-  width: 60px;
-}
-
-.hueco {
-  width: 35px;
-  height: 35px;
-  visibility: hidden;
-}
-
-/* ========================= */
 /* 📱 RESPONSIVE (VISOR ZOOM) */
-/* ========================= */
-
-#selectZona {
-    min-width: 150px;
-}
+#selectZona { min-width: 150px; }
 
 .contenedor-scroll {
   width: 100%;
@@ -162,9 +135,7 @@ header {
 }
 
 /* Configuracion Base para escritorio */
-.teatro, .zona-superior {
-    transform: none !important;
-}
+.teatro, .zona-superior { transform: none !important; }
 
 /* Ajustes para pantallas grandes */
 @media (max-width: 1200px) {
@@ -172,9 +143,7 @@ header {
   .fila { gap: 15px; }
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE TABLET       */
-/* ========================= */
+/* 📱 RESPONSIVE TABLET */
 @media (max-width: 768px) {
   .asiento { width: 32px; height: 32px; font-size: 8px; }
   .fila { gap: 10px; }
@@ -194,9 +163,7 @@ header {
     inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE MOBILE      */
-/* ========================= */
+/* 📱 RESPONSIVE MOBILE */
 @media (max-width: 576px) {
   .contenedor-scroll {
     overflow: auto;
@@ -210,72 +177,31 @@ header {
     padding: 20px;
   }
   
-  .asiento {
-    width: 46px;
-    height: 46px;
-    font-size: 11px;
-  }
-  
-  .fila {
-    gap: 8px;
-  }
-  
-  .seccion {
-    gap: 3px;
-  }
-  
-  .teatro {
-    transform: none;
-    gap: 6px;
-  }
-  
-  .zona-superior {
-    transform: none;
-    margin-bottom: 40px;
-    gap: 6px;
-  }
-  
-  .mesa {
-    width: 100%;
-    max-width: 350px;
-    height: 50px;
-    font-size: 1em;
-  }
-  
-  .cabina {
-    margin-bottom: 15px;
-  }
-  
-  .hueco {
-    width: 30px;
-    height: 30px;
-  }
-  
-  #selectZona {
-    min-width: 120px;
-    font-size: 0.85rem;
-  }
+  .asiento { width: 46px; height: 46px; font-size: 11px; }
+  .fila { gap: 8px; }
+  .seccion { gap: 3px; }
+  .teatro { transform: none; gap: 6px; }
+  .zona-superior { transform: none; margin-bottom: 40px; gap: 6px; }
+  .mesa { width: 100%; max-width: 350px; height: 50px; font-size: 1em; }
+  .cabina { margin-bottom: 15px; }
+  .hueco { width: 30px; height: 30px; }
+  #selectZona { min-width: 120px; font-size: 0.85rem; }
 }
 
-.asiento:hover {
-  transform: translateY(-9px) scale(1.05);
-  box-shadow: 
-    0 12px 16px rgba(0,0,0,0.5),
-    inset 0 2px 4px rgba(255,255,255,0.3);
-}
-.asiento {
-    background-color: #727171;
-    color: rgb(245, 243, 243);
-}
-
+/* CLASES DE GRUPOS Y ESTADOS */
 .mi-asiento {
-  background: #28a745 !important;
+  background-color: #28a745 !important; /* verde */
   color: white;
   font-weight: bold;
 }
 
-.ocupado {
-  background: #2323e1 !important;
+.grupo-li {
+  background-color: blue !important;
+  color: white;
+}
+
+.grupo-lisi {
+  background-color: orange !important;
   color: white;
 }
 
