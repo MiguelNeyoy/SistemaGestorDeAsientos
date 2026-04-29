@@ -1,54 +1,70 @@
-/**
- * LÓGICA DE RENDERIZADO Y SCROLL DEL TEATRO
- * Desktop: Selector de zonas con zoom
- * Móvil: Scroll nativo con asientos grandes
- */
-
 document.addEventListener("DOMContentLoaded", () => {
     
     const envoltura = document.querySelector('.mapa-envoltura');
-    const selectZona = document.getElementById('selectZona');
 
-    const CONFIG_ZOOM = {
-        "todos": {
-            scale: 0.35,
-            x: 0,
-            y: 0
-        },
-        "superior": {
-            scale: 1.0,
-            x: 0,
-            y: 50
-        },
-        "inferior": {
-            scale: 0.8,
-            x: 0,
-            y: -500
-        }
-    };
+    const selectEvento = document.getElementById('selectEvento');
+
+    const CONFIG_ZOOM_COMPLETO = { scale: 0.6, x: 0, y: 0 };
 
     function esDispositivoMovil() {
         return window.innerWidth <= 576;
     }
 
-    function aplicarTransformacion(slug) {
+    function aplicarVistaCompleta() {
         if (esDispositivoMovil()) {
             envoltura.style.transform = '';
             return;
         }
-
-        const conf = CONFIG_ZOOM[slug] || CONFIG_ZOOM["todos"];
-        envoltura.style.transform = `scale(${conf.scale}) translate(${conf.x}px, ${conf.y}px)`;
+        envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
     }
 
-    if (selectZona) {
-        selectZona.addEventListener('change', (e) => {
-            aplicarTransformacion(e.target.value);
+    //  CAMBIO DE EVENTO
+    if (selectEvento && window.TIPO_USUARIO === "admin") {
+        selectEvento.addEventListener('change', (e) => {
+            const evento = e.target.value;
+            window.location.href = "asientos.php?evento=" + evento;
         });
-        
-        aplicarTransformacion("todos");
     }
 
+    aplicarVistaCompleta();
+
+    // ===============================
+    //  FUNCIÓN MODIFICADA
+    // ===============================
+    function pintarAsiento(asiento, idAsiento) {
+
+        asiento.classList.add('disponible');
+
+        //  ALUMNO
+        if (window.TIPO_USUARIO === "alumno") {
+         console.log("Js:", idAsiento, "Grupo:", window.ASIENTOS_GRUPO);    
+            //  Todo su grupo
+            if (window.ASIENTOS_GRUPO.includes(idAsiento)) {
+                asiento.classList.remove('disponible');
+                asiento.classList.add('grupo');
+            }
+
+            //  Su asiento (prioridad)
+            if (idAsiento === window.MI_ASIENTO) {
+                asiento.classList.remove('grupo');
+                asiento.classList.add('mi-asiento');
+            }
+
+            return;
+        }
+
+        // ADMIN
+        if (window.TIPO_USUARIO === "admin") {
+            if (window.ASIENTOS_OCUPADOS.includes(idAsiento)) {
+                asiento.classList.remove('disponible');
+                asiento.classList.add('ocupado');
+            }
+        }
+    }
+
+    // ===============================
+    //  ZONA SUPERIOR
+    // ===============================
     const zonaSuperior = document.querySelector('.zona-superior');
     const letrasSuperior = "KLM";
 
@@ -74,26 +90,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     if ((letra === "M" && (n < 12 || n > 27)) ||
                         (letra === "L" && (n >= 17 && n <= 22)) ||
                         (letra === "M" && (n >= 16 && n <= 23))) {
+
                         asiento.classList.add('hueco');
+
                     } else {
                         asiento.classList.add('asiento');
                         asiento.textContent = idAsiento;
 
-                        if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                            asiento.classList.add('confirmado');
-                        }
-                        if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                            asiento.classList.add('confirmado');
-                        }
+                        pintarAsiento(asiento, idAsiento);
                     }
+
                     secDiv.appendChild(asiento);
                 }
+
                 filaDiv.appendChild(secDiv);
             });
+
             zonaSuperior.appendChild(filaDiv);
         });
     }
 
+    // ===============================
+    //  TEATRO
+    // ===============================
     const teatro = document.querySelector('.teatro');
     const letrasTeatro = "JIHGFEDCBA";
 
@@ -108,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 { inicio: 24, fin: 30 }
             ];
 
-            if (f === (letrasTeatro.length - 1)) {
+            if (f === (letrasTeatro.length - 10)) {
                 secciones = [{ inicio: 1, fin: 34 }];
             }
 
@@ -119,21 +138,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (let n = sec.inicio; n <= sec.fin; n++) {
                     const asiento = document.createElement('div');
                     const idAsiento = letrasTeatro[f] + n;
+
                     asiento.classList.add('asiento');
                     asiento.textContent = idAsiento;
 
-                    if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                        asiento.classList.add('confirmado');
-                    }
-                    if (window.TIPO_USUARIO === "admin" && window.ASIENTOS_OCUPADOS?.includes(idAsiento)) {
-                        asiento.classList.add('confirmado');
-                    }
+                    pintarAsiento(asiento, idAsiento);
 
                     secDiv.appendChild(asiento);
                 }
+
                 filaDiv.appendChild(secDiv);
             });
+
             teatro.appendChild(filaDiv);
         }
     }
+
 });
