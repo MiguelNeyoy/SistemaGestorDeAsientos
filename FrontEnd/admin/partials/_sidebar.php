@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li class="admin-sidebar__item">
-                <a href="../asientos.php" class="admin-sidebar__link">
+                <a href="javascript:void(0)" class="admin-sidebar__link" onclick="showAsientosMap()">
                     <span class="admin-icon admin-icon--chair"></span>
                     <span>Mapa de Asientos</span>
                 </a>

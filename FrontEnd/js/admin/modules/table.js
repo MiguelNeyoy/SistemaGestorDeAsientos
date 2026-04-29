@@ -144,6 +144,11 @@ export function renderTable(filterText = "") {
  * @param {string} type - El identificador del filtro (ALL, CONFIRMADOS, etc.)
  */
 export function setFilterType(type) {
+    // Ocultar mapa de asientos si está visible
+    if (typeof showTableAlumnos === 'function') {
+        showTableAlumnos();
+    }
+    
     state.currentFilterType = type;
 
     // Actualizar estado activo en el sidebar
