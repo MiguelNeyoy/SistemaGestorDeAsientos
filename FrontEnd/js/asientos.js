@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
     const envoltura = document.querySelector('.mapa-envoltura');
+
     const selectEvento = document.getElementById('selectEvento');
 
     const CONFIG_ZOOM_COMPLETO = { scale: 0.6, x: 0, y: 0 };
@@ -16,21 +18,53 @@ document.addEventListener("DOMContentLoaded", () => {
         envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
     }
 
+    //  CAMBIO DE EVENTO
     if (selectEvento && window.TIPO_USUARIO === "admin") {
         selectEvento.addEventListener('change', (e) => {
-            let evento = "li"; // por defecto
-            if (e.target.value === "superior") {
-                evento = "li";   // Evento 1 = LI
-            } else if (e.target.value === "inferior") {
-                evento = "lisi"; // Evento 2 = LISI
-            }
+            const evento = e.target.value;
             window.location.href = "asientos.php?evento=" + evento;
         });
     }
 
     aplicarVistaCompleta();
 
-    // === Renderizado de asientos ===
+    // ===============================
+    //  FUNCIÓN MODIFICADA
+    // ===============================
+    function pintarAsiento(asiento, idAsiento) {
+
+        asiento.classList.add('disponible');
+
+        //  ALUMNO
+        if (window.TIPO_USUARIO === "alumno") {
+         console.log("Js:", idAsiento, "Grupo:", window.ASIENTOS_GRUPO);    
+            //  Todo su grupo
+            if (window.ASIENTOS_GRUPO.includes(idAsiento)) {
+                asiento.classList.remove('disponible');
+                asiento.classList.add('grupo');
+            }
+
+            //  Su asiento (prioridad)
+            if (idAsiento === window.MI_ASIENTO) {
+                asiento.classList.remove('grupo');
+                asiento.classList.add('mi-asiento');
+            }
+
+            return;
+        }
+
+        // ADMIN
+        if (window.TIPO_USUARIO === "admin") {
+            if (window.ASIENTOS_OCUPADOS.includes(idAsiento)) {
+                asiento.classList.remove('disponible');
+                asiento.classList.add('ocupado');
+            }
+        }
+    }
+
+    // ===============================
+    //  ZONA SUPERIOR
+    // ===============================
     const zonaSuperior = document.querySelector('.zona-superior');
     const letrasSuperior = "KLM";
 
@@ -56,39 +90,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     if ((letra === "M" && (n < 12 || n > 27)) ||
                         (letra === "L" && (n >= 17 && n <= 22)) ||
                         (letra === "M" && (n >= 16 && n <= 23))) {
+
                         asiento.classList.add('hueco');
+
                     } else {
                         asiento.classList.add('asiento');
                         asiento.textContent = idAsiento;
 
-                        if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                            asiento.classList.add('mi-asiento');
-                        }
-
-                        if (window.TIPO_USUARIO === "admin") {
-                            const info = window.ASIENTOS_INFO.find(a => a.id_asiento === idAsiento);
-                            if (info) {
-                                if (info.estado === "ocupado") {
-                                    if (info.id_asiento.startsWith("A") || info.id_asiento.startsWith("B")) {
-                                        asiento.classList.add('grupo-li');   // azul
-                                    } else {
-                                        asiento.classList.add('grupo-lisi'); // naranja
-                                    }
-                                }
-                                if (info.asignado) {
-                                    asiento.classList.add('mi-asiento'); // verde para el asiento propio
-                                }
-                            }
-                        }
+                        pintarAsiento(asiento, idAsiento);
                     }
+
                     secDiv.appendChild(asiento);
                 }
+
                 filaDiv.appendChild(secDiv);
             });
+
             zonaSuperior.appendChild(filaDiv);
         });
     }
 
+    // ===============================
+    //  TEATRO
+    // ===============================
     const teatro = document.querySelector('.teatro');
     const letrasTeatro = "JIHGFEDCBA";
 
@@ -114,35 +138,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (let n = sec.inicio; n <= sec.fin; n++) {
                     const asiento = document.createElement('div');
                     const idAsiento = letrasTeatro[f] + n;
+
                     asiento.classList.add('asiento');
                     asiento.textContent = idAsiento;
 
-                    if (window.TIPO_USUARIO === "alumno" && idAsiento === window.MI_ASIENTO) {
-                        asiento.classList.add('mi-asiento');
-                    }
-
-                    if (window.TIPO_USUARIO === "admin") {
-                        const info = window.ASIENTOS_INFO.find(a => a.id_asiento === idAsiento);
-                        if (info) {
-                            if (info.estado === "ocupado") {
-                                if (info.id_asiento.startsWith("A") || info.id_asiento.startsWith("B")) {
-                                    asiento.classList.add('grupo-li');   // azul
-                                } else {
-                                    asiento.classList.add('grupo-lisi'); // naranja
-                                }
-                            }
-                            if (info.asignado) {
-                                asiento.classList.add('mi-asiento'); // verde para el asiento propio
-                            }
-                        }
-                    }
+                    pintarAsiento(asiento, idAsiento);
 
                     secDiv.appendChild(asiento);
                 }
+
                 filaDiv.appendChild(secDiv);
             });
+
             teatro.appendChild(filaDiv);
         }
     }
-});
 
+});
