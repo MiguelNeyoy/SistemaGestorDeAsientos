@@ -3,10 +3,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* Design System Imports */
-@import '../css/admin/variables.css?v=6';
-@import '../css/admin/layout.css?v=6';
-@import '../css/admin/components.css?v=6';
-@import '../css/admin/responsive.css?v=6';
+@import '../css/admin/variables.css?v=8';
+@import '../css/admin/layout.css?v=8';
+@import '../css/admin/components.css?v=8';
+@import '../css/admin/responsive.css?v=8';
 /* Reset base */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
