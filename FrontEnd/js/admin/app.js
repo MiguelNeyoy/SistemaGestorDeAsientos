@@ -1,10 +1,10 @@
-import { state } from './modules/state.js?v=5';
-import { fetchDashboardData } from './modules/api.js?v=5';
-import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js?v=5';
-import { renderTable, setFilterType } from './modules/table.js?v=5';
-import { openEditModal, setupModalFormListener } from './modules/modal.js?v=5';
-import { initQRModule } from './modules/qrscanner.js?v=5';
-import { setupEmailFormListener } from './modules/emails.js?v=5';
+import { state } from './modules/state.js?v=8';
+import { fetchDashboardData } from './modules/api.js?v=8';
+import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js?v=8';
+import { renderTable, setFilterType } from './modules/table.js?v=8';
+import { openEditModal, setupModalFormListener } from './modules/modal.js?v=8';
+import { initQRModule } from './modules/qrscanner.js?v=8';
+import { setupEmailFormListener } from './modules/emails.js?v=8';
 
 let pollInterval = null;
 

@@ -1,5 +1,5 @@
-import { state } from './state.js?v=5';
-import { getGrupo } from './utils.js?v=5';
+import { state } from './state.js?v=8';
+import { getGrupo } from './utils.js?v=8';
 
 /**
  * Función principal para renderizar la tabla de alumnos.
