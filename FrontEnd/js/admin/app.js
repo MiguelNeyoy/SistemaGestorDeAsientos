@@ -147,7 +147,7 @@ async function loadDashboardData(token) {
 
                 // Comparar letras primero
                 if (letraA !== letraB) {
-                    return letraA.localeCompare(letraB);
+                    return letraA.localeCompare(letraB, 'es', { sensitivity: 'base' });
                 }
                 // Luego numeros
                 return numA - numB;

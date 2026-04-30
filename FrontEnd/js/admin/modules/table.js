@@ -78,14 +78,14 @@ export function renderTable(filterText = "") {
             const numA = parseInt(seatA.substring(1)) || 0;
             const numB = parseInt(seatB.substring(1)) || 0;
             
-            if (letraA !== letraB) return letraA.localeCompare(letraB);
+            if (letraA !== letraB) return letraA.localeCompare(letraB, 'es', { sensitivity: 'base' });
             return numA - numB;
         });
     } else {
         filtered.sort((a, b) => {
             const nameA = (a.apellido + " " + a.nombre).toLowerCase();
             const nameB = (b.apellido + " " + b.nombre).toLowerCase();
-            return nameA.localeCompare(nameB);
+            return nameA.localeCompare(nameB, 'es', { sensitivity: 'base' });
         });
     }
 
