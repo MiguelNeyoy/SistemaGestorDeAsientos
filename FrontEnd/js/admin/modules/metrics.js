@@ -1,4 +1,4 @@
-import { getGrupo } from './utils.js?v=5';
+import { getGrupo } from './utils.js?v=8';
 
 export function updateMetricsUI(metrics) {
     // 1. Actualiza el Total Global de Invitados

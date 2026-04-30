@@ -35,13 +35,19 @@ class ControladorAlumno
             $audience_claim = "http://asientos.local";
             $issuedat_claim = time(); // tiempo de emisión
             $expire_claim = $issuedat_claim + (60 * 60); // expira en 24 horas
+
+            // Determinar evento_id basado en la carrera del alumno
+            $carrera = $respuestaDelServicio['data']['carrera'] ?? '';
+            $evento_id = $this->determinarEventoId($carrera);
+
             $token = array(
                 "iss" => $issuer_claim,
                 "aud" => $audience_claim,
                 "iat" => $issuedat_claim,
                 "exp" => $expire_claim,
                 "data" => array(
-                    "numero_cuenta" => $numero_cuenta
+                    "numero_cuenta" => $numero_cuenta,
+                    "evento_id" => $evento_id
                 )
             );
 
@@ -97,5 +103,14 @@ class ControladorAlumno
             http_response_code(401);
             echo json_encode(["success" => false, "message" => "No autorizado"]);
         }
+    }
+
+    private function determinarEventoId($carrera)
+    {
+        $carreraLower = strtolower(trim($carrera));
+        if (strpos($carreraLower, 'informática') !== false || strpos($carreraLower, 'informatica') !== false) {
+            return 'li';
+        }
+        return 'lisi';
     }
 }

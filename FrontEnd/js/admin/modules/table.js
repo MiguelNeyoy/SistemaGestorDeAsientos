@@ -1,5 +1,5 @@
-import { state } from './state.js?v=5';
-import { getGrupo } from './utils.js?v=5';
+import { state } from './state.js?v=8';
+import { getGrupo } from './utils.js?v=8';
 
 /**
  * Función principal para renderizar la tabla de alumnos.
@@ -41,6 +41,19 @@ export function renderTable(filterText = "") {
             if (state.currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
             if (state.currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
             if (state.currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
+            
+            // Filtros por evento (LI o LISI) - simple mostrar/ocultar filas en UI
+            if (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI') {
+                const carLower = (al.carrera || '').toLowerCase();
+                if (state.currentFilterType === 'LI') {
+                    if (!carLower.includes('informática') && !carLower.includes('informatica')) return false;
+                }
+                if (state.currentFilterType === 'LISI') {
+                    if (!carLower.includes('ingeniería') && !carLower.includes('sistemas')) return false;
+                }
+            }
+            
+            // Filtros por grupo específico
             if (['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(state.currentFilterType)) {
                 if (!(isConfirmado && getGrupo(al.carrera, al.turno) === state.currentFilterType)) return false;
             }
@@ -48,12 +61,33 @@ export function renderTable(filterText = "") {
         return true;
     });
 
-    // Ordenar Alfabéticamente: Asegura que la lista resultante siempre esté ordenada por apellido
-    filtered.sort((a, b) => {
-        const nameA = (a.apellido + " " + a.nombre).toLowerCase();
-        const nameB = (b.apellido + " " + b.nombre).toLowerCase();
-        return nameA.localeCompare(nameB);
-    });
+    // Si hay filtro de evento (LI o LISI), ordenar por asiento; si no, por nombre
+    const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
+    
+    if (filtroEvento) {
+        filtered.sort((a, b) => {
+            const seatA = a.asiento || "-";
+            const seatB = b.asiento || "-";
+            
+            if (seatA === "-" && seatB === "-") return 0;
+            if (seatA === "-") return 1;
+            if (seatB === "-") return -1;
+            
+            const letraA = seatA.charAt(0);
+            const letraB = seatB.charAt(0);
+            const numA = parseInt(seatA.substring(1)) || 0;
+            const numB = parseInt(seatB.substring(1)) || 0;
+            
+            if (letraA !== letraB) return letraA.localeCompare(letraB);
+            return numA - numB;
+        });
+    } else {
+        filtered.sort((a, b) => {
+            const nameA = (a.apellido + " " + a.nombre).toLowerCase();
+            const nameB = (b.apellido + " " + b.nombre).toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+    }
 
     // Manejar el caso donde no hay resultados
     if (filtered.length === 0) {
@@ -110,7 +144,36 @@ export function renderTable(filterText = "") {
  * @param {string} type - El identificador del filtro (ALL, CONFIRMADOS, etc.)
  */
 export function setFilterType(type) {
+    // Ocultar mapa de asientos si está visible
+    if (typeof showTableAlumnos === 'function') {
+        showTableAlumnos();
+    }
+    
     state.currentFilterType = type;
+
+    // Actualizar estado activo en el sidebar
+    document.querySelectorAll('.admin-sidebar__link').forEach(link => {
+        link.classList.remove('admin-sidebar__link--active');
+    });
+
+    // Mapear el tipo a ID de link para activar el correcto
+    const filterMap = {
+        'ALL': 'link-filter-all',
+        'CONFIRMADOS': 'link-filter-confirmados',
+        'INVITADOS': 'link-filter-invitados',
+        'LI': 'link-filter-li',
+        'LISI': 'link-filter-lisi',
+        'LI4-1': 'link-filter-li41',
+        'LI4-2': 'link-filter-li42',
+        'LISI4-1': 'link-filter-lisi41',
+        'LISI4-2': 'link-filter-lisi42',
+        'RECHAZADOS': 'link-filter-rechazados'
+    };
+
+    const activeLinkId = filterMap[type];
+    if (activeLinkId && document.getElementById(activeLinkId)) {
+        document.getElementById(activeLinkId).classList.add('admin-sidebar__link--active');
+    }
 
     // Mostrar/Ocultar el botón de "Mostrar Todo" dependiendo del filtro
     const btn = document.getElementById("btnMostrarTodo");

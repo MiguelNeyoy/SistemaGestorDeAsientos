@@ -234,7 +234,6 @@ if (isset($_POST['actualizar_correo'])) {
     <div class="container"> <!-- Contenedor principal -->
 
 
-
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
         <?php
         $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
@@ -273,7 +272,8 @@ if (isset($_POST['actualizar_correo'])) {
                 <div id="extra" style="display:none">
                     <p>Correo</p>
                     <input type="email" name="correo" placeholder="Escribe tu correo" required
-                        value="<?php echo htmlspecialchars($alumno['email']); ?>">
+                        value="<?php ; ?>">
+
 
 
                     <p>Selecciona la cantidad de invitados (Máximo 4)</p>
@@ -284,6 +284,7 @@ if (isset($_POST['actualizar_correo'])) {
                         <option value="3">3</option>
                         <option value="4">4</option>
                     </select>
+
                 </div>
 
                 <button type="submit" name="confirmar">Confirmar asistencia</button>
@@ -310,9 +311,6 @@ if (isset($_POST['actualizar_correo'])) {
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
                 <?php } ?>
 
-                <!-- Formulario para actualizar correo (CONSUMO 3) -->
-
-
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>
                     <p style="color:<?php echo $mensajeCorreo == "Correo actualizado correctamente" ? "green" : "red"; ?>;">
@@ -322,7 +320,7 @@ if (isset($_POST['actualizar_correo'])) {
 
 
                 <br>
-                <p style="text-align: center;"><a href="bienvenida.php">Regresar al inicio</a></p>
+                <p style="text-align: center;"><a href="index.php">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>

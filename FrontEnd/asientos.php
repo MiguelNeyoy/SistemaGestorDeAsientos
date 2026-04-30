@@ -11,13 +11,22 @@ $authData = verify_access(['alumno', 'admin']);
 $token = $authData['token'];
 $tipoUsuario = $authData['tipo'];
 
-//  OBTENER MI ASIENTO (solo si es alumno)
+//  IMPORTANTE → obtener evento desde URL
+$evento = $_GET['evento'] ?? 'li';
+
+
+// ==============================
+//  OBTENER MI ASIENTO (ALUMNO)
+// ==============================
 $miAsiento = null;
+$asientosGrupo = [];
 
 if ($tipoUsuario === "alumno") {
+
+  //  MI ASIENTO
   $ch = curl_init();
   curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/asientos/misAsiento",
+    CURLOPT_URL => $BASE_API_URL . "/asientos/misAsiento?evento=" . $evento,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
       'Authorization: Bearer ' . $token
@@ -30,19 +39,54 @@ if ($tipoUsuario === "alumno") {
 
   $data = json_decode($response, true);
 
-  if ($data['success']) {
+  if ($data && $data['success']) {
     $asientoData = $data['data'];
     $miAsiento = $asientoData['letra'] . $asientoData['numero'];
   }
+
+  //  MAPA (grupo)
+  $endpoint = ($evento === 'lisi')
+    ? "/asientos/mapa/lisi"
+    : "/asientos/mapa/li";
+
+  $ch = curl_init();
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $BASE_API_URL . $endpoint,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . $token
+    ],
+    CURLOPT_SSL_VERIFYPEER => false
+  ]);
+
+  $responseMapa = curl_exec($ch);
+  curl_close($ch);
+
+  $dataMapa = json_decode($responseMapa, true);
+
+  if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
+
+    foreach ($dataMapa['data']['asientos'] as $asiento) {
+      $asientosGrupo[] = trim($asiento['id_asiento']); //  trim por seguridad
+    }
+  }
 }
 
-//  OBTENER MAPA DE ASIENTOS (solo admin)
+
+// ==============================
+// 🔹 ADMIN (SIN CAMBIOS)
+// ==============================
 $asientosOcupados = [];
 
 if ($tipoUsuario === "admin") {
+
+  $endpoint = ($evento === 'lisi')
+    ? "/asientos/mapa/lisi"
+    : "/asientos/mapa/li";
+
   $ch = curl_init();
   curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/asientos/mapa",
+    CURLOPT_URL => $BASE_API_URL . $endpoint,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
       'Authorization: Bearer ' . $token
@@ -55,11 +99,13 @@ if ($tipoUsuario === "admin") {
 
   $data = json_decode($response, true);
 
-  if ($data['success'] && isset($data['data']['asientos'])) {
+  if ($data && $data['success'] && isset($data['data']['asientos'])) {
     foreach ($data['data']['asientos'] as $asiento) {
-      if ($asiento['ocupado']) {
-        $asientosOcupados[] = $asiento['asiento'];
+
+      if (isset($asiento['estado']) && $asiento['estado'] === "ocupado") {
+        $asientosOcupados[] = $asiento['id_asiento'];
       }
+
     }
   }
 }
@@ -67,69 +113,35 @@ if ($tipoUsuario === "admin") {
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <title>Mapa de Asientos Teatro</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
   <link rel="stylesheet" href="css/asientos.css">
 </head>
 
 <body>
 
-  <!-- NavBar y Controles -->
-  <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
-    <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
-      <!-- Botón Volver -->
-      <a href="<?php echo ($tipoUsuario === 'admin') ? 'admin/view_admin.php' : 'index.php'; ?>"
-        class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 8px;">
-        <i class="bi bi-arrow-left"></i> <span class="d-none d-md-inline">Regresar al panel</span>
-      </a>
-
-      <!-- Titulo -->
-      <span class="navbar-brand mb-0 h1 fs-5 fw-bold m-0 p-0 text-white">
-        Mapa de Asientos
-      </span>
-
-      <!-- Selector Zonas (Transform Zoom) -->
-      <div class="m-0" style="width: auto;">
-        <select id="selectZona" class="form-select form-select-sm text-dark fw-bold border-0 shadow-sm"
-          style="border-radius: 8px; font-size: 0.85rem;">
-          <option value="todos">Ver Todo (Vista Aérea)</option>
-          <option value="superior">Zona Superior (Palcos/KLM)</option>
-          <option value="inferior">Planta Baja (General/VIP)</option>
-        </select>
-      </div>
-      <!-- Espaciador para centrar titulo en escritorio -->
-      <div class="d-none d-lg-block" style="width: 140px;"></div>
-    </div>
-  </nav>
-
-
-
-  <!-- Contenedor con scroll -->
-  <div class="contenedor-scroll shadow-inner">
-    <div class="mapa-envoltura">
-      <div class="cabina">Cabina</div>
-      <div class="zona-superior"></div>
-      <div class="teatro"></div>
-      <div class="mesa">Mesa directiva</div>
-    </div>
+<!-- CONTENEDOR -->
+<div class="contenedor-scroll">
+  <div class="mapa-envoltura">
+    <div class="cabina">Cabina</div>
+    <div class="zona-superior"></div>
+    <div class="teatro"></div>
+    <div class="mesa">Escenario</div>
   </div>
+</div>
 
-  <!--  PASAR DATOS A JS GLOBAL -->
-  <script>
-    window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
-    window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
-    window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
-  </script>
+<!-- PASAR DATOS A JS -->
+<script>
+  window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
+  window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
+  window.ASIENTOS_GRUPO = <?php echo json_encode($asientosGrupo); ?>;
+  window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
+</script>
 
-  <script src="js/asientos.js"></script>
-
+<script src="js/asientos.js"></script>
 
 </body>
-
 </html>
