@@ -118,7 +118,7 @@ if ($tipoUsuario === "admin") {
   <title>Mapa de Asientos Teatro</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/asientos.css">
+  <link rel="stylesheet" href="css/asientos.css?v=2">
 </head>
 
 <body>
@@ -141,7 +141,7 @@ if ($tipoUsuario === "admin") {
   window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
 </script>
 
-<script src="js/asientos.js"></script>
+<script src="js/asientos.js?v=2"></script>
 
 </body>
 </html>
