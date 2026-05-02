@@ -76,7 +76,7 @@ if (isset($_POST['buscar'])) {
                         $estado = $alumno['asistencia']; // "Si", "No", "Pendiente"
 
                         if ($estado == "Si") {
-                            header("Location: asientos.php");
+                            header("Location: home_alumno.php");
                         } else {
                             header("Location: view_confirmacion.php");
                         }

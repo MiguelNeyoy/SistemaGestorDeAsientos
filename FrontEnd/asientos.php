@@ -14,7 +14,6 @@ $tipoUsuario = $authData['tipo'];
 //  IMPORTANTE → obtener evento desde URL
 $evento = $_GET['evento'] ?? 'li';
 
-
 // ==============================
 //  OBTENER MI ASIENTO (ALUMNO)
 // ==============================
@@ -22,7 +21,6 @@ $miAsiento = null;
 $asientosGrupo = [];
 
 if ($tipoUsuario === "alumno") {
-
   //  MI ASIENTO
   $ch = curl_init();
   curl_setopt_array($ch, [
@@ -65,21 +63,18 @@ if ($tipoUsuario === "alumno") {
   $dataMapa = json_decode($responseMapa, true);
 
   if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
-
     foreach ($dataMapa['data']['asientos'] as $asiento) {
       $asientosGrupo[] = trim($asiento['id_asiento']); //  trim por seguridad
     }
   }
 }
 
-
 // ==============================
-// 🔹 ADMIN (SIN CAMBIOS)
+//  ADMIN 
 // ==============================
 $asientosOcupados = [];
 
 if ($tipoUsuario === "admin") {
-
   $endpoint = ($evento === 'lisi')
     ? "/asientos/mapa/lisi"
     : "/asientos/mapa/li";
@@ -101,11 +96,9 @@ if ($tipoUsuario === "admin") {
 
   if ($data && $data['success'] && isset($data['data']['asientos'])) {
     foreach ($data['data']['asientos'] as $asiento) {
-
       if (isset($asiento['estado']) && $asiento['estado'] === "ocupado") {
         $asientosOcupados[] = $asiento['id_asiento'];
       }
-
     }
   }
 }
@@ -139,10 +132,13 @@ if ($tipoUsuario === "admin") {
 
     <?php if ($tipoUsuario === 'admin'): ?>
     <!-- SELECT EVENTO (solo visible para admin) -->
-    <select id="selectEvento" class="form-select form-select-sm" style="width: 150px;">
-      <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
-      <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
-    </select>
+    <div class="d-flex align-items-center">
+      <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
+        <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
+        <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
+      </select>
+      <span id="eventoDescripcion" class="text-white fw-bold"></span>
+    </div>
     <?php endif; ?>
 
   </div>
@@ -168,5 +164,25 @@ if ($tipoUsuario === "admin") {
 
 <script src="js/asientos.js"></script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const selectEvento = document.getElementById("selectEvento");
+  const eventoDescripcion = document.getElementById("eventoDescripcion");
+
+  if (selectEvento && eventoDescripcion) {
+    function actualizarDescripcion() {
+      if (selectEvento.value === "li") {
+        eventoDescripcion.textContent = "Licenciatura en Informática";
+      } else if (selectEvento.value === "lisi") {
+        eventoDescripcion.textContent = "Licenciatura en Ingeniería en Sistemas de Información";
+      }
+    }
+    actualizarDescripcion();
+    selectEvento.addEventListener("change", actualizarDescripcion);
+  }
+});
+</script>
+
 </body>
 </html>
+

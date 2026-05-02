@@ -110,7 +110,7 @@ if (isset($_POST['confirmar'])) {
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
 
             if ($asistira == 1) {
-                header("Location: asientos.php");
+                header("Location: home_alumno.php?confirmado=1");
             } else {
                 header("Location: view_confirmacion.php");
             }

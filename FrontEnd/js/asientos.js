@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // ADMIN
+        //  ADMIN
         if (window.TIPO_USUARIO === "admin") {
             if (window.ASIENTOS_OCUPADOS.includes(idAsiento)) {
                 asiento.classList.remove('disponible');
