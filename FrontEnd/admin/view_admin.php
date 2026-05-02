@@ -41,7 +41,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                 <div id="table-container">
                     <?php include 'partials/_directory_table.php'; ?>
                 </div>
-                
+
                 <!-- Asientos Map (hidden by default) -->
                 <div id="asientos-controls" class="mb-2 d-flex align-items-center justify-content-center gap-2" style="display: none;">
                     <select id="selectEventoAsientos" class="form-select form-select-sm" style="width: 150px;">
@@ -54,7 +54,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                 </div>
                 <div id="asientos-container" style="display: none;">
                     <iframe id="asientosIframe" src="../asientos.php?evento=li" style="width: 100%; height: 75vh; border: none;"
-                    onload="initIframeDrag()"></iframe>
+                        onload="initIframeDrag()"></iframe>
                 </div>
             </div>
         </main>
@@ -67,13 +67,13 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
         // Funciones para mostrar/ocultar mapa de asientos
         function showAsientosMap(evento) {
             if (!evento) evento = 'li';
-            
+
             var tableContainer = document.getElementById('table-container');
             var asientosContainer = document.getElementById('asientos-container');
             var asientosControls = document.getElementById('asientos-controls');
             var iframe = document.getElementById('asientosIframe');
             var selectEvento = document.getElementById('selectEventoAsientos');
-            
+
             if (tableContainer) tableContainer.style.display = 'none';
             if (asientosControls) asientosControls.style.display = 'flex';
             if (asientosContainer) asientosContainer.style.display = 'block';
@@ -85,7 +85,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
             var tableContainer = document.getElementById('table-container');
             var asientosContainer = document.getElementById('asientos-container');
             var asientosControls = document.getElementById('asientos-controls');
-            
+
             if (asientosContainer) asientosContainer.style.display = 'none';
             if (asientosControls) asientosControls.style.display = 'none';
             if (tableContainer) tableContainer.style.display = 'block';
@@ -99,7 +99,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
         function updateZoom() {
             var iframe = document.getElementById('asientosIframe');
             var zoomSpan = document.getElementById('zoomLevel');
-            
+
             if (iframe) {
                 // Aplicar scale al contenido del iframe
                 try {
@@ -112,7 +112,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                         container.style.width = '200%';
                         container.style.height = '200%';
                     }
-                } catch(e) {
+                } catch (e) {
                     console.log('No se puede acceder al contenido:', e);
                 }
             }
@@ -172,10 +172,10 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
 
             document.onmousemove = function(e) {
                 if (!isDragging || !dragContainer) return;
-                
+
                 var deltaX = e.clientX - startX;
                 var deltaY = e.clientY - startY;
-                
+
                 dragContainer.scrollLeft = scrollLeft - deltaX;
                 dragContainer.scrollTop = scrollTop - deltaY;
             };
@@ -188,9 +188,9 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                 var iframeWin = iframe.contentWindow;
                 var iframeDoc = iframeWin.document;
                 var body = iframeDoc.body;
-                
+
                 body.style.cursor = 'grab';
-                
+
                 var iframeIsDragging = false;
                 var iframeStartX, iframeStartY;
                 var iframeScrollLeft, iframeScrollTop;
@@ -214,14 +214,14 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
 
                 iframeWin.onmousemove = function(e) {
                     if (!iframeIsDragging) return;
-                    
+
                     var deltaX = e.clientX - iframeStartX;
                     var deltaY = e.clientY - iframeStartY;
-                    
+
                     body.scrollLeft = iframeScrollLeft - deltaX;
                     body.scrollTop = iframeScrollTop - deltaY;
                 };
-            } catch(e) {
+            } catch (e) {
                 console.log('No se puede acceder al iframe:', e);
             }
         }
@@ -232,8 +232,9 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
         }
 
         function abrirModalEscanerQR() {
-            const modal = new bootstrap.Modal(document.getElementById('qrScannerModal'));
-            modal.show();
+            if (typeof window.openQRScanner === 'function') {
+                window.openQRScanner();
+            }
         }
 
         function abrirModalEnviarQR() {
