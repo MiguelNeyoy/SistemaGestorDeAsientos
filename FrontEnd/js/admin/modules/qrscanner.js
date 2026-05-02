@@ -24,14 +24,6 @@ export function initQRModule() {
         btnCerrar.addEventListener("click", stopQRScanner);
     }
     
-    // Additional stop camera button
-    const btnDetenerCamara = document.getElementById("btnDetenerCamara");
-    if (btnDetenerCamara) {
-        btnDetenerCamara.addEventListener("click", () => {
-            stopQRScanner();
-            qrScannerModal.hide();
-        });
-    }
 
     const btnRescan = document.getElementById("btnQrRescan");
     if (btnRescan) {
@@ -47,18 +39,18 @@ export function initQRModule() {
             qrResultModal.hide();
             setTimeout(() => {
                 openQRScanner();
-            }, 300);
+            }, 900);
         });
     }
+    window.openQRScanner = openQRScanner;
 }
 
 async function openQRScanner() {
     detectDevice();
     qrScannerModal.show();
 
-    setTimeout(() => {
-        startCamera();
-    }, 500);
+  document.getElementById('qrScannerModal')
+        .addEventListener('shown.bs.modal', startCamera, { once: true });
 }
 
 function detectDevice() {
@@ -102,8 +94,25 @@ function initHtml5Scanner() {
         config, 
         onScanSuccess
     ).catch(err => {
+        // 👇 AQUÍ van los mensajes de error
         console.error("Error al iniciar cámara:", err);
-        if (statusText) statusText.innerText = "Error: No se pudo acceder a la cámara.";
+        
+        if (statusText) {
+            statusText.innerText = "⚠️ No se pudo acceder a la cámara.";
+            statusText.classList.remove("text-secondary");
+            statusText.classList.add("text-danger");
+        }
+
+        const container = document.getElementById("qrReaderContainer");
+        if (container) {
+            container.innerHTML = `
+                <div class="p-4 text-center text-white">
+                    <div style="font-size:3rem">📷</div>
+                    <p class="mt-2 fw-bold">No se detectó ninguna cámara.</p>
+                    <p class="small">Verifica que tu dispositivo tenga cámara 
+                    y que hayas dado permiso de acceso.</p>
+                </div>`;
+        }
     });
 }
 
