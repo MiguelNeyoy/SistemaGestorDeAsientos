@@ -23,7 +23,7 @@ export function initQRModule() {
     if (btnCerrar) {
         btnCerrar.addEventListener("click", stopQRScanner);
     }
-    
+
 
     const btnRescan = document.getElementById("btnQrRescan");
     if (btnRescan) {
@@ -49,7 +49,7 @@ async function openQRScanner() {
     detectDevice();
     qrScannerModal.show();
 
-  document.getElementById('qrScannerModal')
+    document.getElementById('qrScannerModal')
         .addEventListener('shown.bs.modal', startCamera, { once: true });
 }
 
@@ -82,23 +82,23 @@ function initHtml5Scanner() {
     const statusText = document.getElementById("qrScannerStatus");
     if (statusText) statusText.innerText = "Alinea el código QR dentro del recuadro";
     html5QrCode = new Html5Qrcode("qrReaderContainer");
-    
-    const config = { 
-        fps: 10, 
+
+    const config = {
+        fps: 10,
         qrbox: { width: 250, height: 250 },
         aspectRatio: 1.0
     };
 
     html5QrCode.start(
-        { facingMode: "environment" }, 
-        config, 
+        { facingMode: "environment" },
+        config,
         onScanSuccess
     ).catch(err => {
-        // 👇 AQUÍ van los mensajes de error
+        // AQUÍ van los mensajes de error
         console.error("Error al iniciar cámara:", err);
-        
+
         if (statusText) {
-            statusText.innerText = "⚠️ No se pudo acceder a la cámara.";
+            statusText.innerText = "No se pudo acceder a la cámara.";
             statusText.classList.remove("text-secondary");
             statusText.classList.add("text-danger");
         }
@@ -107,7 +107,6 @@ function initHtml5Scanner() {
         if (container) {
             container.innerHTML = `
                 <div class="p-4 text-center text-white">
-                    <div style="font-size:3rem">📷</div>
                     <p class="mt-2 fw-bold">No se detectó ninguna cámara.</p>
                     <p class="small">Verifica que tu dispositivo tenga cámara 
                     y que hayas dado permiso de acceso.</p>
@@ -122,7 +121,7 @@ function onScanSuccess(decodedText, decodedResult) {
 
     stopQRScanner();
     qrScannerModal.hide();
-    
+
     processQRData(decodedText);
 }
 
@@ -140,7 +139,7 @@ function parseJwt(token) {
         const parts = token.split('.');
         if (parts.length !== 3) return null;
         const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
         return JSON.parse(jsonPayload);
@@ -151,14 +150,14 @@ function parseJwt(token) {
 
 function processQRData(text) {
     let numCuenta = text;
-    
+
     // Check if the token was already scanned (mock DB check)
     if (scannedTokens.has(text)) {
         alert("Este código QR ya ha sido escaneado y marcado previamente.");
         openQRScanner();
         return;
     }
-    
+
     const jwtPayload = parseJwt(text);
     if (jwtPayload && jwtPayload.numCuenta) {
         numCuenta = jwtPayload.numCuenta;
@@ -172,17 +171,17 @@ function processQRData(text) {
         showStudentResultModal(alumno);
     } else {
         alert("Alumno no encontrado en el sistema con cuenta: " + numCuenta);
-        openQRScanner(); 
+        openQRScanner();
     }
 }
 
 function showStudentResultModal(alumno) {
     document.getElementById("qrResNombre").innerText = `${alumno.nombre} ${alumno.apellidoP} ${alumno.apellidoM}`.trim();
     document.getElementById("qrResNumCuenta").innerText = alumno.numCuenta;
-    
+
     let asientoAsignado = alumno.asiento || "-";
     document.getElementById("qrResAsiento").innerText = asientoAsignado;
-    
+
     document.getElementById("qrResInvitados").innerText = alumno.cantInvitado || "0";
     document.getElementById("qrToggleInvitado").checked = false;
 
