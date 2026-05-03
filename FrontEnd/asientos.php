@@ -135,13 +135,15 @@ if ($tipoUsuario === "admin") {
 
 <!-- PASAR DATOS A JS -->
 <script>
-  window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
-  window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
-  window.ASIENTOS_GRUPO = <?php echo json_encode($asientosGrupo); ?>;
-  window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
+  window.__SEAT_DATA__ = {
+    tipoUsuario: "<?php echo $tipoUsuario; ?>",
+    miAsiento: "<?php echo $miAsiento; ?>",
+    asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
+    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>
+  };
 </script>
 
-<script src="js/asientos.js"></script>
+<script type="module" src="js/asientos.js"></script>
 
 </body>
 </html>
