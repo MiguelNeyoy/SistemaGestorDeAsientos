@@ -14,9 +14,14 @@ class AlumnoModel
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT a.*, asi.estado as asistencia_estado 
+        $sql = 'SELECT a.*, asi.estado as asistencia_estado,
+                       COALESCE(ali.letra, alisi.letra) as letra,
+                       COALESCE(ali.numero, alisi.numero) as numero,
+                       COALESCE(ali.idAsiento, alisi.idAsiento) as idAsiento
                 FROM alumno a 
-                LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta';
+                LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                LEFT JOIN asiento_evento_li ali ON a.numCuenta = ali.numCuenta
+                LEFT JOIN asiento_evento_lisi alisi ON a.numCuenta = alisi.numCuenta';
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -73,19 +78,6 @@ class AlumnoModel
                 return ['success' => false, 'error' => 'Error en asistencia'];
             }
 
-            // 2. Si va a asistir, crear registros de invitados
-            // if ($asistira && $numInvitados > 0) {
-            //     $sqlInvitado = 'INSERT INTO invitado (numCuenta) VALUES (?)';
-            //     $stmtInvitado = $this->db->prepare($sqlInvitado);
-
-            //     for ($i = 0; $i < $numInvitados; $i++) {
-            //         $resultadoInvitado = $stmtInvitado->execute([$idAlumno]);
-            //         if (!$resultadoInvitado) {
-            //             return ['success' => false, 'error' => 'Error al insertar invitado'];
-            //         }
-            //     }
-            // }
-
             // 3. Actualizar cantidad de invitados en tabla alumno
             $sqlAlumno = 'UPDATE alumno SET cantInvitado = ? WHERE numCuenta = ?';
             $stmtAlumno = $this->db->prepare($sqlAlumno);
@@ -102,11 +94,23 @@ class AlumnoModel
         }
     }
 
+
     public function actualizarCorreo($idAlumno, $correo)
     {
         $sql = 'UPDATE alumno SET email = ? WHERE numCuenta = ?';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$correo, $idAlumno]);
         return $stmt->rowCount() > 0;
+    }
+
+    public function obtenerConfirmadosPorGrupo($carrera, $turno)
+    {
+        $sql = 'SELECT a.numCuenta 
+                FROM alumno a 
+                JOIN asistencia asi ON a.numCuenta = asi.numCuenta 
+                WHERE a.carrera = ? AND a.turno = ? AND asi.estado = 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$carrera, $turno]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
