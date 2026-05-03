@@ -1,0 +1,30 @@
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.admin-badge--pendiente {
+    background-color: #E2E8F0;
+    color: #475569;
+}
+
+.admin-badge--confirmado {
+    background-color: #DCFCE7;
+    color: #166534;
+}
+
+.admin-badge--rechazado {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Legacy compatibility */
+.badge-pendiente { background-color: var(--color-secondary); color: var(--color-white); }
+.badge-confirmado { background-color: var(--color-success); color: var(--color-white); }
+.badge-rechazado { background-color: var(--color-error); color: var(--color-white); }

@@ -1,0 +1,59 @@
+/* Admin specific overrides */
+
+#table-container {
+    margin-bottom: 2rem;
+}
+
+.has-filter {
+    border-color: var(--color-navy);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Icon utilities */
+.admin-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.admin-icon--white {
+    filter: brightness(0) invert(1);
+}
+
+.admin-icon--edit { background-image: var(--icon-edit); }
+.admin-icon--add { background-image: var(--icon-add-student); }
+.admin-icon--dashboard { background-image: var(--icon-dashboard); }
+.admin-icon--chair { background-image: var(--icon-chair); }
+.admin-icon--logout { background-image: var(--icon-logout); }
+.admin-icon--scan { background-image: var(--icon-scan-qr); }
+.admin-icon--send { background-image: var(--icon-send-email); }
+.admin-icon--menu { background-image: var(--icon-menu); }
+.admin-icon--student { background-image: var(--icon-student); }
+.admin-icon--student-disable { background-image: var(--icon-student-disable); }
+.admin-icon--update { background-image: var(--icon-update); }
+
+/* QR Scanner Styles */
+#qrReaderContainer {
+    width: 100%;
+    min-height: 300px;
+    background: #000;
+}
+
+#qrScannerStatus {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Seating Map Controls */
+#asientos-controls {
+    margin-bottom: 0.5rem;
+}
+
+#zoomLevel {
+    font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+}
