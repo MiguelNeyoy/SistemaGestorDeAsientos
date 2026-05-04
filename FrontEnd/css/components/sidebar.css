@@ -65,6 +65,7 @@
 
 .admin-sidebar__link .admin-icon {
     margin-right: 1rem;
+    filter: brightness(0) invert(1);
 }
 
 .admin-sidebar__footer {
@@ -85,6 +86,10 @@
     cursor: pointer;
     transition: var(--transition-fast);
     gap: 0.5rem;
+}
+
+.admin-sidebar__logout .admin-icon {
+    filter: brightness(0) invert(1);
 }
 
 .admin-sidebar__logout:hover {
