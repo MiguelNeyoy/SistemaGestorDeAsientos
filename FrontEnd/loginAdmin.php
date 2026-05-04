@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
     <title>Acceso de Administración</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/LoginAdmin.css">
+    <link rel="stylesheet" href="css/LoginAdmin.css?v=<?= filemtime(__DIR__ . '/css/LoginAdmin.css') ?>">
 </head>
 
 <body>

@@ -204,7 +204,7 @@ if (isset($_POST['actualizar_correo'])) {
 <head>
     <title>Confirmar asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/bienvenida.css">
+    <link rel="stylesheet" href="css/bienvenida.css?v=<?= filemtime(__DIR__ . '/css/bienvenida.css') ?>">
 
     <script>
         // Configuración inyectada desde PHP
