@@ -129,7 +129,12 @@ function setupSidebar() {
     const btnLogout = document.getElementById('btnLogout');
     const btnToggleSidebar = document.getElementById('btnToggleSidebar');
     const sidebar = document.querySelector('.admin-sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
     
+    const toggleSidebar = () => {
+        sidebar.classList.toggle('admin-sidebar--active');
+    };
+
     if (btnLogout) {
         btnLogout.onclick = () => {
             window.location.href = 'view_admin.php?logout=true';
@@ -139,10 +144,16 @@ function setupSidebar() {
     if (btnToggleSidebar && sidebar) {
         btnToggleSidebar.onclick = (e) => {
             e.stopPropagation();
-            sidebar.classList.toggle('admin-sidebar--active');
+            toggleSidebar();
         };
 
-        // Close sidebar when clicking outside
+        if (overlay) {
+            overlay.onclick = () => {
+                sidebar.classList.remove('admin-sidebar--active');
+            };
+        }
+
+        // Close sidebar when clicking outside (on desktop or content)
         document.addEventListener('click', (e) => {
             if (sidebar.classList.contains('admin-sidebar--active') && 
                 !sidebar.contains(e.target) && 

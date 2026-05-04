@@ -30,6 +30,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <div class="admin-layout">
         <!-- Sidebar -->
         <?php include 'partials/_sidebar.php'; ?>
+        <div id="sidebarOverlay" class="admin-sidebar-overlay"></div>
 
         <!-- Main Content -->
         <main class="admin-main">
