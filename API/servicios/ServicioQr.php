@@ -19,13 +19,7 @@ class ServicioQr
 
     public function obtenerQrAlumno($numCuenta)
     {
-        // Only return if alumno is confirmed
-        $alumno = $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
-        // We need to check if they are confirmed (asistencia = 1)
-        // Note: The current DB has 'asistencia' table with 'estado'.
-        // I need to verify how AlumnoModelo gets this.
-
-        return $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
+        return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
     }
 
     public function validarAcceso($token)

@@ -26,6 +26,15 @@ class QrModelo
         return $stmt->fetch();
     }
 
+    public function obtenerPorNumCuenta($numCuenta)
+    {
+        $query = "SELECT * FROM " . $this->table . " WHERE numCuenta = :numCuenta LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':numCuenta', $numCuenta);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
 
     public function crear($numCuenta, $token)
     {
@@ -57,8 +66,8 @@ class QrModelo
         $this->db->beginTransaction();
         try {
             foreach ($alumnos as $numCuenta) {
-                // Check if already exists
-                $existing = $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
+                // Check if already exists in QR table
+                $existing = $this->obtenerPorNumCuenta($numCuenta);
                 if (!$existing) {
                     $token = bin2hex(random_bytes(16)); // 32 chars hex
                     $this->crear($numCuenta, $token);
