@@ -111,12 +111,21 @@ if ($tipoUsuario === "admin") {
   <title>Mapa de Asientos Teatro</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/asientos.css?v=2">
+  <link rel="stylesheet" href="css/asientos.css?v=<?= filemtime(__DIR__ . '/css/asientos.css') ?>">
+  <!-- Panzoom Library -->
+  <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
 </head>
 
-<body>
+<body class="<?= (isset($_GET['hideNavbar']) && $_GET['hideNavbar'] == '1') ? 'navbar-hidden' : '' ?>">
 
-<!-- NAVBAR -->
+<!-- Mensaje de instrucción (flotante) -->
+<div id="panzoom-instruction" class="panzoom-msg">
+  <span class="d-none d-md-inline">Haz clic y arrastra para mover. Usa <b>Ctrl + Rueda</b> para zoom.</span>
+  <span class="d-md-none">Arrastra para mover. Usa dos dedos para zoom.</span>
+</div>
+
+<!-- NAVBAR (Condicional) -->
+<?php if (!isset($_GET['hideNavbar']) || $_GET['hideNavbar'] != '1'): ?>
 <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
   <div class="container-fluid d-flex justify-content-between align-items-center">
 
@@ -143,6 +152,7 @@ if ($tipoUsuario === "admin") {
 
   </div>
 </nav>
+<?php endif; ?>
 
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">
@@ -164,7 +174,7 @@ if ($tipoUsuario === "admin") {
   };
 </script>
 
-<script type="module" src="js/asientos.js"></script>
+<script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

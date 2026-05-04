@@ -48,12 +48,9 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                         <option value="li">Evento 1 (LI)</option>
                         <option value="lisi">Evento 2 (LISI)</option>
                     </select>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomOut">-</button>
-                    <span id="zoomLevel">100%</span>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomIn">+</button>
                 </div>
                 <div id="asientos-container" class="admin-hidden">
-                    <iframe id="asientosIframe" src="../asientos.php?evento=li" style="width: 100%; height: 75vh; border: none;"></iframe>
+                    <iframe id="asientosIframe" src="../asientos.php?evento=li&hideNavbar=1" style="width: 100%; height: 75vh; border: none;"></iframe>
                 </div>
             </div>
         </main>

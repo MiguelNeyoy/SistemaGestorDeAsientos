@@ -9,22 +9,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!data) return;
 
     const envoltura = document.querySelector('.mapa-envoltura');
-    const CONFIG_ZOOM_COMPLETO = { scale: 0.6, x: 0, y: 0 };
+    const contenedor = document.querySelector('.contenedor-scroll');
 
-    function esDispositivoMovil() {
-        return window.innerWidth <= 576;
+    // Inicializar Panzoom
+    if (envoltura && contenedor) {
+        const panzoom = Panzoom(envoltura, {
+            maxScale: 5,
+            minScale: 0.1,
+            contain: false, // Permitir movimiento libre
+            cursor: 'default'
+        });
+
+        // Zoom con la rueda del mouse + Ctrl
+        contenedor.addEventListener('wheel', (event) => {
+            if (!event.ctrlKey) return; 
+            event.preventDefault();
+            panzoom.zoomWithWheel(event);
+        });
+
+        // Centrar inicialmente con una escala más alejada
+        setTimeout(() => {
+            panzoom.zoom(0.5, { animate: false });
+            panzoom.pan(0, 0);
+        }, 100);
     }
-
-    function aplicarVistaCompleta() {
-        if (!envoltura) return;
-        if (esDispositivoMovil()) {
-            envoltura.style.transform = '';
-            return;
-        }
-        envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
-    }
-
-    aplicarVistaCompleta();
 
     const configRenderer = {
         userType: data.tipoUsuario,
