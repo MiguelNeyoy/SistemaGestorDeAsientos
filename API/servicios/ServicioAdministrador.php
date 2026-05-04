@@ -86,7 +86,9 @@ class ServicioAdministrador
         }
 
         return $this->respuesta(true, "Métricas obtenidas", 200, [
+            'total_confirmados' => count($alumnosConfirmados),
             'total_invitados' => $total_invitados,
+            'total_asientos' => count($alumnosConfirmados) + $total_invitados,
             'por_grupo' => $por_grupo,
             'individual' => $individual
         ]);

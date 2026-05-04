@@ -1,0 +1,27 @@
+@media (max-width: 991px) {
+    .admin-sidebar { width: 80px; }
+    .admin-main { margin-left: 80px; }
+}
+
+@media (max-width: 767px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+    
+    .admin-sidebar--active {
+        transform: translateX(0);
+    }
+    
+    .admin-main { margin-left: 0; }
+    
+    .admin-content { padding: 1rem; }
+    
+    .admin-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-topbar__actions {
+        display: none;
+    }
+}

@@ -5,7 +5,7 @@ $error = "";
 
 // Si ya tiene sesión, mandarlo al panel
 if (isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'])) {
-    header("Location: admin/view_admin.php");
+            header("Location: admin/view_admin");
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
             unset($_SESSION['tipo']);
 
             $_SESSION['admin_token'] = $data['data']['token'];
-            header("Location: admin/view_admin.php");
+                    header("Location: admin/view_admin");
             exit;
         } else {
             $error = isset($data['message']) ? $data['message'] : "Credenciales inválidas";

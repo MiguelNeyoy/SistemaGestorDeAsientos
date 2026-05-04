@@ -1,0 +1,16 @@
+@media (max-width: 600px) {
+    .public-container {
+        padding: 1.5rem;
+    }
+    
+    .public-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .qr-container #contenedor-qr canvas {
+        width: 200px !important;
+        height: 200px !important;
+    }
+}

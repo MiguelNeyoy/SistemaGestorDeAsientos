@@ -65,9 +65,9 @@ class ServicioAlumno
             return $this->respuesta(false, "Correo inválido", 400);
         }
 
-        //Validar si ya confirmo asistencia
+        //Validar si ya confirmo asistencia (Solo bloquear si ya confirmó que SÍ asiste)
         $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
-        if ($estadoConfirmacion !== false || $estadoConfirmacion === 1) {
+        if ($estadoConfirmacion === 1) {
             return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
         }
 
@@ -100,18 +100,10 @@ class ServicioAlumno
             $numInvitados = 0;
         }
 
-        // Verificar si el alumno ya confirmó su asistencia
-        // Si retorna algo diferente de false, significa que ya existe un registro
-        $estadoConfirmacion = $this->modelo->verificarConfirmacion($data['id_alumno']);
-        if ($estadoConfirmacion !== false) {
-            return $this->respuesta(false, "El alumno ya confirmó asistencia", 409);
-        }
-
         $guardado = $this->modelo->actualizarConfirmacion(
             $data['id_alumno'],
             $asistira,
-            $numInvitados,
-            $data['correo']
+            $numInvitados
         );
 
         if (!$guardado || (is_array($guardado) && !$guardado['success'])) {

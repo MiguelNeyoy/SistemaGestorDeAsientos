@@ -1,49 +1,68 @@
-// API Methods
-export async function fetchDashboardData(token) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos para asientos
+import { coreFetch } from '../../core/api.js';
 
-    // Definir todas las promesas para ejecución concurrente
-    // Ahora llamamos a ambos eventos (li y lisi) y los combinamos
-    const promises = [
-        fetch(`${window.BASE_API_URL}/admin/metricas`, { 
-            headers: { "Authorization": `Bearer ${token}` } 
-        }),
-        fetch(`${window.BASE_API_URL}/admin/alumnos`, { 
-            headers: { "Authorization": `Bearer ${token}` } 
-        }),
-        // Llamada a evento LI
-        fetch(`${window.BASE_API_URL}/asientos/mapa/li`, { 
-            headers: { "Authorization": `Bearer ${token}` },
-            signal: controller.signal
-        }).catch(e => {
-            console.warn("Error al solicitar mapa de asientos LI:", e);
-            return { ok: false, status: 0, json: () => Promise.resolve({ success: false }) };
-        }),
-        // Llamada a evento LISI
-        fetch(`${window.BASE_API_URL}/asientos/mapa/lisi`, { 
-            headers: { "Authorization": `Bearer ${token}` },
-            signal: controller.signal
-        }).catch(e => {
-            console.warn("Error al solicitar mapa de asientos LISI:", e);
-            return { ok: false, status: 0, json: () => Promise.resolve({ success: false }) };
-        })
-    ];
+/**
+ * Admin-specific API calls.
+ */
 
-    const [metricasRes, alumnosRes, asientosLiRes, asientosLisiRes] = await Promise.all(promises);
-    clearTimeout(timeoutId);
-
-    return { metricasRes, alumnosRes, asientosLiRes, asientosLisiRes };
+export async function fetchDashboardData() {
+    const response = await coreFetch('/admin/alumnos');
+    const data = await response.json();
+    return data.success ? data.data : [];
 }
 
-export async function updateAlumno(token, dataPayload) {
-    const response = await fetch(`${window.BASE_API_URL}/admin/alumnos/editar`, {
+export async function fetchMetricas() {
+    const response = await coreFetch('/admin/metricas');
+    const data = await response.json();
+    return data.success ? data.data : {};
+}
+
+export async function updateAlumno(alumnoData) {
+    const response = await coreFetch('/admin/alumnos/editar', {
         method: 'PUT',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(dataPayload)
+        body: JSON.stringify(alumnoData)
     });
-    return response.json();
+    return await response.json();
+}
+
+/**
+ * QR Management
+ */
+
+export async function toggleGrupoQR(grupo, accion) {
+    const response = await coreFetch('/admin/qr/toggle-grupo', {
+        method: 'POST',
+        body: JSON.stringify({ grupo, accion })
+    });
+    return await response.json();
+}
+
+export async function fetchEstadoGrupo(grupo) {
+    const response = await coreFetch(`/admin/qr/estado-grupo?grupo=${grupo}`);
+    const data = await response.json();
+    return data.success ? data.data : null;
+}
+
+export async function validarQR(token) {
+    const response = await coreFetch('/admin/qr/validar', {
+        method: 'POST',
+        body: JSON.stringify({ token })
+    });
+    return await response.json();
+}
+
+/**
+ * Seats Management
+ */
+export async function getMapaAsientos(evento) {
+    const response = await coreFetch(`/asientos/mapa/${evento}`);
+    const data = await response.json();
+    return data.success ? data.data : [];
+}
+
+export async function enviarCorreoIndividual(numCuenta) {
+    const response = await coreFetch('/admin/alumnos/correo', {
+        method: 'POST',
+        body: JSON.stringify({ numCuenta })
+    });
+    return await response.json();
 }
