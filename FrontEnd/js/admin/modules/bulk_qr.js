@@ -1,5 +1,5 @@
 import { state } from '../store/state.js';
-import { toggleGrupoQR } from './api.js';
+import { toggleGrupoQR, fetchEstadoGrupo } from './api.js';
 import { toast } from '../../core/toast.js';
 import { refreshData } from './dashboard.js';
 
@@ -11,11 +11,12 @@ export function initBulkQR() {
     const container = document.getElementById('bulkQrActionContainer');
     
     // Subscribe to filter changes to show/hide the action button
-    state.subscribe('filterType', (type) => {
+    state.subscribe('filterType', async (type) => {
         const isGroup = ['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(type);
         
         if (isGroup && container) {
-            renderBulkButton(type);
+            const estado = await fetchEstadoGrupo(type);
+            renderBulkButton(type, estado);
             container.classList.remove('admin-hidden');
         } else if (container) {
             container.classList.add('admin-hidden');
@@ -24,16 +25,20 @@ export function initBulkQR() {
     });
 }
 
-function renderBulkButton(grupo) {
+function renderBulkButton(grupo, estado) {
     const container = document.getElementById('bulkQrActionContainer');
     if (!container) return;
 
+    const qrHabilitado = estado && estado.qr_habilitado == 1;
+
     container.innerHTML = `
         <div class="d-flex gap-2">
-            <button class="admin-btn admin-btn--success" id="btnEnableGroupQR">
-                <span class="admin-icon admin-icon--scan admin-icon--white"></span>
-                Habilitar QRs ${grupo}
-            </button>
+            ${!qrHabilitado ? `
+                <button class="admin-btn admin-btn--success" id="btnEnableGroupQR">
+                    <span class="admin-icon admin-icon--scan admin-icon--white"></span>
+                    Habilitar QRs ${grupo}
+                </button>
+            ` : ''}
             <button class="admin-btn admin-btn--outline" id="btnDisableGroupQR">
                 <span class="admin-icon admin-icon--student-disable"></span>
                 Deshabilitar QRs ${grupo}
@@ -41,7 +46,9 @@ function renderBulkButton(grupo) {
         </div>
     `;
 
-    document.getElementById('btnEnableGroupQR').onclick = () => handleBulkAction(grupo, 'habilitar');
+    if (!qrHabilitado) {
+        document.getElementById('btnEnableGroupQR').onclick = () => handleBulkAction(grupo, 'habilitar');
+    }
     document.getElementById('btnDisableGroupQR').onclick = () => handleBulkAction(grupo, 'deshabilitar');
 }
 
@@ -56,7 +63,9 @@ async function handleBulkAction(grupo, accion) {
         const result = await toggleGrupoQR(grupo, accion);
         if (result.success) {
             toast.success(result.message || 'Operación exitosa');
-            refreshData(); // Refresh to update statuses if needed
+            const nuevoEstado = await fetchEstadoGrupo(grupo);
+            renderBulkButton(grupo, nuevoEstado);
+            refreshData(); // Refresh to update table statuses
         } else {
             toast.error(result.message || 'Error al procesar la acción');
         }

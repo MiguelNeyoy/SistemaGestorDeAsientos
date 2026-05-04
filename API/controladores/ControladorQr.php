@@ -72,4 +72,16 @@ class ControladorQr {
             echo json_encode(["success" => false, "message" => "Error al procesar la acción de grupo"]);
         }
     }
+
+    public function obtenerEstadoGrupo() {
+        $grupo = $_GET['grupo'] ?? null;
+        if (!$grupo) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Grupo no proporcionado"]);
+            return;
+        }
+
+        $estado = $this->servicioQr->obtenerEstadoGrupo($grupo);
+        echo json_encode(["success" => true, "data" => $estado]);
+    }
 }

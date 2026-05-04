@@ -36,6 +36,12 @@ export async function toggleGrupoQR(grupo, accion) {
     return await response.json();
 }
 
+export async function fetchEstadoGrupo(grupo) {
+    const response = await coreFetch(`/admin/qr/estado-grupo?grupo=${grupo}`);
+    const data = await response.json();
+    return data.success ? data.data : null;
+}
+
 export async function validarQR(token) {
     const response = await coreFetch('/admin/qr/validar', {
         method: 'POST',

@@ -2,16 +2,19 @@
 
 require_once __DIR__ . '/../modelos/QrModelo.php';
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
+require_once __DIR__ . '/../modelos/GrupoModelo.php';
 
 class ServicioQr
 {
     private $qrModelo;
     private $alumnoModelo;
+    private $grupoModelo;
 
     public function __construct()
     {
         $this->qrModelo = new QrModelo();
         $this->alumnoModelo = new AlumnoModel();
+        $this->grupoModelo = new GrupoModelo();
     }
 
     public function obtenerQrAlumno($numCuenta)
@@ -22,7 +25,7 @@ class ServicioQr
         // Note: The current DB has 'asistencia' table with 'estado'.
         // I need to verify how AlumnoModelo gets this.
 
-        return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
+        return $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
     }
 
     public function validarAcceso($token)
@@ -64,16 +67,32 @@ class ServicioQr
         $turno = (strpos($grupo, '-1') !== false) ? 'M' : 'V';
 
         // Get confirmed students for this carrera and turno
-        // We need a custom query for this.
         $alumnos = $this->alumnoModelo->obtenerConfirmadosPorGrupo($carrera, $turno);
 
         $numsCuenta = array_map(function ($a) {
-            return $a['numCuenta']; }, $alumnos);
+            return $a['numCuenta'];
+        }, $alumnos);
 
         if ($accion === 'habilitar') {
+            $this->grupoModelo->actualizarEstado($carrera, $turno, 1);
             return $this->qrModelo->habilitarGrupo($numsCuenta);
         } else {
+            $this->grupoModelo->actualizarEstado($carrera, $turno, 0);
             return $this->qrModelo->deshabilitarGrupo($numsCuenta);
         }
+    }
+
+    public function obtenerEstadoGrupo($grupo)
+    {
+        $carrera = "";
+        $turno = "";
+        if (strpos($grupo, 'LISI') !== false) {
+            $carrera = 'Licenciatura en Ingeniería en Sistemas de Información';
+        } else {
+            $carrera = 'Licenciatura en Informática';
+        }
+        $turno = (strpos($grupo, '-1') !== false) ? 'M' : 'V';
+
+        return $this->grupoModelo->obtenerEstado($carrera, $turno);
     }
 }
