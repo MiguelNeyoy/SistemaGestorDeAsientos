@@ -32,20 +32,15 @@ if (!$estadoAlumno || ($estadoAlumno['data']['asistencia'] ?? "No") !== "Si") {
     $error = "Aún no has confirmado tu asistencia. Por favor, completa el formulario primero.";
 }
 
-// 2. Verificar estado del grupo
-if (!isset($error)) {
-    $grupo = $estadoAlumno['data']['grupo'] ?? null;
-    $estadoGrupo = apiRequest($BASE_API_URL . "/admin/qr/estado-grupo?grupo=" . urlencode($grupo), $token);
-    if (!$estadoGrupo || ($estadoGrupo['data']['qr_habilitado'] ?? 0) == 0) {
-        $error = "El pase de acceso aún no ha sido habilitado para tu grupo. Mantente al pendiente.";
-    }
-}
-
-// 3. Obtener token QR
+// 2. Intentar obtener token QR
 if (!isset($error)) {
     $qrData = apiRequest($BASE_API_URL . "/alumnos/qr", $token);
-    if (!$qrData || empty($qrData['data']['token'])) {
-        $error = "No se pudo conectar con el servidor. Intenta recargar la página.";
+    
+    if (!$qrData || !$qrData['success']) {
+        // Si el éxito es falso, es que aún no está habilitado o generado
+        $error = "El pase de acceso aún no ha sido habilitado para tu grupo o confirmación. Mantente al pendiente.";
+    } elseif (empty($qrData['data']['token'])) {
+        $error = "Pase generado pero sin token válido. Contacta a soporte.";
     } elseif (($qrData['data']['escaneado'] ?? 0) == 1) {
         $error = "Este pase ya ha sido utilizado.";
     } else {

@@ -341,8 +341,11 @@ if (isset($_POST['actualizar_correo'])) {
                 <?php endif; ?>
 
                 <!-- QR Access Section -->
-                <div id="contenedor-qr" class="qr-container">
-                    <p class="text-muted">Cargando pase de acceso...</p>
+                <div class="mt-4 text-center">
+                    <a href="view_qr.php" class="btn btn-success px-4">
+                        <span class="admin-icon admin-icon--scan admin-icon--white"></span>
+                        Obtener mi Pase QR
+                    </a>
                 </div>
 
                 <br>
@@ -354,8 +357,6 @@ if (isset($_POST['actualizar_correo'])) {
     </div>
 
     <!-- QR Library and Module -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script type="module" src="js/alumno/confirmacion.js"></script>
 </body>
 
 </html>

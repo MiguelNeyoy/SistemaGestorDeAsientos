@@ -137,9 +137,19 @@ function setupSidebar() {
     }
 
     if (btnToggleSidebar && sidebar) {
-        btnToggleSidebar.onclick = () => {
+        btnToggleSidebar.onclick = (e) => {
+            e.stopPropagation();
             sidebar.classList.toggle('admin-sidebar--active');
         };
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('admin-sidebar--active') && 
+                !sidebar.contains(e.target) && 
+                !btnToggleSidebar.contains(e.target)) {
+                sidebar.classList.remove('admin-sidebar--active');
+            }
+        });
     }
 
     // Sidebar collapsibles

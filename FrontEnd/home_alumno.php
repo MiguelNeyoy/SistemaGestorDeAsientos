@@ -82,7 +82,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="card-body">
           <h5 class="card-title">Código QR</h5>
           <p class="card-text">Accede a tu código QR personal para el evento.</p>
-          <a href="view_confirmacion" class="btn btn-primary">Ver QR</a>
+          <a href="view_qr.php" class="btn btn-primary">Ver QR</a>
         </div>
       </div>
     </div>
