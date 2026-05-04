@@ -115,7 +115,7 @@ if (isset($_POST['confirmar'])) {
                 // Determinar el evento para la redirección
                 $carreraAl = strtolower($alumno['carrera'] ?? '');
                 $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
-                header("Location: asientos.php?evento=" . $evRedirect);
+                header("Location: home_alumno.php?evento=" . $evRedirect);
             } else {
                 header("Location: view_confirmacion.php");
             }
@@ -294,7 +294,8 @@ if (isset($_POST['actualizar_correo'])) {
                 <div id="extra" class="extra-campos">
                     <p>Correo</p>
                     <input type="email" name="correo" placeholder="Escribe tu correo"
-                        value="<?php echo htmlspecialchars($alumno['email'] ?? ''); ?>">
+       value="<?php echo isset($alumno['email']) && filter_var($alumno['email'], FILTER_VALIDATE_EMAIL) ? htmlspecialchars($alumno['email']) : ''; ?>">
+
 
 
 

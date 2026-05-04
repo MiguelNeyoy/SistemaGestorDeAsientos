@@ -37,25 +37,27 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
   <style>
     body {
       background: url('img/logo.png') no-repeat center center fixed;
-      background-size: cover; /* La imagen se ajusta a toda la pantalla */
+      background-size: cover;
     }
     .card {
-      background-color: rgba(255,255,255,0.9); /* Fondo blanco semitransparente para legibilidad */
+      background-color: rgba(255,255,255,0.9);
     }
     @media (max-width: 768px) {
       body {
         background: url('img/logo.png') no-repeat center top;
-        background-size: contain; /* En móviles muestra la imagen completa */
+        background-size: contain;
       }
     }
   </style>
 </head>
 <body>
 
+<!-- Navbar con botón de cerrar sesión -->
 <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
   <div class="container-fluid d-flex justify-content-between align-items-center">
     <span class="navbar-brand fw-bold text-white">Facultad de Informática</span>
     <span class="text-white">Bienvenido, <?php echo htmlspecialchars($alumno['nombre'] ?? 'Alumno'); ?></span>
+    <a href="index.php" class="btn btn-outline-light ms-3">Cerrar Sesión</a>
   </div>
 </nav>
 
@@ -71,7 +73,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
     </div>
   <?php else: ?>
     <div class="alert alert-warning text-center">
-      Tu asistencia aún está pendiente.
+      ⚠ Tu asistencia aún está pendiente.
     </div>
   <?php endif; ?>
 
@@ -93,16 +95,6 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
           <h5 class="card-title">Mapa de Asientos</h5>
           <p class="card-text">Consulta tu asiento asignado y el mapa completo.</p>
           <a href="asientos.php" class="btn btn-secondary">Ver Asientos</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 mb-3">
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">Cerrar Sesión</h5>
-          <p class="card-text">Salir de tu cuenta de manera segura.</p>
-          <a href="index.php" class="btn btn-outline-danger">Cerrar Sesión</a>
         </div>
       </div>
     </div>
