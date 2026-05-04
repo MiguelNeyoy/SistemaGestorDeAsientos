@@ -38,8 +38,8 @@ class QrModelo
 
     public function crear($numCuenta, $token)
     {
-        $query = "INSERT INTO " . $this->table . " (numCuenta, token, fecha_creacion) 
-                  VALUES (:numCuenta, :token, NOW())";
+        $query = "INSERT INTO " . $this->table . " (numCuenta, token, fecha_creacion, enviado, escaneado) 
+                  VALUES (:numCuenta, :token, NOW(), 0, 0)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':numCuenta', $numCuenta);
         $stmt->bindParam(':token', $token);
@@ -75,7 +75,7 @@ class QrModelo
             }
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db->rollBack();
             return false;
         }
