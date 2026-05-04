@@ -25,7 +25,7 @@ class ServicioQr
         // Note: The current DB has 'asistencia' table with 'estado'.
         // I need to verify how AlumnoModelo gets this.
 
-        return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
+        return $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
     }
 
     public function validarAcceso($token)
@@ -54,7 +54,8 @@ class ServicioQr
     {
         // 1. Get all carrera/turno combinations for this short name
         $detalles = $this->grupoModelo->obtenerDetallesGrupo($grupo);
-        if (empty($detalles)) return false;
+        if (empty($detalles))
+            return false;
 
         $allNumsCuenta = [];
 
