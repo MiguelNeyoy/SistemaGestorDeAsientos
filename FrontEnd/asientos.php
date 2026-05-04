@@ -116,34 +116,6 @@ if ($tipoUsuario === "admin") {
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <a href="admin/view_admin.php" class="btn btn-outline-light btn-sm">
-      ← Regresar
-    </a>
-    <?php endif; ?>
-
-    <span class="navbar-brand fw-bold text-white">
-      Mapa de Asientos
-    </span>
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <!-- SELECT EVENTO (solo visible para admin) -->
-    <div class="d-flex align-items-center">
-      <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
-        <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
-        <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
-      </select>
-      <span id="eventoDescripcion" class="text-white fw-bold"></span>
-    </div>
-    <?php endif; ?>
-
-  </div>
-</nav>
-
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
@@ -156,13 +128,15 @@ if ($tipoUsuario === "admin") {
 
 <!-- PASAR DATOS A JS -->
 <script>
-  window.TIPO_USUARIO = "<?php echo $tipoUsuario; ?>";
-  window.MI_ASIENTO = "<?php echo $miAsiento; ?>";
-  window.ASIENTOS_GRUPO = <?php echo json_encode($asientosGrupo); ?>;
-  window.ASIENTOS_OCUPADOS = <?php echo json_encode($asientosOcupados); ?>;
+  window.__SEAT_DATA__ = {
+    tipoUsuario: "<?php echo $tipoUsuario; ?>",
+    miAsiento: "<?php echo $miAsiento; ?>",
+    asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
+    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>
+  };
 </script>
 
-<script src="js/asientos.js"></script>
+<script type="module" src="js/asientos.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

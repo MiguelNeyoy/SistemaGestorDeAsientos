@@ -12,26 +12,12 @@
     overflow-x: hidden;
 }
 
-.admin-hide-desktop {
-    display: none !important;
-}
-
-.admin-sidebar {
-    width: 260px;
-    background-color: var(--color-navy);
-    color: var(--color-white);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    z-index: 1000;
-}
-
 .admin-main {
     flex: 1;
     margin-left: 260px;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .admin-content {
@@ -52,43 +38,35 @@
     }
 
     .admin-sidebar__link span,
-    .admin-sidebar__logout span {
+    .admin-sidebar__logout span,
+    .admin-sidebar__section-title,
+    .admin-sidebar__chevron {
         display: none;
     }
 }
 
 @media (max-width: 767px) {
-    .admin-layout {
-        flex-direction: column;
-    }
-
-    .admin-hide-desktop {
-        display: inline-flex !important;
-    }
-
-    .admin-sidebar {
-        display: flex;
-        width: 260px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        z-index: 1050;
-        box-shadow: var(--shadow-lg);
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-
-    .admin-sidebar--active {
-        transform: translateX(0);
-    }
-
     .admin-main {
         margin-left: 0;
     }
 
-    .admin-sidebar__link span,
-    .admin-sidebar__logout span {
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .admin-sidebar--active {
+        transform: translateX(0);
+        width: 260px;
+    }
+
+    .admin-sidebar--active .admin-sidebar__link span,
+    .admin-sidebar--active .admin-sidebar__logout span,
+    .admin-sidebar--active .admin-sidebar__section-title,
+    .admin-sidebar--active .admin-sidebar__chevron {
         display: inline !important;
     }
+}
+
+.admin-hidden {
+    display: none !important;
 }

@@ -1,5 +1,5 @@
-import { state } from './state.js?v=5';
-import { updateAlumno } from './api.js?v=5';
+import { state } from './state.js?v=8';
+import { updateAlumno } from './api.js?v=8';
 
 let currentEditModal = null;
 

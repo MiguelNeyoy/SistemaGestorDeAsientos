@@ -22,7 +22,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <title>Panel de Administrador - Clausura</title>
     <!-- Se mantiene Bootstrap por compatibilidad con otras vistas y modales (Grid y JS) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href='./admin.css?v=6'>
+    <link rel="stylesheet" href='./admin.css?v=8'>
 </head>
 
 <body class="admin-body">
@@ -38,75 +38,32 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
 
             <div class="admin-content">
                 <!-- Students Table -->
-                <?php include 'partials/_directory_table.php'; ?>
+                <div id="table-container">
+                    <?php include 'partials/_directory_table.php'; ?>
+                </div>
+
+                <!-- Asientos Map (hidden by default) -->
+                <div id="asientos-controls" class="admin-hidden mb-2 d-flex align-items-center justify-content-center gap-2">
+                    <select id="selectEventoAsientos" class="form-select form-select-sm" style="width: 150px;">
+                        <option value="li">Evento 1 (LI)</option>
+                        <option value="lisi">Evento 2 (LISI)</option>
+                    </select>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomOut">-</button>
+                    <span id="zoomLevel">100%</span>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnZoomIn">+</button>
+                </div>
+                <div id="asientos-container" class="admin-hidden">
+                    <iframe id="asientosIframe" src="../asientos.php?evento=li" style="width: 100%; height: 75vh; border: none;"></iframe>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        window.BASE_API_URL = "<?php echo $JS_BASE_API_URL; ?>";
-        window.ADMIN_TOKEN = "<?php echo $_SESSION['admin_token']; ?>";
-
-        function abrirModalAgregarAlumno() {
-            const modal = new bootstrap.Modal(document.getElementById('agregarAlumnoModal'));
-            modal.show();
-        }
-
-        function abrirModalEscanerQR() {
-            const modal = new bootstrap.Modal(document.getElementById('qrScannerModal'));
-            modal.show();
-        }
-
-        function abrirModalEnviarQR() {
-            const modal = new bootstrap.Modal(document.getElementById('enviarQRModal'));
-            modal.show();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnToggle = document.getElementById('btnToggleSidebar');
-            const sidebar = document.querySelector('.admin-sidebar');
-
-            if (btnToggle && sidebar) {
-                btnToggle.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    sidebar.classList.toggle('admin-sidebar--active');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 767 &&
-                        sidebar.classList.contains('admin-sidebar--active') &&
-                        !sidebar.contains(e.target)) {
-                        sidebar.classList.remove('admin-sidebar--active');
-                    }
-                });
-            }
-
-            // Lógica para visibilidad de la tabla en versión móvil
-            const searchInput = document.getElementById('searchInput');
-            const tbody = document.getElementById('alumnosTableBody');
-            const hint = document.getElementById('directorioHintMobile');
-
-            if (window.innerWidth <= 768 && hint) {
-                hint.style.display = 'block';
-            }
-
-            function showMobileTable() {
-                if (tbody) tbody.classList.add('has-results');
-                if (hint) hint.style.display = 'none';
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', () => {
-                    if (searchInput.value.trim().length > 0) {
-                        showMobileTable();
-                    }
-                });
-            }
-
-            document.querySelectorAll('.admin-sidebar__link, #btnMostrarTodo').forEach(el => {
-                el.addEventListener('click', showMobileTable);
-            });
-        });
+        window.__APP_CONFIG__ = {
+            apiUrl: "<?php echo $JS_BASE_API_URL; ?>",
+            token: "<?php echo $_SESSION['admin_token']; ?>"
+        };
     </script>
 
     <!-- Modals -->
@@ -117,9 +74,9 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <?php include 'modals/modal_enviar_qr.php'; ?>
 
     <!-- Scripts -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../js/admin/app.js?v=7"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script type="module" src="../js/admin/app.js?v=9"></script>
 </body>
 
 </html>

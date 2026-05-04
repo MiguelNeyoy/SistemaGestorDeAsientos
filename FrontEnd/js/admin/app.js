@@ -1,181 +1,153 @@
-import { state } from './modules/state.js?v=5';
-import { fetchDashboardData } from './modules/api.js?v=5';
-import { updateMetricsUI, updateCustomLocalMetrics } from './modules/metrics.js?v=5';
-import { renderTable, setFilterType } from './modules/table.js?v=5';
-import { openEditModal, setupModalFormListener } from './modules/modal.js?v=5';
-import { initQRModule } from './modules/qrscanner.js?v=5';
-import { setupEmailFormListener } from './modules/emails.js?v=5';
+import { state } from './store/state.js';
+import { initDashboard, refreshData } from './modules/dashboard.js';
+import { initTable } from './modules/table.js';
+import { initMetrics } from './modules/metrics.js';
+import { initQRScanner } from './modules/qrscanner.js';
+import { initEditModal } from './modules/modal_editar.js';
+import { initBulkQR } from './modules/bulk_qr.js';
+import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
 
-let pollInterval = null;
+/**
+ * Main application orchestrator.
+ */
 
-// Exponer métodos globalmente para los eventos onclick en HTML
-window.setFilterType = setFilterType;
-window.openEditModal = openEditModal;
-window.handleLogout = handleLogout;
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Admin Dashboard: DOM loaded. Initializing modules...");
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Manejador del menú colapsable (Sidebar)
-    const filterToggleBtn = document.querySelector('.admin-sidebar__section-toggle');
-    if (filterToggleBtn) {
-        filterToggleBtn.addEventListener('click', () => {
-            const section = filterToggleBtn.closest('.admin-sidebar__section--collapsible');
-            if (section) section.classList.toggle('admin-sidebar__section--collapsed');
-        });
-    }
+    try {
+        // 1. Core Modules Initialization
+        initDashboard();
+        initTable();
+        initMetrics();
+        initQRScanner();
+        initEditModal();
+        initBulkQR();
+        initMap();
 
-    if (typeof window.ADMIN_TOKEN !== 'undefined' && window.ADMIN_TOKEN) {
-        loadDashboardData(window.ADMIN_TOKEN);
+        // 2. Global UI Listeners
+        setupNavigation();
+        setupFilters();
+        setupSidebar();
 
-        if (!pollInterval) {
-            pollInterval = setInterval(() => loadDashboardData(window.ADMIN_TOKEN), 5000);
-        }
-
-        const btnLogout = document.getElementById("btnLogout");
-        if (btnLogout) {
-            btnLogout.addEventListener("click", handleLogout);
-        }
-
-        const searchInput = document.getElementById("searchInput");
-        if (searchInput) {
-            searchInput.addEventListener("keyup", (e) => {
-                renderTable(e.target.value);
-            });
-        }
-
-        // Suscribir el listener del modal pasando la función de recarga
-        setupModalFormListener(async () => {
-            await loadDashboardData(window.ADMIN_TOKEN);
-        });
-
-        initQRModule();
-        setupEmailFormListener();
+        console.log("Admin Dashboard: Initialization complete.");
+    } catch (error) {
+        console.error("Admin Dashboard: Critical initialization error:", error);
     }
 });
 
-function handleLogout() {
-    window.location.href = "view_admin.php?logout=1";
+function setupNavigation() {
+    console.log("Setting up navigation listeners...");
+    
+    const btnMap = document.getElementById('btnMapaAsientos');
+    const btnTable = document.getElementById('link-filter-all'); // Using the sidebar link as "Home"
+    const btnRefresh = document.getElementById('btnRefreshData');
+    
+    // Topbar Actions
+    const btnScan = document.getElementById('btnEscanearQR');
+    const btnSend = document.getElementById('btnEnviarQR');
+    const btnAdd = document.getElementById('btnAgregarAlumno');
+
+    if (btnMap) {
+        btnMap.onclick = (e) => {
+            e.preventDefault();
+            console.log("Map button clicked");
+            showMap('li');
+        };
+    }
+
+    if (btnTable) {
+        btnTable.onclick = (e) => {
+            e.preventDefault();
+            console.log("Dashboard button clicked");
+            hideMap();
+            state.setFilterType('ALL');
+        };
+    }
+
+    if (btnRefresh) {
+        btnRefresh.onclick = () => {
+            console.log("Refresh button clicked");
+            refreshData();
+        };
+    }
+
+    // Modal Triggers
+    if (btnScan) {
+        btnScan.onclick = () => {
+            console.log("Opening QR Scanner modal...");
+            const modalEl = document.getElementById('qrScannerModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                console.error("qrScannerModal not found");
+            }
+        };
+    }
+
+    if (btnSend) {
+        btnSend.onclick = () => {
+            console.log("Opening Send QR modal...");
+            const modalEl = document.getElementById('enviarQRModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+        };
+    }
+
+    if (btnAdd) {
+        btnAdd.onclick = () => {
+            console.log("Opening Add Alumno modal...");
+            const modalEl = document.getElementById('agregarAlumnoModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+        };
+    }
 }
 
-async function loadDashboardData(token) {
-    const statusText = document.getElementById("lastUpdated");
+function setupFilters() {
+    const filterLinks = document.querySelectorAll('[data-filter]');
+    filterLinks.forEach(link => {
+        link.onclick = (e) => {
+            e.preventDefault();
+            const filter = link.dataset.filter;
+            console.log(`Filter changed to: ${filter}`);
+            
+            filterLinks.forEach(l => l.classList.remove('admin-sidebar__link--active'));
+            link.classList.add('admin-sidebar__link--active');
 
-    try {
-        const { metricasRes, alumnosRes, asientosLiRes, asientosLisiRes } = await fetchDashboardData(token);
+            hideMap();
+            state.setFilterType(filter);
+        };
+    });
+}
 
-        if (metricasRes.status === 401 || metricasRes.status === 403) {
-            handleLogout();
-            return;
-        }
-
-        const metricasData = await metricasRes.json();
-        const alumnosData = await alumnosRes.json();
-
-        // Combinar asientos de ambos eventos (LI y LISI)
-        const seatMap = new Map();
-
-        // Procesar asientos LI
-        try {
-            if (asientosLiRes.ok) {
-                const asientosLiData = await asientosLiRes.json();
-                if (asientosLiData.success && asientosLiData.data && asientosLiData.data.asientos) {
-                    asientosLiData.data.asientos.forEach(s => {
-                        if (s.numCuenta) {
-                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
-                        }
-                    });
-                }
-            }
-        } catch (e) {
-            console.warn("Error procesando asientos LI:", e);
-        }
-
-        // Procesar asientos LISI
-        try {
-            if (asientosLisiRes.ok) {
-                const asientosLisiData = await asientosLisiRes.json();
-                if (asientosLisiData.success && asientosLisiData.data && asientosLisiData.data.asientos) {
-                    asientosLisiData.data.asientos.forEach(s => {
-                        if (s.numCuenta) {
-                            seatMap.set(s.numCuenta.toString(), s.id_asiento);
-                        }
-                    });
-                }
-            }
-        } catch (e) {
-            console.warn("Error procesando asientos LISI:", e);
-        }
-
-        if (metricasData.success && metricasData.data) {
-            updateMetricsUI(metricasData.data);
-        }
-
-        const unicos = new Map();
-        if (alumnosData.success && Array.isArray(alumnosData.data)) {
-            alumnosData.data.forEach(al => {
-                // Asignar el asiento si existe en el mapa
-                if (al.numCuenta) {
-                    const numCuentaStr = String(al.numCuenta);
-                    al.asiento = seatMap.get(numCuentaStr) || "-";
-                    unicos.set(al.numCuenta, al);
-                }
-            });
-        } else {
-            console.warn("No se recibieron alumnos o el formato es incorrecto");
-        }
-
-        // Ordenar: si hay filtro de evento (LI o LISI), ordenar por asiento
-        const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
-
-        state.allStudentsCache = Array.from(unicos.values()).sort((a, b) => {
-            // Si hay filtro de evento activo, ordenar por asiento
-            if (filtroEvento) {
-                const seatA = a.asiento || "-";
-                const seatB = b.asiento || "-";
-
-                // Si no tienen asiento, ir al final
-                if (seatA === "-" && seatB === "-") return 0;
-                if (seatA === "-") return 1;
-                if (seatB === "-") return -1;
-
-                // Extraer letra y numero
-                const letraA = seatA.charAt(0);
-                const letraB = seatB.charAt(0);
-                const numA = parseInt(seatA.substring(1)) || 0;
-                const numB = parseInt(seatB.substring(1)) || 0;
-
-                // Comparar letras primero
-                if (letraA !== letraB) {
-                    return letraA.localeCompare(letraB);
-                }
-                // Luego numeros
-                return numA - numB;
-            }
-
-            // Default: ordenar por apellido
-            const apellidoA = (a.apellido || "").trim();
-            const apellidoB = (b.apellido || "").trim();
-            const comparacionApellidos = apellidoA.localeCompare(apellidoB, 'es', { sensitivity: 'base' });
-
-            if (comparacionApellidos !== 0) return comparacionApellidos;
-
-            const nombreA = (a.nombre || "").trim();
-            const nombreB = (b.nombre || "").trim();
-            return nombreA.localeCompare(nombreB, 'es', { sensitivity: 'base' });
-        });
-
-        updateCustomLocalMetrics(state.allStudentsCache);
-
-        const searchInput = document.getElementById("searchInput");
-        renderTable(searchInput ? searchInput.value : "");
-
-        if (statusText) {
-            const now = new Date();
-            statusText.innerText = `Actualizado: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-        }
-    } catch (err) {
-        console.error("Error obteniendo datos del dashboard:", err);
-        if (statusText) {
-            statusText.innerText = "Error de conexión";
-        }
+function setupSidebar() {
+    const btnLogout = document.getElementById('btnLogout');
+    const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+    const sidebar = document.querySelector('.admin-sidebar');
+    
+    if (btnLogout) {
+        btnLogout.onclick = () => {
+            window.location.href = 'view_admin.php?logout=true';
+        };
     }
+
+    if (btnToggleSidebar && sidebar) {
+        btnToggleSidebar.onclick = () => {
+            sidebar.classList.toggle('admin-sidebar--active');
+        };
+    }
+
+    // Sidebar collapsibles
+    const headers = document.querySelectorAll('.admin-sidebar__section-header');
+    headers.forEach(h => {
+        h.onclick = () => {
+            const section = h.closest('.admin-sidebar__section--collapsible');
+            if (section) section.classList.toggle('admin-sidebar__section--collapsed');
+        };
+    });
 }

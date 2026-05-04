@@ -76,7 +76,13 @@ if (isset($_POST['buscar'])) {
                         $estado = $alumno['asistencia']; // "Si", "No", "Pendiente"
 
                         if ($estado == "Si") {
+<<<<<<< HEAD
                             header("Location: home_alumno.php");
+=======
+                            $carreraAl = strtolower($alumno['carrera'] ?? '');
+                            $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
+                            header("Location: asientos.php?evento=" . $evRedirect);
+>>>>>>> 995362272ba50ab6673fd2cb7277c515880d845b
                         } else {
                             header("Location: view_confirmacion.php");
                         }

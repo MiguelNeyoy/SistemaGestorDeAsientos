@@ -1,187 +1,132 @@
-import { state } from './state.js?v=5';
-import { getGrupo } from './utils.js?v=5';
+import { state } from '../store/state.js';
+import { filterStudents } from './filters.js';
+import { sortByName, sortBySeat } from './sort.js';
+import { getGrupo } from '../../shared/utils.js';
+import { enviarCorreoIndividual } from './api.js';
+import { toast } from '../../core/toast.js';
 
 /**
- * Función principal para renderizar la tabla de alumnos.
- * @param {string} filterText - Texto de búsqueda ingresado por el usuario.
+ * Directory table rendering module.
+ * Uses reactive subscriptions and event delegation.
  */
-export function renderTable(filterText = "") {
-    // Obtener el cuerpo de la tabla donde se insertarán las filas
-    const tbody = document.getElementById("alumnosTableBody");
-    if (!tbody) return;
 
-    // Limpiar el contenido actual de la tabla
-    tbody.innerHTML = "";
+let lastDataHash = null;
 
-    const lowerFilter = filterText.toLowerCase();
-    const directorioCardBody = document.getElementById("directorioCardBody");
-
-    // Feedback visual: Si hay filtros activos, se agrega una clase CSS para resaltar el contenedor
-    if (directorioCardBody) {
-        if (state.currentFilterType !== 'ALL' || filterText.trim() !== "") {
-            directorioCardBody.classList.add("has-filter");
-        } else {
-            directorioCardBody.classList.remove("has-filter");
-        }
-    }
-
-    // Lógica de Filtrado: Filtra la caché de alumnos basado en el texto de búsqueda y el tipo de filtro activo
-    const filtered = state.allStudentsCache.filter(al => {
-        const nombreStr = (al.nombre + " " + al.apellido).toLowerCase();
-        // Comprobar si el número de cuenta o el nombre completo coinciden con la búsqueda
-        const matchesText = al.numCuenta.includes(lowerFilter) || nombreStr.includes(lowerFilter);
-
-        if (!matchesText) return false;
-
-        // Aplicar filtros por categorías (Confirmados, Rechazados, Turno, Carrera, etc.)
-        if (state.currentFilterType !== 'ALL') {
-            const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
-            const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
-
-            if (state.currentFilterType === 'CONFIRMADOS' && !isConfirmado) return false;
-            if (state.currentFilterType === 'RECHAZADOS' && !isRechazado) return false;
-            if (state.currentFilterType === 'INVITADOS' && !(isConfirmado && al.cantInvitado > 0)) return false;
-            
-            // Filtros por evento (LI o LISI) - simple mostrar/ocultar filas en UI
-            if (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI') {
-                const carLower = (al.carrera || '').toLowerCase();
-                if (state.currentFilterType === 'LI') {
-                    if (!carLower.includes('informática') && !carLower.includes('informatica')) return false;
-                }
-                if (state.currentFilterType === 'LISI') {
-                    if (!carLower.includes('ingeniería') && !carLower.includes('sistemas')) return false;
-                }
-            }
-            
-            // Filtros por grupo específico
-            if (['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(state.currentFilterType)) {
-                if (!(isConfirmado && getGrupo(al.carrera, al.turno) === state.currentFilterType)) return false;
-            }
-        }
-        return true;
-    });
-
-    // Si hay filtro de evento (LI o LISI), ordenar por asiento; si no, por nombre
-    const filtroEvento = (state.currentFilterType === 'LI' || state.currentFilterType === 'LISI');
-    
-    if (filtroEvento) {
-        filtered.sort((a, b) => {
-            const seatA = a.asiento || "-";
-            const seatB = b.asiento || "-";
-            
-            if (seatA === "-" && seatB === "-") return 0;
-            if (seatA === "-") return 1;
-            if (seatB === "-") return -1;
-            
-            const letraA = seatA.charAt(0);
-            const letraB = seatB.charAt(0);
-            const numA = parseInt(seatA.substring(1)) || 0;
-            const numB = parseInt(seatB.substring(1)) || 0;
-            
-            if (letraA !== letraB) return letraA.localeCompare(letraB);
-            return numA - numB;
-        });
-    } else {
-        filtered.sort((a, b) => {
-            const nameA = (a.apellido + " " + a.nombre).toLowerCase();
-            const nameB = (b.apellido + " " + b.nombre).toLowerCase();
-            return nameA.localeCompare(nameB);
+export function initTable() {
+    const searchInput = document.getElementById('searchAlumno');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderTable(); // Re-render on search
         });
     }
 
-    // Manejar el caso donde no hay resultados
+    // Subscribe to state changes
+    state.subscribe('students', renderTable);
+    state.subscribe('filterType', renderTable);
+
+    // Event delegation for table actions
+    const tableBody = document.getElementById('alumnosTableBody');
+    if (tableBody) {
+        tableBody.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            const numCuenta = btn.dataset.numcuenta;
+
+            if (action === 'edit') {
+                window.dispatchEvent(new CustomEvent('open-edit-modal', { detail: { numCuenta } }));
+            } else if (action === 'send-individual') {
+                if (!confirm('¿Enviar correo con QR a este alumno?')) return;
+
+                toast.info("Enviando correo...");
+                try {
+                    const res = await enviarCorreoIndividual(numCuenta);
+                    if (res.success) {
+                        toast.success("Correo enviado correctamente.");
+                    } else {
+                        toast.error(res.message || "Error al enviar correo.");
+                    }
+                } catch (err) {
+                    toast.error("Error de conexión.");
+                }
+            }
+        });
+    }
+}
+
+export function renderTable() {
+    const tableBody = document.getElementById('alumnosTableBody');
+    const searchInput = document.getElementById('searchAlumno');
+    if (!tableBody) return;
+
+    const allStudents = state.students;
+    const filterType = state.filterType;
+    const searchText = searchInput ? searchInput.value : '';
+
+    // 1. Filter
+    let filtered = filterStudents(allStudents, filterType, searchText);
+
+    // 2. Sort (default by seat)
+    filtered = sortBySeat(filtered);
+
+    // 3. Performance: Simple data check to avoid flickering
+    const currentHash = JSON.stringify(filtered.map(s => `${s.numCuenta}-${s.asistencia_estado}-${s.email}`)) + searchText + filterType;
+    if (currentHash === lastDataHash) return;
+    lastDataHash = currentHash;
+
+    // 4. Render
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center">No se encontraron alumnos coincidentes.</td></tr>`;
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="admin-table__loading">
+                    <div class="admin-table__loading-content">
+                        <span class="admin-text-muted">No se encontraron alumnos con los criterios seleccionados.</span>
+                    </div>
+                </td>
+            </tr>
+        `;
         return;
     }
 
-    // Generar las filas de la tabla para cada alumno filtrado
-    filtered.forEach(al => {
-        // Definir el badge visual basado en el estado de asistencia
-        let estadoBadge = `<span class="admin-badge admin-badge--pendiente">Pendiente</span>`;
-        if (al.asistencia_estado === 1 || al.asistencia_estado === "1") {
-            estadoBadge = `<span class="admin-badge admin-badge--confirmado">Confirmado</span>`;
-        } else if (al.asistencia_estado === 0 || al.asistencia_estado === "0") {
-            estadoBadge = `<span class="admin-badge admin-badge--rechazado">Rechazado</span>`;
-        }
+    tableBody.innerHTML = filtered.map(alumno => {
+        const grupo = getGrupo(alumno.carrera, alumno.turno);
+        const estado = parseInt(alumno.asistencia_estado || 0);
+        const badgeClass = estado === 1 ? 'admin-badge--confirmado' : (estado === 2 ? 'admin-badge--rechazado' : 'admin-badge--pendiente');
+        const estadoTexto = estado === 1 ? 'Confirmado' : (estado === 2 ? 'No Asistirá' : 'Pendiente');
 
-        // Simplificar el nombre de la carrera para la visualización en la tabla
-        let carreraCorta = al.carrera;
-        const carLower = al.carrera.toLowerCase();
-        if (carLower.includes("informática") || carLower.includes("informatica")) {
-            carreraCorta = "Informática";
-        } else if (carLower.includes("ingeniería") || carLower.includes("sistemas")) {
-            carreraCorta = "Ingeniería";
-        }
-
-        // Crear el elemento de fila (tr) e insertar el HTML con los datos
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td data-label="No. Cuenta"><strong>${al.numCuenta}</strong></td>
-            <td data-label="Nombre">${al.apellido} ${al.nombre}</td>
-            <td data-label="Grupo">${getGrupo(al.carrera, al.turno)}</td>
-            <td data-label="Invitados" class="admin-text-center">${al.cantInvitado || 0}</td>
-            <td data-label="Correo" class="admin-table__email">${al.email || '<span class="admin-text-muted">Sin correo</span>'}</td>
-            <td data-label="Asiento" class="admin-text-center">${al.asiento || "-"}</td>
-            <td data-label="Estado" class="admin-text-center">${estadoBadge}</td>
-            <td data-label="Acciones" class="admin-text-center">
-                <div class="admin-action-group">
-                    <button type="button" class="admin-btn admin-btn--outline" style="padding: 0.5rem;" title="Editar Alumno" onclick="window.openEditModal('${al.numCuenta}')">
-                        <span class="admin-icon admin-icon--edit"></span> <span class="admin-hide-mobile ms-1">Editar</span>
-                    </button>
-                    <button type="button" class="admin-btn admin-btn--outline" style="padding: 0.5rem;" title="Enviar QR" onclick="alert('Función de enviar QR en desarrollo')">
-                        <span class="admin-icon admin-icon--send"></span> <span class="admin-hide-mobile ms-1">Enviar</span>
-                    </button>
-                </div>
-            </td>
+        return `
+            <tr>
+                <td class="fw-bold">${alumno.numCuenta}</td>
+                <td class="text-uppercase">${alumno.apellido} ${alumno.nombre}</td>
+                <td><span class="admin-badge admin-badge--outline">${grupo}</span></td>
+                <td class="text-center">${alumno.cantInvitado || 0}</td>
+                <td>
+                    <div class="admin-table__email text-muted small">${alumno.email || '—'}</div>
+                </td>
+                <td class="fw-bold text-navy">
+                    ${alumno.letra ? `${alumno.letra}-${alumno.numero}` : '—'}
+                </td>
+                <td>
+                    <span class="admin-badge ${badgeClass}">${estadoTexto}</span>
+                </td>
+                <td>
+                    <div class="d-flex flex-column gap-1">
+                        <button class="admin-btn admin-btn--outline admin-btn--sm d-flex align-items-center gap-2" 
+                                data-action="edit" 
+                                data-numcuenta="${alumno.numCuenta}">
+                            <span class="admin-icon admin-icon--edit" style="width:14px;height:14px;"></span>
+                            <span style="font-size: 0.75rem;">Editar</span>
+                        </button>
+                        <button class="admin-btn admin-btn--outline admin-btn--sm d-flex align-items-center gap-2" 
+                                data-action="send-individual" 
+                                data-numcuenta="${alumno.numCuenta}">
+                            <span class="admin-icon admin-icon--send" style="width:14px;height:14px;"></span>
+                            <span style="font-size: 0.75rem;">Enviar</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
         `;
-        tbody.appendChild(tr);
-    });
+    }).join('');
 }
-
-/**
- * Establece el tipo de filtro actual y refresca la tabla.
- * @param {string} type - El identificador del filtro (ALL, CONFIRMADOS, etc.)
- */
-export function setFilterType(type) {
-    state.currentFilterType = type;
-
-    // Actualizar estado activo en el sidebar
-    document.querySelectorAll('.admin-sidebar__link').forEach(link => {
-        link.classList.remove('admin-sidebar__link--active');
-    });
-
-    // Mapear el tipo a ID de link para activar el correcto
-    const filterMap = {
-        'ALL': 'link-filter-all',
-        'CONFIRMADOS': 'link-filter-confirmados',
-        'INVITADOS': 'link-filter-invitados',
-        'LI': 'link-filter-li',
-        'LISI': 'link-filter-lisi',
-        'LI4-1': 'link-filter-li41',
-        'LI4-2': 'link-filter-li42',
-        'LISI4-1': 'link-filter-lisi41',
-        'LISI4-2': 'link-filter-lisi42',
-        'RECHAZADOS': 'link-filter-rechazados'
-    };
-
-    const activeLinkId = filterMap[type];
-    if (activeLinkId && document.getElementById(activeLinkId)) {
-        document.getElementById(activeLinkId).classList.add('admin-sidebar__link--active');
-    }
-
-    // Mostrar/Ocultar el botón de "Mostrar Todo" dependiendo del filtro
-    const btn = document.getElementById("btnMostrarTodo");
-    if (btn) {
-        if (type === 'ALL') {
-            btn.classList.add('admin-hidden');
-        } else {
-            btn.classList.remove('admin-hidden');
-        }
-    }
-
-    // Obtener el valor actual de búsqueda y rerenderizar la tabla
-    const searchVal = document.getElementById("searchInput") ? document.getElementById("searchInput").value : "";
-    renderTable(searchVal);
-}
-

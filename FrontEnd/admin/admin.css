@@ -3,45 +3,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* Design System Imports */
-@import '../css/admin/variables.css?v=6';
-@import '../css/admin/layout.css?v=6';
-@import '../css/admin/components.css?v=6';
-@import '../css/admin/responsive.css?v=6';
-/* Reset base */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import '../css/design-system/reset.css';
+@import '../css/design-system/variables.css';
+@import '../css/design-system/typography.css';
 
-/* Legacy overrides and specific logic */
-#qrReaderContainer {
-    border-radius: 0;
-    overflow: hidden;
-}
+/* Components */
+@import '../css/components/buttons.css';
+@import '../css/components/badges.css';
+@import '../css/components/cards.css';
+@import '../css/components/table.css';
+@import '../css/components/sidebar.css';
+@import '../css/components/topbar.css';
+@import '../css/components/loader.css';
+@import '../css/components/search.css';
+@import '../css/components/toast.css';
+@import '../css/components/modals.css';
 
-#qrReaderContainer video {
-    border-radius: 0;
-}
+/* Layouts */
+@import '../css/layouts/admin-layout.css';
 
-#qrResultModal .list-group-item {
-    border-left: none;
-    border-right: none;
-}
+/* Pages */
+@import '../css/pages/admin.css';
 
-/* Badge styles for the table (still used by JS) */
-.badge-pendiente { background-color: var(--color-secondary); }
-.badge-confirmado { background-color: var(--color-success); }
-.badge-rechazado { background-color: var(--color-error); }
-
-/* Sticky columns for the directory table */
-@media (min-width: 768px) {
-    #alumnosTable th:last-child,
-    #alumnosTable td:last-child {
-        position: sticky;
-        right: 0;
-        z-index: 10;
-        background-color: var(--color-surface);
-        box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
-    }
-    
-    #alumnosTable th:last-child {
-        background-color: #f1f5f9;
-    }
-}
+/* Responsive */
+@import '../css/responsive/admin-responsive.css';

@@ -1,9 +1,14 @@
+import { pintarAsiento } from './shared/seat-renderer.js';
+
+/**
+ * Seat map rendering logic.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
-    
+    const data = window.__SEAT_DATA__;
+    if (!data) return;
+
     const envoltura = document.querySelector('.mapa-envoltura');
-
-    const selectEvento = document.getElementById('selectEvento');
-
     const CONFIG_ZOOM_COMPLETO = { scale: 0.6, x: 0, y: 0 };
 
     function esDispositivoMovil() {
@@ -11,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function aplicarVistaCompleta() {
+        if (!envoltura) return;
         if (esDispositivoMovil()) {
             envoltura.style.transform = '';
             return;
@@ -18,49 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
         envoltura.style.transform = `scale(${CONFIG_ZOOM_COMPLETO.scale}) translate(${CONFIG_ZOOM_COMPLETO.x}px, ${CONFIG_ZOOM_COMPLETO.y}px)`;
     }
 
-    //  CAMBIO DE EVENTO
-    if (selectEvento && window.TIPO_USUARIO === "admin") {
-        selectEvento.addEventListener('change', (e) => {
-            const evento = e.target.value;
-            window.location.href = "asientos.php?evento=" + evento;
-        });
-    }
-
     aplicarVistaCompleta();
 
-    // ===============================
-    //  FUNCIÓN MODIFICADA
-    // ===============================
-    function pintarAsiento(asiento, idAsiento) {
-
-        asiento.classList.add('disponible');
-
-        //  ALUMNO
-        if (window.TIPO_USUARIO === "alumno") {
-         console.log("Js:", idAsiento, "Grupo:", window.ASIENTOS_GRUPO);    
-            //  Todo su grupo
-            if (window.ASIENTOS_GRUPO.includes(idAsiento)) {
-                asiento.classList.remove('disponible');
-                asiento.classList.add('grupo');
-            }
-
-            //  Su asiento (prioridad)
-            if (idAsiento === window.MI_ASIENTO) {
-                asiento.classList.remove('grupo');
-                asiento.classList.add('mi-asiento');
-            }
-
-            return;
-        }
-
-        //  ADMIN
-        if (window.TIPO_USUARIO === "admin") {
-            if (window.ASIENTOS_OCUPADOS.includes(idAsiento)) {
-                asiento.classList.remove('disponible');
-                asiento.classList.add('ocupado');
-            }
-        }
-    }
+    const configRenderer = {
+        userType: data.tipoUsuario,
+        occupiedSeats: data.asientosOcupados || [],
+        studentSeat: data.miAsiento,
+        groupSeats: data.asientosGrupo || []
+    };
 
     // ===============================
     //  ZONA SUPERIOR
@@ -97,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         asiento.classList.add('asiento');
                         asiento.textContent = idAsiento;
 
-                        pintarAsiento(asiento, idAsiento);
+                        pintarAsiento(asiento, idAsiento, configRenderer);
                     }
 
                     secDiv.appendChild(asiento);
@@ -142,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     asiento.classList.add('asiento');
                     asiento.textContent = idAsiento;
 
-                    pintarAsiento(asiento, idAsiento);
+                    pintarAsiento(asiento, idAsiento, configRenderer);
 
                     secDiv.appendChild(asiento);
                 }
@@ -153,5 +124,4 @@ document.addEventListener("DOMContentLoaded", () => {
             teatro.appendChild(filaDiv);
         }
     }
-
 });

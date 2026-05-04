@@ -1,0 +1,30 @@
+.public-body {
+    background-color: var(--color-background);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.public-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--color-surface);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.public-logo {
+    display: block;
+    width: 150px;
+    margin: 0 auto 2rem;
+}
+
+.public-title {
+    text-align: center;
+    color: var(--color-navy);
+    margin-bottom: 1.5rem;
+}
