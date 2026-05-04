@@ -131,17 +131,44 @@ header {
 .pasillo { width: 60px; }
 .hueco { width: 35px; height: 35px; visibility: hidden; }
 
-/* SCROLL */
+/* MENSAJE PANZOOM */
+.panzoom-msg {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 59, 113, 0.85);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 0.3s ease;
+}
+
+/* SCROLL / PANZOOM CONTAINER */
 .contenedor-scroll {
   width: 100%;
   height: calc(100vh - 80px);
-  overflow: auto;
+  overflow: hidden; /* Importante para Panzoom */
   position: relative;
   background-color: transparent;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+  align-items: center; 
+  padding: 0;
+  cursor: grab;
+}
+
+.navbar-hidden .contenedor-scroll {
+  height: 100vh;
+}
+
+.contenedor-scroll:active {
+  cursor: grabbing;
 }
 
 .mapa-envoltura {
@@ -149,9 +176,8 @@ header {
   flex-direction: column;
   align-items: center;
   min-width: max-content; 
-  padding: 40px;
-  transform-origin: top center;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 40px; /* Reducido para evitar que se corte al inicio */
+  transform-origin: center center;
   will-change: transform;
 }
 
@@ -188,15 +214,11 @@ header {
 /* MOBILE */
 @media (max-width: 576px) {
   .contenedor-scroll {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x pan-y;
     height: calc(100vh - 120px);
   }
   
   .mapa-envoltura {
-    transform: scale(1.2) !important;
-    padding: 20px;
+    padding: 150px; /* Mucho padding en móvil para que no se "pegue" a los bordes */
   }
   
   .asiento { width: 46px; height: 46px; font-size: 11px; }

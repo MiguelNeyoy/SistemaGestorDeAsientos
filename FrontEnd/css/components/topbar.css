@@ -1,0 +1,51 @@
+.admin-topbar {
+    background-color: var(--color-white);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-topbar__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.admin-topbar__title-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-topbar__title {
+    font-size: var(--font-headline-md);
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-navy);
+}
+
+.admin-topbar__clock {
+    font-size: var(--font-label-sm);
+    color: var(--color-text-sub);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-topbar__actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    .admin-topbar {
+        padding: 0.75rem 1rem;
+    }
+    
+    .admin-topbar__actions {
+        display: none; /* Hidden on mobile by default, handled by menu */
+    }
+}

@@ -76,9 +76,11 @@ if (isset($_POST['buscar'])) {
                         $estado = $alumno['asistencia']; // "Si", "No", "Pendiente"
 
                         if ($estado == "Si") {
-                            header("Location: asientos.php");
+                            $carreraAl = strtolower($alumno['carrera'] ?? '');
+                            $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
+                            header("Location: home_alumno");
                         } else {
-                            header("Location: view_confirmacion.php");
+                            header("Location: view_confirmacion");
                         }
                         exit;
 
@@ -113,7 +115,7 @@ if (isset($_POST['buscar'])) {
     <title>Confirmación de asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/bienvenida.css">
+    <link rel="stylesheet" href="css/bienvenida.css?v=<?= filemtime(__DIR__ . '/css/bienvenida.css') ?>">
 </head>
 
 <body>

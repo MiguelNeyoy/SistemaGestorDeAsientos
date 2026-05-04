@@ -3,79 +3,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* Design System Imports */
-@import '../css/admin/variables.css?v=8';
-@import '../css/admin/layout.css?v=8';
-@import '../css/admin/components.css?v=8';
-@import '../css/admin/responsive.css?v=8';
-/* Reset base */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import '../css/design-system/reset.css';
+@import '../css/design-system/variables.css';
+@import '../css/design-system/typography.css';
 
-/* Legacy overrides and specific logic */
-#qrReaderContainer {
-    border-radius: 0;
-    overflow: hidden;
+/* Components */
+@import '../css/components/buttons.css';
+@import '../css/components/badges.css';
+@import '../css/components/cards.css';
+@import '../css/components/table.css';
+@import '../css/components/sidebar.css';
+@import '../css/components/topbar.css';
+@import '../css/components/loader.css';
+@import '../css/components/search.css';
+@import '../css/components/toast.css';
+@import '../css/components/modals.css';
+
+/* Layouts */
+@import '../css/layouts/admin-layout.css';
+
+/* Pages */
+@import '../css/pages/admin.css';
+
+/* Responsive */
+@import '../css/responsive/admin-responsive.css';
+
+/* Overlay para el Sidebar en móvil */
+.admin-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
 }
 
-#qrReaderContainer video {
-    border-radius: 0;
-}
-
-#qrResultModal .list-group-item {
-    border-left: none;
-    border-right: none;
-}
-
-/* Badge styles for the table (still used by JS) */
-.badge-pendiente { background-color: var(--color-secondary); }
-.badge-confirmado { background-color: var(--color-success); }
-.badge-rechazado { background-color: var(--color-error); }
-
-/* Sticky columns for the directory table */
-@media (min-width: 768px) {
-    #alumnosTable th:last-child,
-    #alumnosTable td:last-child {
-        position: sticky;
-        right: 0;
-        z-index: 10;
-        background-color: var(--color-surface);
-        box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
-    }
-    
-    #alumnosTable th:last-child {
-        background-color: #f1f5f9;
-    }
-}
-
-/* Asientos Map */
-#asientos-container {
-    width: 100%;
-    height: 75vh;
-    position: relative;
-}
-
-#asientos-controls {
-    margin-bottom: 0.5rem;
-}
-
-#asientos-controls #zoomLevel {
-    min-width: 50px;
-    text-align: center;
-}
-
-#asientosIframe {
-    transform-origin: top left;
-    transition: transform 0.2s;
-    display: block;
-    border: 1px solid #ddd;
-    background: #fff;
-    width: 100%;
-    height: 100%;
-    min-width: 800px;
-    min-height: 400px;
-}
-
-#zoomLevel {
-    min-width: 50px;
-    text-align: center;
-    font-weight: 500;
+.admin-sidebar--active + .admin-sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
 }

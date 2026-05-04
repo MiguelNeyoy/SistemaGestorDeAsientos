@@ -38,6 +38,7 @@ if ($httpCodeGet == 200 && $responseGet) {
     if (isset($dataGet['success']) && $dataGet['success'] === true) {
         // Almacenamos la información del alumno devuelta por la API
         $alumno = $dataGet['data'];
+        $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
     } else {
         die(isset($dataGet['message']) ? $dataGet['message'] : "Alumno no encontrado.");
     }
@@ -79,7 +80,8 @@ if (isset($_POST['confirmar'])) {
     // Armar el arreglo de datos que espera la API
     $datosConfirmacion = [
         "asistira" => $asistira,
-        "correo" => $correo
+        "correo" => $correo,
+        "num_invitados" => isset($_POST['invitados']) ? (int)$_POST['invitados'] : 0
     ];
 
     // Enviar la petición POST a la API
@@ -110,9 +112,12 @@ if (isset($_POST['confirmar'])) {
         if ($httpCodeConfirmar == 200 && isset($resultadoConfirmar['success']) && $resultadoConfirmar['success']) {
 
             if ($asistira == 1) {
-                header("Location: asientos.php");
+                // Determinar el evento para la redirección
+                $carreraAl = strtolower($alumno['carrera'] ?? '');
+                $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
+                header("Location: home_alumno?confirmado=1");
             } else {
-                header("Location: view_confirmacion.php");
+                header("Location: view_confirmacion");
             }
             exit;
         } else {
@@ -199,44 +204,61 @@ if (isset($_POST['actualizar_correo'])) {
 <head>
     <title>Confirmar asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/bienvenida.css">
+    <link rel="stylesheet" href="css/bienvenida.css?v=<?= filemtime(__DIR__ . '/css/bienvenida.css') ?>">
 
     <script>
-        // Función en Javascript para mostrar/ocultar los campos extras
-        // dependiendo de si el alumno asiste o no.
+        // Configuración inyectada desde PHP
+        window.__APP_CONFIG__ = {
+            apiUrl: <?php echo json_encode($JS_BASE_API_URL); ?>,
+            token: <?php echo json_encode($token); ?>
+        };
+        window.__ALUMNO_DATA__ = {
+            numCuenta: <?php echo json_encode($alumno['numCuenta'] ?? ''); ?>,
+            asistira: <?php echo json_encode($estadoAsistencia ?? 'Pendiente') ;?>
+        };
+
+        // Función para mostrar/ocultar los campos extras
         function mostrarCampos() {
-            let opcion = document.querySelector('input[name="asiste"]:checked')?.value;
-            let inputCorreo = document.querySelector('input[name="correo"]');
-            let btnConfirmar = document.getElementById("btnConfirmar");
-            if (opcion == "Si") {
-                document.getElementById("extra").style.display = "block";
-                inputCorreo.required = true;
+            const extraDiv = document.getElementById("extra");
+            if (!extraDiv) return;
+
+            const radioSi = document.querySelector('input[name="asiste"][value="Si"]');
+            const isSi = radioSi && radioSi.checked;
+            
+            const inputCorreo = document.querySelector('input[name="correo"]');
+            const btnConfirmar = document.getElementById("btnConfirmar");
+
+            if (isSi) {
+                extraDiv.style.display = "block";
+                if (inputCorreo) inputCorreo.required = true;
                 if (btnConfirmar) btnConfirmar.innerText = "Confirmar asistencia";
             } else {
-                document.getElementById("extra").style.display = "none";
-                inputCorreo.required = false;
+                extraDiv.style.display = "none";
+                if (inputCorreo) inputCorreo.required = false;
                 if (btnConfirmar) btnConfirmar.innerText = "Enviar";
             }
         }
 
-        function validarEnvio() {
-            let opcion = document.querySelector('input[name="asiste"]:checked')?.value;
-            if (opcion == "No") {
-                return confirm("¿Estás seguro de no ir? No se te contemplará para la ceremonia de graduación.");
-            }
-            return true;
-        }
+        // Inicialización de eventos
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('input[name="asiste"]').forEach(radio => {
+                radio.addEventListener('change', mostrarCampos);
+            });
+            // Verificación inicial por si hay autocompletado
+            mostrarCampos();
+        });
     </script>
 </head>
 
 <body>
 
     <div class="container"> <!-- Contenedor principal -->
+        <!-- ... resto del contenido ... -->
+<?php /* Mantenemos la lógica de bloques PHP anterior pero simplificada en la inyección JS */ ?>
 
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
         <?php
-        $estadoAsistencia = isset($alumno['asistencia']) ? $alumno['asistencia'] : "Pendiente";
         if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
             ?>
             <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
@@ -269,10 +291,10 @@ if (isset($_POST['actualizar_correo'])) {
                 </label>
 
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
-                <div id="extra" style="display:none">
+                <div id="extra" class="extra-campos">
                     <p>Correo</p>
-                    <input type="email" name="correo" placeholder="Escribe tu correo" required
-                        value="<?php ; ?>">
+                    <input type="email" name="correo" placeholder="Escribe tu correo"
+                        value="<?php echo htmlspecialchars($alumno['email'] ?? ''); ?>">
 
 
 
@@ -287,7 +309,7 @@ if (isset($_POST['actualizar_correo'])) {
 
                 </div>
 
-                <button type="submit" name="confirmar">Confirmar asistencia</button>
+                <button type="submit" name="confirmar" id="btnConfirmar">Confirmar asistencia</button>
             </form>
 
             <!-- Mensaje de resultado de confirmación -->
@@ -318,15 +340,23 @@ if (isset($_POST['actualizar_correo'])) {
                     </p>
                 <?php endif; ?>
 
+                <!-- QR Access Section -->
+                <div class="mt-4 text-center">
+                    <a href="view_qr.php" class="btn btn-success px-4">
+                        <span class="admin-icon admin-icon--scan admin-icon--white"></span>
+                        Obtener mi Pase QR
+                    </a>
+                </div>
 
                 <br>
-                <p style="text-align: center;"><a href="index.php">Regresar al inicio</a></p>
+                <p style="text-align: center;"><a href="index">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>
 
     </div>
 
+    <!-- QR Library and Module -->
 </body>
 
 </html>

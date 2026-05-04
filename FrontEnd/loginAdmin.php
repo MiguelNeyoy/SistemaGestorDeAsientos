@@ -5,7 +5,7 @@ $error = "";
 
 // Si ya tiene sesión, mandarlo al panel
 if (isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token'])) {
-    header("Location: admin/view_admin.php");
+            header("Location: admin/view_admin");
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
             unset($_SESSION['tipo']);
 
             $_SESSION['admin_token'] = $data['data']['token'];
-            header("Location: admin/view_admin.php");
+                    header("Location: admin/view_admin");
             exit;
         } else {
             $error = isset($data['message']) ? $data['message'] : "Credenciales inválidas";
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
     <title>Acceso de Administración</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/LoginAdmin.css">
+    <link rel="stylesheet" href="css/LoginAdmin.css?v=<?= filemtime(__DIR__ . '/css/LoginAdmin.css') ?>">
 </head>
 
 <body>

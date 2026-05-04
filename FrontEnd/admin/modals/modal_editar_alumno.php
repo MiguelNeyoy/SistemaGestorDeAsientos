@@ -31,8 +31,9 @@
                     <div class="mb-3">
                         <label for="editEstado" class="form-label">Estado de Asistencia</label>
                         <select class="form-select" id="editEstado">
+                            <option value="0">Pendiente</option>
                             <option value="1">Confirmado</option>
-                            <option value="0">Rechazado</option>
+                            <option value="2">No Asistirá</option>
                         </select>
                     </div>
 
