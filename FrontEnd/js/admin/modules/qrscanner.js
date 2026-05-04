@@ -53,10 +53,12 @@ async function onScanSuccess(decodedText) {
     // 1. Stop scanner immediately to avoid multiple reads
     stopScanner();
 
-    // 2. Play beep or visual feedback
-    const modal = document.getElementById('qrScannerModal');
-    const bsModal = bootstrap.Modal.getInstance(modal);
-    bsModal.hide();
+    // 2. Hide scanner modal robustly
+    const modalEl = document.getElementById('qrScannerModal');
+    if (modalEl) {
+        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        bsModal.hide();
+    }
 
     toast.info("Validando código...");
 
