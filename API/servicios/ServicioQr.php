@@ -25,7 +25,7 @@ class ServicioQr
         // Note: The current DB has 'asistencia' table with 'estado'.
         // I need to verify how AlumnoModelo gets this.
 
-        return $this->alumnoModelo->buscarPorNumeroCuenta($numCuenta);
+        return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
     }
 
     public function validarAcceso($token)
@@ -40,59 +40,49 @@ class ServicioQr
             return ["success" => false, "message" => "Este pase ya ha sido utilizado", "data" => $qr];
         }
 
-        // Mark as used
+        // Marcar como escaneado
         $this->qrModelo->marcarEscaneado($token);
 
-        return ["success" => true, "message" => "Acceso concedido", "data" => $qr];
+        return [
+            "success" => true,
+            "message" => "Acceso permitido",
+            "data" => $qr
+        ];
     }
 
     public function toggleAccesoGrupo($grupo, $accion)
     {
-        // $grupo is e.g. 'LI4-1'
-        // We need to find all confirmed students of this group.
+        // 1. Get all carrera/turno combinations for this short name
+        $detalles = $this->grupoModelo->obtenerDetallesGrupo($grupo);
+        if (empty($detalles)) return false;
 
-        // This logic usually belongs to ServicioAdministrador, but I'll implement a helper here
-        // for simplicity or reuse if possible.
+        $allNumsCuenta = [];
 
-        // Map group string to carrera and turno
-        $carrera = "";
-        $turno = "";
-
-        if (strpos($grupo, 'LISI') !== false) {
-            $carrera = 'Licenciatura en Ingeniería en Sistemas de Información';
-        } else {
-            $carrera = 'Licenciatura en Informática';
+        // 2. Collect all students from all variations of this group
+        foreach ($detalles as $detalle) {
+            $alumnos = $this->alumnoModelo->obtenerConfirmadosPorGrupo($detalle['carrera'], $detalle['turno']);
+            foreach ($alumnos as $alumno) {
+                $allNumsCuenta[] = $alumno['numCuenta'];
+            }
         }
 
-        $turno = (strpos($grupo, '-1') !== false) ? 'M' : 'V';
+        if (empty($allNumsCuenta)) {
+            // Even if no students, update the group status
+            return $this->grupoModelo->actualizarEstado($grupo, ($accion === 'habilitar' ? 1 : 0));
+        }
 
-        // Get confirmed students for this carrera and turno
-        $alumnos = $this->alumnoModelo->obtenerConfirmadosPorGrupo($carrera, $turno);
-
-        $numsCuenta = array_map(function ($a) {
-            return $a['numCuenta'];
-        }, $alumnos);
-
+        // 3. Perform the bulk QR action
         if ($accion === 'habilitar') {
-            $this->grupoModelo->actualizarEstado($carrera, $turno, 1);
-            return $this->qrModelo->habilitarGrupo($numsCuenta);
+            $this->grupoModelo->actualizarEstado($grupo, 1);
+            return $this->qrModelo->habilitarGrupo($allNumsCuenta);
         } else {
-            $this->grupoModelo->actualizarEstado($carrera, $turno, 0);
-            return $this->qrModelo->deshabilitarGrupo($numsCuenta);
+            $this->grupoModelo->actualizarEstado($grupo, 0);
+            return $this->qrModelo->deshabilitarGrupo($allNumsCuenta);
         }
     }
 
     public function obtenerEstadoGrupo($grupo)
     {
-        $carrera = "";
-        $turno = "";
-        if (strpos($grupo, 'LISI') !== false) {
-            $carrera = 'Licenciatura en Ingeniería en Sistemas de Información';
-        } else {
-            $carrera = 'Licenciatura en Informática';
-        }
-        $turno = (strpos($grupo, '-1') !== false) ? 'M' : 'V';
-
-        return $this->grupoModelo->obtenerEstado($carrera, $turno);
+        return $this->grupoModelo->obtenerEstado($grupo);
     }
 }
