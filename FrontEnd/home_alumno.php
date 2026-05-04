@@ -3,7 +3,7 @@ session_start();
 require_once "config.php";
 
 if (!isset($_SESSION['jwt_token'])) {
-    header("Location: index.php");
+    header("Location: index");
     exit;
 }
 
@@ -82,7 +82,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="card-body">
           <h5 class="card-title">Código QR</h5>
           <p class="card-text">Accede a tu código QR personal para el evento.</p>
-          <a href="view_qr.php" class="btn btn-primary">Ver QR</a>
+          <a href="view_confirmacion" class="btn btn-primary">Ver QR</a>
         </div>
       </div>
     </div>
@@ -92,7 +92,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="card-body">
           <h5 class="card-title">Mapa de Asientos</h5>
           <p class="card-text">Consulta tu asiento asignado y el mapa completo.</p>
-          <a href="asientos.php" class="btn btn-secondary">Ver Asientos</a>
+          <a href="asientos" class="btn btn-secondary">Ver Asientos</a>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="card-body">
           <h5 class="card-title">Cerrar Sesión</h5>
           <p class="card-text">Salir de tu cuenta de manera segura.</p>
-          <a href="index.php" class="btn btn-outline-danger">Cerrar Sesión</a>
+          <a href="index" class="btn btn-outline-danger">Cerrar Sesión</a>
         </div>
       </div>
     </div>

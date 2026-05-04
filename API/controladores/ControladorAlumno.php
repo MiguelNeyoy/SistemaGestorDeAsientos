@@ -34,7 +34,7 @@ class ControladorAlumno
             $issuer_claim = "http://asientos.local";
             $audience_claim = "http://asientos.local";
             $issuedat_claim = time(); // tiempo de emisión
-            $expire_claim = $issuedat_claim + (24 * 60 * 60); // expira en 24 horas
+            $expire_claim = $issuedat_claim + (10 * 60); // expira en 24 horas
 
             // Determinar evento_id basado en la carrera del alumno
             $carrera = $respuestaDelServicio['data']['carrera'] ?? '';

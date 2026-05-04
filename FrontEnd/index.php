@@ -78,9 +78,9 @@ if (isset($_POST['buscar'])) {
                         if ($estado == "Si") {
                             $carreraAl = strtolower($alumno['carrera'] ?? '');
                             $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
-                            header("Location: asientos.php?evento=" . $evRedirect);
+                            header("Location: home_alumno");
                         } else {
-                            header("Location: view_confirmacion.php");
+                            header("Location: view_confirmacion");
                         }
                         exit;
 

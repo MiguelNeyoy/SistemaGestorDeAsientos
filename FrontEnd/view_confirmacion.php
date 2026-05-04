@@ -115,9 +115,9 @@ if (isset($_POST['confirmar'])) {
                 // Determinar el evento para la redirección
                 $carreraAl = strtolower($alumno['carrera'] ?? '');
                 $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
-                header("Location: asientos.php?evento=" . $evRedirect);
+                header("Location: home_alumno?confirmado=1");
             } else {
-                header("Location: view_confirmacion.php");
+                header("Location: view_confirmacion");
             }
             exit;
         } else {
@@ -346,7 +346,7 @@ if (isset($_POST['actualizar_correo'])) {
                 </div>
 
                 <br>
-                <p style="text-align: center;"><a href="index.php">Regresar al inicio</a></p>
+                <p style="text-align: center;"><a href="index">Regresar al inicio</a></p>
             </div>
 
         <?php } ?>
