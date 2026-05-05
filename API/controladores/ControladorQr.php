@@ -33,7 +33,7 @@ class ControladorQr {
     }
 
     /**
-     * Valida un token QR (Admin only)
+     * Valida un token QR sin marcar (Admin only)
      */
     public function validarQr() {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -45,8 +45,37 @@ class ControladorQr {
             return;
         }
 
-        $result = $this->servicioQr->validarAcceso($token);
+        $result = $this->servicioQr->validarTokenSolo($token);
         echo json_encode($result);
+    }
+
+    /**
+     * Marca un token QR como escaneado (Admin only)
+     */
+    public function marcarQr() {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $token = $data['token'] ?? null;
+
+        if (!$token) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Token no proporcionado"]);
+            return;
+        }
+
+        $validacion = $this->servicioQr->validarTokenSolo($token);
+
+        if (!$validacion['success']) {
+            echo json_encode($validacion);
+            return;
+        }
+
+        $this->servicioQr->marcarEscaneado($token);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "QR marcado como utilizado",
+            "data" => $validacion['data']
+        ]);
     }
 
     /**

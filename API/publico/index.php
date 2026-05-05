@@ -70,6 +70,9 @@ $rutas = [
     '/admin/qr/validar' => [
         'POST' => ['ControladorQr', 'validarQr']
     ],
+    '/admin/qr/marcar' => [
+        'POST' => ['ControladorQr', 'marcarQr']
+    ],
     '/alumnos/qr' => [
         'GET' => ['ControladorQr', 'obtenerQrAlumno']
     ]
@@ -101,7 +104,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento', '/asientos/mapa/{evento}', '/alumnos/qr'];
-            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar'];
+            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar', '/admin/qr/marcar'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;

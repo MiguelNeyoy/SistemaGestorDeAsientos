@@ -22,6 +22,25 @@ class ServicioQr
         return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
     }
 
+    public function validarTokenSolo($token)
+    {
+        $qr = $this->qrModelo->obtenerPorToken($token);
+
+        if (!$qr) {
+            return ["success" => false, "message" => "Token inválido"];
+        }
+
+        if ($qr['escaneado'] == 1) {
+            return ["success" => false, "message" => "Este pase ya ha sido utilizado", "data" => $qr];
+        }
+
+        return [
+            "success" => true,
+            "message" => "QR válido y disponible",
+            "data" => $qr
+        ];
+    }
+
     public function validarAcceso($token)
     {
         $qr = $this->qrModelo->obtenerPorToken($token);
@@ -79,5 +98,10 @@ class ServicioQr
     public function obtenerEstadoGrupo($grupo)
     {
         return $this->grupoModelo->obtenerEstado($grupo);
+    }
+
+    public function marcarEscaneado($token)
+    {
+        return $this->qrModelo->marcarEscaneado($token);
     }
 }
