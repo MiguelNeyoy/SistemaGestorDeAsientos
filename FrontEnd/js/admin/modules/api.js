@@ -50,6 +50,14 @@ export async function validarQR(token) {
     return await response.json();
 }
 
+export async function marcarQR(token) {
+    const response = await coreFetch('/admin/qr/marcar', {
+        method: 'POST',
+        body: JSON.stringify({ token })
+    });
+    return await response.json();
+}
+
 /**
  * Seats Management
  */
