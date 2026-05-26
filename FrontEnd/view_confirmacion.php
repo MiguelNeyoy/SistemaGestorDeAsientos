@@ -292,21 +292,40 @@ if (isset($_POST['actualizar_correo'])) {
 
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
                 <div id="extra" class="extra-campos">
-                    <p>Correo</p>
+                    
                     <input type="email" name="correo" placeholder="Escribe tu correo"
        value="<?php echo isset($alumno['email']) && filter_var($alumno['email'], FILTER_VALIDATE_EMAIL) ? htmlspecialchars($alumno['email']) : ''; ?>">
 
 
+            <?php
+$carreraInv = strtolower($alumno['carrera'] ?? '');
 
+/*
+    Si contiene "informática"
+    entonces es LI → 4 invitados
 
-                    <p>Selecciona la cantidad de invitados (Máximo 4)</p>
-                    <select name="invitados">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
+    cualquier otra carrera → LISI → 3 invitados
+*/
+$esLI =
+(
+    strpos($carreraInv, 'informática') !== false ||
+    strpos($carreraInv, 'informatica') !== false
+);
+
+$maxInvitados = $esLI ? 4 : 3;
+?>
+
+<p>Selecciona la cantidad de invitados (Máximo <?php echo $maxInvitados; ?>)</p>
+
+<select name="invitados">
+    <?php for($i = 0; $i <= $maxInvitados; $i++): ?>
+        <option value="<?php echo $i; ?>">
+            <?php echo $i; ?>
+        </option>
+    <?php endfor; ?>
+</select>
+
+                    
                 </div>
 
                 <button type="submit" name="confirmar" id="btnConfirmar">Confirmar asistencia</button>
