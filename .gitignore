@@ -1,8 +1,8 @@
 # Archivos de configuración sensibles
 .env
 .env.*.local
-/SKILLS
-.md
+
+
 
 # Dependencias
 /vendor/
@@ -11,7 +11,6 @@ node_modules/
 
 /API/vendor/
 /instrucciones/
-
 
 # Archivos del sistema
 .DS_Store
