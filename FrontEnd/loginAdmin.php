@@ -32,6 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginAdmin'])) {
     if (($httpCode == 200 || $httpCode == 201) && $response) {
         $data = json_decode($response, true);
         if (isset($data['success']) && $data['success'] === true && !empty($data['data']['token'])) {
+            // Limpiar sesión de alumno si existía previamente para evitar colisiones
+            unset($_SESSION['jwt_token']);
+            unset($_SESSION['tipo']);
+
             $_SESSION['admin_token'] = $data['data']['token'];
             header("Location: admin/view_admin.php");
             exit;

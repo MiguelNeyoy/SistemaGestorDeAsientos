@@ -24,7 +24,6 @@ header {
   margin: 15px auto;
   color: #333;
   background-color: #ccc;
-
   width: 400px;
   height: 60px;
   display: flex;
@@ -55,12 +54,11 @@ header {
   gap: 4px;
 }
 
-/* ASIENTOS */
+/* ASIENTOS BASE */
 .asiento {
   flex-shrink: 0;
   width: 38px;
   height: 38px;
-  background: linear-gradient(145deg, #5f8bd7, #1c6bb9);
   border-radius: 12px 12px 6px 6px;
   position: relative;
   cursor: pointer;
@@ -70,12 +68,12 @@ header {
   font-size: 10px;
   font-weight: bold;
   color: white;
-  user-select: none; /* Evita seleccion de texto al panear */
+  user-select: none;
   box-shadow: 
     0 4px 6px rgba(0,0,0,0.4),
     inset 0 2px 4px rgba(255,255,255,0.2);
-
   transition: transform 0.25s ease, background 0.3s;
+  background-color: #727171; /* gris base */
 }
 
 .asiento::after {
@@ -89,19 +87,33 @@ header {
   border-radius: 2px;
 }
 
-/* ESTADOS */
-.confirmado {
-  background-color: #4CAF50;
+/* ========================= */
+/*  ESTADOS CORREGIDOS */
+/* ========================= */
+
+.asiento.disponible {
+  background-color: #727171 !important; /* gris */
 }
 
-.libre {
-  background-color: #969796;
+.asiento.ocupado {
+  background-color: #111167 !important; /* rojo */
+  color: white;
+  
 }
 
-.no-disponible {
-  background-color: #d32f2f;
-  cursor: not-allowed;
+.mi-asiento {
+  background-color: #28a745 !important; /* verde */
+  color: white;
+  font-weight: bold;
 }
+.asiento.grupo {
+  background-color: #1d1174 !important; /* azul */
+  color: white;
+}
+/* (Se mantienen por compatibilidad si los usas en otro lado) */
+.confirmado { background-color: #4CAF50; }
+.libre { background-color: #454645; }
+.no-disponible { background-color: #eb0e0e;  }
 
 /* ZONA SUPERIOR */
 .zona-superior {
@@ -115,39 +127,21 @@ header {
 }
 
 /* OTROS */
-.sin-asiento {
-  background: transparent !important;
-  box-shadow: none !important;
-}
+.sin-asiento { background: transparent !important; box-shadow: none !important; }
+.pasillo { width: 60px; }
+.hueco { width: 35px; height: 35px; visibility: hidden; }
 
-.pasillo {
-  width: 60px;
-}
-
-.hueco {
-  width: 35px;
-  height: 35px;
-  visibility: hidden;
-}
-
-/* ========================= */
-/* 📱 RESPONSIVE (VISOR ZOOM) */
-/* ========================= */
-
-#selectZona {
-    min-width: 150px;
-}
-
+/* SCROLL */
 .contenedor-scroll {
   width: 100%;
-  height: calc(100vh - 80px); /* Ajuste segun navbar */
-  overflow: hidden; /* IMPORTANTE: El visor es estatico */
+  height: calc(100vh - 80px);
+  overflow: auto;
   position: relative;
-  background-color: transparent; /* Fondo transparente para mostrar el logo/fondo general */
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 20px;
+  padding: 20px;
 }
 
 .mapa-envoltura {
@@ -156,32 +150,34 @@ header {
   align-items: center;
   min-width: max-content; 
   padding: 40px;
-  transform-origin: top center; /* Punto de pivote para el zoom */
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Transicion fluida */
+  transform-origin: top center;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
-/* Configuracion Base para escritorio */
-.teatro, .zona-superior {
-    transform: none !important; /* En desktop no queremos escalado individual */
-}
+/* Configuración base escritorio */
+.teatro, .zona-superior { transform: none !important; }
 
-/* Solo ajustes menores de tamaño en el mapa real */
+/* Pantallas grandes */
 @media (max-width: 1200px) {
   .asiento { width: 34px; height: 34px; font-size: 9px; }
   .fila { gap: 15px; }
 }
 
+/* TABLET */
 @media (max-width: 768px) {
   .asiento { width: 32px; height: 32px; font-size: 8px; }
   .fila { gap: 10px; }
   .mesa { width: 200px; }
 }
+
 .cabina {
-  text-align: center;    /* asegura que el texto “Cabina” quede centrado */
+  text-align: center;
   margin-bottom: 20px;
   font-weight: bold;
 }
+
+/* HOVER */
 .asiento:hover {
   transform: translateY(-9px) scale(1.05);
   box-shadow: 
@@ -189,3 +185,26 @@ header {
     inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
+/* MOBILE */
+@media (max-width: 576px) {
+  .contenedor-scroll {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    height: calc(100vh - 120px);
+  }
+  
+  .mapa-envoltura {
+    transform: scale(1.2) !important;
+    padding: 20px;
+  }
+  
+  .asiento { width: 46px; height: 46px; font-size: 11px; }
+  .fila { gap: 8px; }
+  .seccion { gap: 3px; }
+  .teatro { transform: none; gap: 6px; }
+  .zona-superior { transform: none; margin-bottom: 40px; gap: 6px; }
+  .mesa { width: 100%; max-width: 350px; height: 50px; font-size: 1em; }
+  .cabina { margin-bottom: 15px; }
+  .hueco { width: 30px; height: 30px; }
+}

@@ -1,0 +1,59 @@
+:root {
+  /* Colors - Institutional Excellence (UAS) */
+  --color-navy: #003B71;
+  --color-gold: #FDC800;
+  --color-white: #FFFFFF;
+  --color-background: #F9F9FF;
+  --color-surface: #FFFFFF;
+  --color-text-main: #001C3A;
+  --color-text-sub: #424750;
+  --color-border: #D1D9E0;
+
+  /* State Colors */
+  --color-primary: var(--color-navy);
+  --color-secondary: #755B00;
+  --color-accent: var(--color-gold);
+  --color-error: #BA1A1A;
+  --color-success: #198754;
+  --color-info: #355F97;
+  --color-warning: #FDC800;
+  --color-danger: #BA1A1A;
+  --color-purple: #6F42C1;
+
+  /* Toast Colors */
+  --color-toast-success: #E8F5E9;
+  --color-toast-error: #FFEBEE;
+  --color-toast-warning: #FFFDE7;
+  --color-toast-info: #E3F2FD;
+
+  /* Typography - Poppins */
+  --font-family: 'Poppins', sans-serif;
+
+  /* Iconos SVG (Rutas relativas desde CSS) */
+  --icon-edit: url('../../img/icon.edit.svg');
+  --icon-dashboard: url('../../img/icon_dashboard.svg');
+  --icon-add-student: url('../../img/icon_addAlumn.svg');
+  --icon-chair: url('../../img/icon_chair.svg');
+  --icon-logout: url('../../img/icon_logOut.svg');
+  --icon-scan-qr: url('../../img/icon_scanerQR.svg');
+  --icon-send-email: url('../../img/icon_sendEmail.svg');
+  --icon-menu: url('../../img/icon_menu.svg');
+  --icon-student: url('../../img/icon_student.svg');
+  --icon-student-disable: url('../../img/icon_student_disable.icon');
+  --icon-update: url('../../img/icon_update.svg');
+
+  /* Border & Spacing */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --spacing-unit: 8px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 59, 113, 0.05);
+  --shadow-lg: 0 8px 24px rgba(0, 59, 113, 0.1);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-modal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

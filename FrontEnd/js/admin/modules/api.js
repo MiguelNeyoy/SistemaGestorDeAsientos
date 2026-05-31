@@ -1,22 +1,62 @@
-// API Methods
+import { coreFetch } from '../../core/api.js';
 
-console.log(window.BASE_API_URL);
-export async function fetchDashboardData(token) {
-    const [metricasRes, alumnosRes] = await Promise.all([
-        fetch(`${window.BASE_API_URL}/admin/metricas`, { headers: { "Authorization": `Bearer ${token}` } }),
-        fetch(`${window.BASE_API_URL}/admin/alumnos`, { headers: { "Authorization": `Bearer ${token}` } })
-    ]);
-    return { metricasRes, alumnosRes };
+/**
+ * Admin-specific API calls.
+ */
+
+export async function fetchDashboardData() {
+    const response = await coreFetch('/admin/alumnos');
+    const data = await response.json();
+    return data.success ? data.data : [];
 }
 
-export async function updateAlumno(token, dataPayload) {
-    const response = await fetch(`${window.BASE_API_URL}/admin/alumnos/editar`, {
+export async function fetchMetricas() {
+    const response = await coreFetch('/admin/metricas');
+    const data = await response.json();
+    return data.success ? data.data : {};
+}
+
+export async function updateAlumno(alumnoData) {
+    const response = await coreFetch('/admin/alumnos/editar', {
         method: 'PUT',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(dataPayload)
+        body: JSON.stringify(alumnoData)
     });
-    return response.json();
+    return await response.json();
+}
+
+/**
+ * QR Management
+ */
+
+export async function toggleGrupoQR(grupo, accion) {
+    const response = await coreFetch('/admin/qr/toggle-grupo', {
+        method: 'POST',
+        body: JSON.stringify({ grupo, accion })
+    });
+    return await response.json();
+}
+
+export async function validarQR(token) {
+    const response = await coreFetch('/admin/qr/validar', {
+        method: 'POST',
+        body: JSON.stringify({ token })
+    });
+    return await response.json();
+}
+
+/**
+ * Seats Management
+ */
+export async function getMapaAsientos(evento) {
+    const response = await coreFetch(`/asientos/mapa/${evento}`);
+    const data = await response.json();
+    return data.success ? data.data : [];
+}
+
+export async function enviarCorreoIndividual(numCuenta) {
+    const response = await coreFetch('/admin/alumnos/correo', {
+        method: 'POST',
+        body: JSON.stringify({ numCuenta })
+    });
+    return await response.json();
 }

@@ -11,23 +11,29 @@ function verify_access($rolesPermitidos = ['alumno', 'admin'])
         'token' => null
     ];
 
-    // Verificar si es un Administrador
-    if (isset($_SESSION['admin_token'])) {
-        $auth['isLoggedIn'] = true;
-        $auth['tipo'] = 'admin';
-        $auth['token'] = $_SESSION['admin_token'];
-    }
-    // Verificar si es un Alumno
-    else if (isset($_SESSION['jwt_token'])) {
+    // Determinar prioridad según los roles permitidos y sesión activa
+    $tieneAdmin = isset($_SESSION['admin_token']) && !empty($_SESSION['admin_token']);
+    $tieneAlumno = isset($_SESSION['jwt_token']) && !empty($_SESSION['jwt_token']);
+
+    // Si la página permite alumnos y tiene sesión de alumno, le damos prioridad al alumno
+    // (Esto resuelve el caso donde un admin entra a una vista compartida como alumno)
+    if ($tieneAlumno && in_array('alumno', $rolesPermitidos)) {
         $auth['isLoggedIn'] = true;
         $auth['tipo'] = $_SESSION['tipo'] ?? 'alumno';
         $auth['token'] = $_SESSION['jwt_token'];
-    }
-
-    // Verificar si el rol recuperado tiene permiso en la matriz exigida
-    if ($auth['isLoggedIn'] && in_array($auth['tipo'], $rolesPermitidos)) {
         return $auth;
     }
+
+    // Si tiene sesión de admin y la página permite admin
+    if ($tieneAdmin && in_array('admin', $rolesPermitidos)) {
+        $auth['isLoggedIn'] = true;
+        $auth['tipo'] = 'admin';
+        $auth['token'] = $_SESSION['admin_token'];
+        return $auth;
+    }
+
+    // Caso de respaldo: Si el usuario tiene sesión de alumno pero la página es SOLO de admin
+    // o viceversa, y no se cumplieron las condiciones anteriores, el flujo caerá al redireccionamiento.
 
     // Flujo bloqueado, expulsa al usuario al index
     header("Location: index.php");

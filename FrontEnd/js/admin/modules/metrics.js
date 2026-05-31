@@ -1,63 +1,49 @@
-// Metrics UI Logic
+import { state } from '../store/state.js';
 
-export function updateMetricsUI(metrics) {
-    if(document.getElementById("metric-total")) 
-        document.getElementById("metric-total").innerText = metrics.total_invitados || 0;
-        
-    if(document.getElementById("metric-m")) 
-        document.getElementById("metric-m").innerText = (metrics.por_turno && metrics.por_turno['M']) ? metrics.por_turno['M'] : 0;
-        
-    if(document.getElementById("metric-v")) 
-        document.getElementById("metric-v").innerText = (metrics.por_turno && metrics.por_turno['V']) ? metrics.por_turno['V'] : 0;
+/**
+ * Metrics display module.
+ * Updates the dashboard counters when the student list changes.
+ */
 
-    // Identificar las llaves en por_carrera considerando agrupamientos
-    let ing = 0, inf = 0;
-    if (metrics.por_carrera) {
-        for (const [key, value] of Object.entries(metrics.por_carrera)) {
-            if (key.toLowerCase().includes("ingeniería") || key.toLowerCase().includes("sistemas")) ing += value;
-            else if (key.toLowerCase().includes("informática") || key.toLowerCase().includes("informatica")) inf += value;
+export function initMetrics() {
+    state.subscribe('metrics', renderMetrics);
+}
+
+function renderMetrics(data) {
+    // Update main counters
+    updateCounter('metric-confirmados', data.total_confirmados || 0);
+    updateCounter('metric-invitados', data.total_invitados || 0);
+    updateCounter('metric-asientos', data.total_asientos || 0);
+    
+    // Detailed breakdown per group
+    if (data.por_grupo) {
+        Object.entries(data.por_grupo).forEach(([grupo, count]) => {
+            const el = document.getElementById(`metric-grupo-${grupo}`);
+            if (el) el.textContent = count;
+        });
+    }
+}
+
+function updateCounter(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    // Simple count-up animation
+    const start = parseInt(el.textContent) || 0;
+    const duration = 500;
+    const startTime = performance.now();
+
+    function animate(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const current = Math.floor(start + (value - start) * progress);
+        
+        el.textContent = current;
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
         }
     }
 
-    if(document.getElementById("metric-ing")) document.getElementById("metric-ing").innerText = ing;
-    if(document.getElementById("metric-inf")) document.getElementById("metric-inf").innerText = inf;
-}
-
-export function updateCustomLocalMetrics(allStudentsCache) {
-    let totalConfirmados = 0;
-    let totalRechazados = 0;
-    let guestsM = 0;
-    let guestsV = 0;
-    let guestsIng = 0;
-    let guestsInf = 0;
-
-    allStudentsCache.forEach(al => {
-        const isConfirmado = al.asistencia_estado === 1 || al.asistencia_estado === "1";
-        const isRechazado = al.asistencia_estado === 0 || al.asistencia_estado === "0";
-
-        if (isConfirmado) {
-            totalConfirmados++;
-            const cant = parseInt(al.cantInvitado) || 0;
-            if (al.turno.toUpperCase() === 'M') guestsM += cant;
-            if (al.turno.toUpperCase() === 'V') guestsV += cant;
-
-            const carLower = al.carrera.toLowerCase();
-            if (carLower.includes("ingeniería") || carLower.includes("sistemas")) {
-                guestsIng += cant;
-            } else if (carLower.includes("informática") || carLower.includes("informatica")) {
-                guestsInf += cant;
-            }
-        } else if (isRechazado) {
-            totalRechazados++;
-        }
-    });
-
-    if(document.getElementById("metric-confirmados")) document.getElementById("metric-confirmados").innerText = totalConfirmados;
-    if(document.getElementById("metric-rechazados")) document.getElementById("metric-rechazados").innerText = totalRechazados;
-    if(document.getElementById("metric-total-alumnos")) document.getElementById("metric-total-alumnos").innerText = allStudentsCache.length;
-
-    if (document.getElementById("guests-m")) document.getElementById("guests-m").innerText = guestsM;
-    if (document.getElementById("guests-v")) document.getElementById("guests-v").innerText = guestsV;
-    if (document.getElementById("guests-ing")) document.getElementById("guests-ing").innerText = guestsIng;
-    if (document.getElementById("guests-inf")) document.getElementById("guests-inf").innerText = guestsInf;
+    requestAnimationFrame(animate);
 }
