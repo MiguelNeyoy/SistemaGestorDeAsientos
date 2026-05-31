@@ -1,8 +1,8 @@
 # Archivos de configuración sensibles
 .env
 .env.*.local
-/SKILLS
-.md
+
+
 
 # Dependencias
 /vendor/
@@ -11,7 +11,6 @@ node_modules/
 /SKILL/
 /API/vendor/
 /instrucciones/
-*.md
 
 # Archivos del sistema
 .DS_Store
@@ -25,7 +24,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
-AGENTS.md
+
 
 # Logs
 *.log

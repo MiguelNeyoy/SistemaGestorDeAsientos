@@ -153,7 +153,6 @@ if ($tipoUsuario === "admin") {
   </div>
 </nav>
 <?php endif; ?>
-
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">

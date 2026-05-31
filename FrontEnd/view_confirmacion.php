@@ -115,7 +115,7 @@ if (isset($_POST['confirmar'])) {
                 // Determinar el evento para la redirección
                 $carreraAl = strtolower($alumno['carrera'] ?? '');
                 $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
-                header("Location: home_alumno?confirmado=1");
+                header("Location: home_alumno?evento=" . $evRedirect);
             } else {
                 header("Location: view_confirmacion");
             }
@@ -214,7 +214,7 @@ if (isset($_POST['actualizar_correo'])) {
         };
         window.__ALUMNO_DATA__ = {
             numCuenta: <?php echo json_encode($alumno['numCuenta'] ?? ''); ?>,
-            asistira: <?php echo json_encode($estadoAsistencia ?? 'Pendiente') ;?>
+            asistira: <?php echo json_encode($estadoAsistencia ?? 'Pendiente'); ?>
         };
 
         // Función para mostrar/ocultar los campos extras
@@ -224,7 +224,7 @@ if (isset($_POST['actualizar_correo'])) {
 
             const radioSi = document.querySelector('input[name="asiste"][value="Si"]');
             const isSi = radioSi && radioSi.checked;
-            
+
             const inputCorreo = document.querySelector('input[name="correo"]');
             const btnConfirmar = document.getElementById("btnConfirmar");
 
@@ -254,13 +254,13 @@ if (isset($_POST['actualizar_correo'])) {
 
     <div class="container"> <!-- Contenedor principal -->
         <!-- ... resto del contenido ... -->
-<?php /* Mantenemos la lógica de bloques PHP anterior pero simplificada en la inyección JS */ ?>
+        <?php /* Mantenemos la lógica de bloques PHP anterior pero simplificada en la inyección JS */ ?>
 
 
         <!-- Verificamos la asistencia desde la BD, por defecto era "Pendiente" -->
         <?php
         if ($estadoAsistencia == "Pendiente" || $estadoAsistencia == "" || $errorApi != "") {
-            ?>
+        ?>
             <!-- Formulario de confirmación de asistencia (CONSUMO 2) -->
             <form method="post" class="form-box">
                 <h2>
@@ -292,19 +292,37 @@ if (isset($_POST['actualizar_correo'])) {
 
                 <!-- Este bloque se muestra/oculta basado en el radio button de asistencia -->
                 <div id="extra" class="extra-campos">
-                    <p>Correo</p>
+
                     <input type="email" name="correo" placeholder="Escribe tu correo"
-                        value="<?php echo htmlspecialchars($alumno['email'] ?? ''); ?>">
+                        value="<?php echo isset($alumno['email']) && filter_var($alumno['email'], FILTER_VALIDATE_EMAIL) ? htmlspecialchars($alumno['email']) : ''; ?>">
 
 
+                    <?php
+                    $carreraInv = strtolower($alumno['carrera'] ?? '');
 
-                    <p>Selecciona la cantidad de invitados (Máximo 4)</p>
+                    /*
+    Si contiene "informática"
+    entonces es LI → 4 invitados
+
+    cualquier otra carrera → LISI → 3 invitados
+*/
+                    $esLI =
+                        (
+                            strpos($carreraInv, 'informática') !== false ||
+                            strpos($carreraInv, 'informatica') !== false
+                        );
+
+                    $maxInvitados = $esLI ? 4 : 3;
+                    ?>
+
+                    <p>Selecciona la cantidad de invitados (Máximo <?php echo $maxInvitados; ?>)</p>
+
                     <select name="invitados">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                        <?php for ($i = 0; $i <= $maxInvitados; $i++): ?>
+                            <option value="<?php echo $i; ?>">
+                                <?php echo $i; ?>
+                            </option>
+                        <?php endfor; ?>
                     </select>
 
                 </div>
@@ -342,7 +360,7 @@ if (isset($_POST['actualizar_correo'])) {
 
                 <!-- QR Access Section -->
                 <div class="mt-4 text-center">
-                    <a href="view_qr.php" class="btn btn-success px-4">
+                    <a href="view_qr" class="btn btn-success px-4">
                         <span class="admin-icon admin-icon--scan admin-icon--white"></span>
                         Obtener mi Pase QR
                     </a>
