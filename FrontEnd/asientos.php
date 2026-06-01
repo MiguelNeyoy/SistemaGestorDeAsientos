@@ -73,6 +73,8 @@ if ($tipoUsuario === "alumno") {
 //  ADMIN 
 // ==============================
 $asientosOcupados = [];
+$asientosConfirmados = [];
+$asientosEscaneados = [];
 
 if ($tipoUsuario === "admin") {
   $endpoint = ($evento === 'lisi')
@@ -97,7 +99,13 @@ if ($tipoUsuario === "admin") {
   if ($data && $data['success'] && isset($data['data']['asientos'])) {
     foreach ($data['data']['asientos'] as $asiento) {
       if (isset($asiento['estado']) && $asiento['estado'] === "ocupado") {
-        $asientosOcupados[] = $asiento['id_asiento'];
+        if (isset($asiento['escaneado']) && $asiento['escaneado'] === true) {
+          $asientosEscaneados[] = $asiento['id_asiento'];
+        } elseif (isset($asiento['confirmado']) && $asiento['confirmado'] === true) {
+          $asientosConfirmados[] = $asiento['id_asiento'];
+        } else {
+          $asientosOcupados[] = $asiento['id_asiento'];
+        }
       }
     }
   }
@@ -151,9 +159,31 @@ if ($tipoUsuario === "admin") {
     <?php endif; ?>
 
   </div>
-</nav>
 <?php endif; ?>
 
+<!-- Barra de Leyenda de Colores (solo para admin) -->
+<?php if ($tipoUsuario === 'admin'): ?>
+<div class="bg-light py-2 border-bottom shadow-sm">
+  <div class="container-fluid d-flex justify-content-center align-items-center flex-wrap gap-4" style="font-size: 0.9rem;">
+    <div class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #727171; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="fw-semibold text-secondary">Disponible</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="fw-semibold text-secondary">Ocupado (Pre-asignado)</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #4CAF50; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="fw-semibold text-secondary">Confirmado (Por el Alumno)</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #eb0e0e; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="fw-semibold text-secondary">Escaneado / Presente</span>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
@@ -170,7 +200,9 @@ if ($tipoUsuario === "admin") {
     tipoUsuario: "<?php echo $tipoUsuario; ?>",
     miAsiento: "<?php echo $miAsiento; ?>",
     asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
-    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>
+    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
+    asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
+    asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
   };
 </script>
 

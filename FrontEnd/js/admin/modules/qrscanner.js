@@ -1,4 +1,4 @@
-import { validarQR as apiValidarQR } from './api.js';
+import { validarQR as apiValidarQR, marcarQR as apiMarcarQR } from './api.js';
 import { toast } from '../../core/toast.js';
 import { refreshData } from './dashboard.js';
 
@@ -8,17 +8,41 @@ import { refreshData } from './dashboard.js';
  */
 
 let scanner = null;
+let scannerPaused = false;
 
 export function initQRScanner() {
     const modal = document.getElementById('qrScannerModal');
     if (!modal) return;
 
     modal.addEventListener('shown.bs.modal', startScanner);
-    modal.addEventListener('hidden.bs.modal', stopScanner);
+    modal.addEventListener('hidden.bs.modal', pauseScanner);
 }
 
 function startScanner() {
     const statusEl = document.getElementById('qrScannerStatus');
+
+    if (scanner) {
+        try {
+            if (scanner.getState) {
+                const state = scanner.getState();
+                if (state === Html5QrcodeScannerState.PAUSED) {
+                    scanner.resume();
+                    scannerPaused = false;
+                    return;
+                }
+
+                if (state === Html5QrcodeScannerState.SCANNING) {
+                    return;
+                }
+            } else if (scannerPaused) {
+                scanner.resume();
+                scannerPaused = false;
+                return;
+            }
+        } catch (err) {
+            console.warn("Error resuming scanner:", err);
+        }
+    }
 
     scanner = new Html5Qrcode("qrReaderContainer");
 
@@ -33,25 +57,40 @@ function startScanner() {
         config,
         onScanSuccess,
         onScanFailure
-    ).catch(err => {
+    ).then(() => {
+        scannerPaused = false;
+    }).catch(err => {
         console.error("Error starting scanner:", err);
         if (statusEl) statusEl.textContent = "Error al iniciar la cámara.";
         toast.error("No se pudo acceder a la cámara.");
     });
 }
 
+function pauseScanner() {
+    if (scanner) {
+        try {
+            scanner.pause(true);
+            scannerPaused = true;
+            console.log("Scanner paused.");
+        } catch (err) {
+            console.warn("Error pausing scanner:", err);
+        }
+    }
+}
+
 function stopScanner() {
     if (scanner) {
         scanner.stop().then(() => {
             scanner = null;
+            scannerPaused = false;
             console.log("Scanner stopped.");
         }).catch(err => console.warn("Error stopping scanner:", err));
     }
 }
 
 async function onScanSuccess(decodedText) {
-    // 1. Stop scanner immediately to avoid multiple reads
-    stopScanner();
+    // 1. Pause scanner immediately to avoid multiple reads
+    pauseScanner();
 
     // 2. Hide scanner modal robustly
     const modalEl = document.getElementById('qrScannerModal');
@@ -63,17 +102,13 @@ async function onScanSuccess(decodedText) {
     toast.info("Validando código...");
 
     try {
-        // 3. Validate on server
+        // 3. Validate on server (only get data, don't mark yet)
         const result = await apiValidarQR(decodedText);
 
         if (result.success) {
-            toast.success(`Acceso concedido: ${result.data.nombre}`);
-            showResultModal(result.data);
-            refreshData(); // Refresh table to show updated status
+            showResultModal(result.data, decodedText);
         } else {
             toast.error(result.message || "Código inválido o ya utilizado.");
-            // Allow rescanning after a short delay
-            setTimeout(() => bsModal.show(), 1000);
         }
     } catch (error) {
         toast.error("Error de comunicación con el servidor.");
@@ -84,8 +119,10 @@ function onScanFailure(error) {
     // Silently ignore normal scan failures
 }
 
-function showResultModal(alumno) {
-    // Implementation of showing the success modal with student info
+let tokenActual = null;
+
+function showResultModal(alumno, token) {
+    tokenActual = token;
     const resModal = new bootstrap.Modal(document.getElementById('qrResultModal'));
 
     document.getElementById('qrResNombre').textContent = `${alumno.apellido} ${alumno.nombre}`;
@@ -95,3 +132,35 @@ function showResultModal(alumno) {
 
     resModal.show();
 }
+
+export async function confirmarLlegada() {
+    if (!tokenActual) return;
+
+    try {
+        const result = await apiMarcarQR(tokenActual);
+        
+        if (result.success) {
+            toast.success("Pase marcado como utilizado");
+            const resModal = bootstrap.Modal.getInstance(document.getElementById('qrResultModal'));
+            resModal.hide();
+            refreshData();
+            tokenActual = null;
+        } else {
+            toast.error(result.message || "Error al marcar el pase");
+        }
+    } catch (error) {
+        toast.error("Error de comunicación con el servidor");
+    }
+}
+
+export function reescanearQR() {
+    const resModal = bootstrap.Modal.getInstance(document.getElementById('qrResultModal'));
+    resModal.hide();
+    tokenActual = null;
+    
+    const scannerModal = new bootstrap.Modal(document.getElementById('qrScannerModal'));
+    scannerModal.show();
+}
+
+window.confirmarLlegada = confirmarLlegada;
+window.reescanearQR = reescanearQR;

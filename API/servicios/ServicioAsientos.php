@@ -63,7 +63,9 @@ class ServicioAsientos
                     'fila' => $asiento['letra'],
                     'numero' => $asiento['numero'],
                     'estado' => $tieneNumCuenta ? 'ocupado' : 'libre',
-                    'asignado' => $esAsignado
+                    'asignado' => $esAsignado,
+                    'confirmado' => isset($asiento['asistencia_estado']) && $asiento['asistencia_estado'] == 1,
+                    'escaneado' => isset($asiento['escaneado']) && $asiento['escaneado'] == 1
                 ];
                 
                 // Solo incluir numCuenta si hay admin pidiendo (para mapear en frontend)

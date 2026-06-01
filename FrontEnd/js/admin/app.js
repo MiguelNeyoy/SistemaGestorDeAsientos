@@ -6,6 +6,8 @@ import { initQRScanner } from './modules/qrscanner.js';
 import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
+import { resetQrEvento } from './modules/api.js';
+import { toast } from '../core/toast.js';
 
 /**
  * Main application orchestrator.
@@ -35,22 +37,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function clearAllActiveLinks() {
+    const allLinks = document.querySelectorAll('.admin-sidebar__link');
+    allLinks.forEach(l => l.classList.remove('admin-sidebar__link--active'));
+}
+
 function setupNavigation() {
     console.log("Setting up navigation listeners...");
     
     const btnMap = document.getElementById('btnMapaAsientos');
     const btnTable = document.getElementById('link-filter-all'); // Using the sidebar link as "Home"
     const btnRefresh = document.getElementById('btnRefreshData');
+    const logoLink = document.getElementById('link-logo-dashboard');
     
     // Topbar Actions
     const btnScan = document.getElementById('btnEscanearQR');
     const btnSend = document.getElementById('btnEnviarQR');
     const btnAdd = document.getElementById('btnAgregarAlumno');
 
+    if (logoLink) {
+        logoLink.onclick = (e) => {
+            e.preventDefault();
+            console.log("Logo clicked, redirecting to dashboard...");
+            clearAllActiveLinks();
+            if (btnTable) {
+                btnTable.classList.add('admin-sidebar__link--active');
+            }
+            hideMap();
+            state.setFilterType('ALL');
+        };
+    }
+
     if (btnMap) {
         btnMap.onclick = (e) => {
             e.preventDefault();
             console.log("Map button clicked");
+            clearAllActiveLinks();
+            btnMap.classList.add('admin-sidebar__link--active');
             showMap('li');
         };
     }
@@ -59,8 +82,47 @@ function setupNavigation() {
         btnTable.onclick = (e) => {
             e.preventDefault();
             console.log("Dashboard button clicked");
+            clearAllActiveLinks();
+            btnTable.classList.add('admin-sidebar__link--active');
             hideMap();
             state.setFilterType('ALL');
+        };
+    }
+
+    // Botones de Restablecimiento de QRs
+    const btnResetLi = document.getElementById('btnResetQrLi');
+    const btnResetLisi = document.getElementById('btnResetQrLisi');
+
+    const handleReset = async (evento, label) => {
+        const confirmacion = confirm(`¿Estás seguro de que deseas restablecer TODOS los QRs de ${label}? Esta acción no se puede deshacer y marcará todos los pases de este evento como NO escaneados.`);
+        if (!confirmacion) return;
+
+        try {
+            toast.info(`Restableciendo pases de ${label}...`);
+            const result = await resetQrEvento(evento);
+            if (result.success) {
+                toast.success(result.message || `Pases de ${label} restablecidos correctamente.`);
+                refreshData();
+            } else {
+                toast.error(result.message || 'Error al restablecer pases.');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al comunicarse con el servidor.');
+        }
+    };
+
+    if (btnResetLi) {
+        btnResetLi.onclick = (e) => {
+            e.preventDefault();
+            handleReset('li', 'LI (Informática)');
+        };
+    }
+
+    if (btnResetLisi) {
+        btnResetLisi.onclick = (e) => {
+            e.preventDefault();
+            handleReset('lisi', 'LISI (Sistemas)');
         };
     }
 
@@ -116,7 +178,7 @@ function setupFilters() {
             const filter = link.dataset.filter;
             console.log(`Filter changed to: ${filter}`);
             
-            filterLinks.forEach(l => l.classList.remove('admin-sidebar__link--active'));
+            clearAllActiveLinks();
             link.classList.add('admin-sidebar__link--active');
 
             hideMap();
