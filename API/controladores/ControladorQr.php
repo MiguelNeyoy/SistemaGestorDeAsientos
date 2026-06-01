@@ -22,13 +22,17 @@ class ControladorQr {
             return;
         }
 
-        $qr = $this->servicioQr->obtenerQrAlumno($numCuenta);
-        
-        if ($qr) {
-            echo json_encode(["success" => true, "data" => $qr]);
-        } else {
-            // No QR yet (pilot mode or not confirmed)
-            echo json_encode(["success" => false, "message" => "Pase no disponible aún."]);
+        try {
+            $qr = $this->servicioQr->obtenerQrAlumno($numCuenta);
+            
+            if ($qr) {
+                echo json_encode(["success" => true, "data" => $qr]);
+            } else {
+                // No QR yet (pilot mode or not confirmed)
+                echo json_encode(["success" => false, "message" => "Pase no disponible aún."]);
+            }
+        } catch (Exception $e) {
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
@@ -112,5 +116,29 @@ class ControladorQr {
 
         $estado = $this->servicioQr->obtenerEstadoGrupo($grupo);
         echo json_encode(["success" => true, "data" => $estado]);
+    }
+
+    public function resetearEvento() {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $evento = $data['evento'] ?? null;
+
+        if (!$evento) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Evento no proporcionado"]);
+            return;
+        }
+
+        try {
+            $success = $this->servicioQr->resetearEvento($evento);
+            if ($success) {
+                echo json_encode(["success" => true, "message" => "Códigos QR restablecidos con éxito para el evento " . strtoupper($evento)]);
+            } else {
+                http_response_code(500);
+                echo json_encode(["success" => false, "message" => "Fallo al restablecer los códigos QR"]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => $e->getMessage()]);
+        }
     }
 }

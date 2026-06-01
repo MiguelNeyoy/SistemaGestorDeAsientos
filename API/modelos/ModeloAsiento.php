@@ -14,9 +14,13 @@ class ModeloAsiento
     {
         try {
             $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
-                           al.nombre, al.apellido
+                           al.nombre, al.apellido,
+                           COALESCE(asi.estado, 0) AS asistencia_estado,
+                           COALESCE(q.escaneado, 0) AS escaneado
                     FROM {$tabla} a
                     LEFT JOIN alumno al ON a.numCuenta = al.numCuenta
+                    LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                    LEFT JOIN qr q ON a.numCuenta = q.numCuenta
                     ORDER BY a.letra, a.numero";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -30,9 +34,13 @@ class ModeloAsiento
     {
         try {
             $tabla = "asiento_evento_" . $evento;
-            $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado
+            $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
+                           COALESCE(asi.estado, 0) AS asistencia_estado,
+                           COALESCE(q.escaneado, 0) AS escaneado
                     FROM {$tabla} a
                     JOIN alumno al ON a.numCuenta = al.numCuenta
+                    LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                    LEFT JOIN qr q ON a.numCuenta = q.numCuenta
                     WHERE al.turno = ?
                     ORDER BY a.letra, a.numero";
             $stmt = $this->db->prepare($sql);
