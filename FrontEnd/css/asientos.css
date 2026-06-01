@@ -96,9 +96,8 @@ header {
 }
 
 .asiento.ocupado {
-  background-color: #111167 !important; /* rojo */
+  background-color: #111167 !important; /* azul marino ocupado */
   color: white;
-  
 }
 
 .mi-asiento {
@@ -106,12 +105,23 @@ header {
   color: white;
   font-weight: bold;
 }
+
 .asiento.grupo {
   background-color: #1d1174 !important; /* azul */
   color: white;
 }
+
+.asiento.confirmado {
+  background-color: #4CAF50 !important; /* verde */
+  color: white;
+}
+
+.asiento.escaneado {
+  background-color: #eb0e0e !important; /* rojo */
+  color: white;
+}
+
 /* (Se mantienen por compatibilidad si los usas en otro lado) */
-.confirmado { background-color: #4CAF50; }
 .libre { background-color: #454645; }
 .no-disponible { background-color: #eb0e0e;  }
 

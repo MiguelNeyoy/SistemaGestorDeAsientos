@@ -74,3 +74,11 @@ export async function enviarCorreoIndividual(numCuenta) {
     });
     return await response.json();
 }
+
+export async function resetQrEvento(evento) {
+    const response = await coreFetch('/admin/qr/reset-evento', {
+        method: 'POST',
+        body: JSON.stringify({ evento })
+    });
+    return await response.json();
+}

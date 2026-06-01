@@ -12,12 +12,14 @@ export function pintarAsiento(element, idAsiento, config = {}) {
     const { 
         userType = 'alumno', 
         occupiedSeats = [], 
+        confirmedSeats = [],
+        scannedSeats = [],
         studentSeat = null, 
         groupSeats = [] 
     } = config;
 
     // Reset classes
-    element.classList.remove('disponible', 'ocupado', 'mi-asiento', 'grupo');
+    element.classList.remove('disponible', 'ocupado', 'mi-asiento', 'grupo', 'confirmado', 'escaneado');
     element.classList.add('disponible');
 
     if (userType === 'alumno') {
@@ -33,7 +35,13 @@ export function pintarAsiento(element, idAsiento, config = {}) {
             element.classList.add('mi-asiento');
         }
     } else if (userType === 'admin') {
-        if (occupiedSeats.includes(idAsiento)) {
+        if (scannedSeats.includes(idAsiento)) {
+            element.classList.remove('disponible');
+            element.classList.add('escaneado');
+        } else if (confirmedSeats.includes(idAsiento)) {
+            element.classList.remove('disponible');
+            element.classList.add('confirmado');
+        } else if (occupiedSeats.includes(idAsiento)) {
             element.classList.remove('disponible');
             element.classList.add('ocupado');
         }

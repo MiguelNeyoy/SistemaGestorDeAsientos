@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const configRenderer = {
         userType: data.tipoUsuario,
         occupiedSeats: data.asientosOcupados || [],
+        confirmedSeats: data.asientosConfirmados || [],
+        scannedSeats: data.asientosEscaneados || [],
         studentSeat: data.miAsiento,
         groupSeats: data.asientosGrupo || []
     };
