@@ -10,9 +10,19 @@ class ModeloAsiento
         $this->db = Conexion::Conectar();
     }
 
+    private function validarTabla($tabla)
+    {
+        $tablasPermitidas = ['asiento_evento_li', 'asiento_evento_lisi'];
+        if (!in_array($tabla, $tablasPermitidas, true)) {
+            throw new InvalidArgumentException("Tabla no permitida: " . $tabla);
+        }
+        return $tabla;
+    }
+
     public function obtenerTodosLosAsientos($tabla)
     {
         try {
+            $tabla = $this->validarTabla($tabla);
             $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
                            al.nombre, al.apellido,
                            COALESCE(asi.estado, 0) AS asistencia_estado,
@@ -34,6 +44,7 @@ class ModeloAsiento
     {
         try {
             $tabla = "asiento_evento_" . $evento;
+            $tabla = $this->validarTabla($tabla);
             $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
                            COALESCE(asi.estado, 0) AS asistencia_estado,
                            COALESCE(q.escaneado, 0) AS escaneado
@@ -72,6 +83,7 @@ class ModeloAsiento
     public function reiniciarTeatro($tabla)
     {
         try {
+            $tabla = $this->validarTabla($tabla);
             $sql = "UPDATE {$tabla} SET estado = 0";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute();
