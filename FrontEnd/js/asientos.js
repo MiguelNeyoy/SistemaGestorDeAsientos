@@ -1,4 +1,5 @@
 import { pintarAsiento } from './shared/seat-renderer.js';
+import { THEATER_CONFIG } from './shared/theater-layout.js';
 
 /**
  * Seat map rendering logic.
@@ -43,95 +44,79 @@ document.addEventListener("DOMContentLoaded", () => {
         groupSeats: data.asientosGrupo || []
     };
 
-        // ===============================
-        //  ZONA SUPERIOR
-        // ===============================
-        const zonaSuperior = document.querySelector('.zona-superior');
-        const letrasSuperior = "KLM";
+    // ===============================
+    //  ZONA SUPERIOR
+    // ===============================
+    const zonaSuperior = document.querySelector('.zona-superior');
 
-        if (zonaSuperior) {
-            letrasSuperior.split("").reverse().forEach(letra => {
-                const filaDiv = document.createElement('div');
-                filaDiv.classList.add('fila');
+    if (zonaSuperior) {
+        const configZS = THEATER_CONFIG.zonaSuperior;
+        configZS.letras.forEach(letra => {
+            const filaDiv = document.createElement('div');
+            filaDiv.classList.add('fila');
 
-                const secciones = [
-                    { inicio: 1, fin: 11 },
-                    { inicio: 12, fin: 27 },
-                    { inicio: 28, fin: 38 }
-                ];
+            configZS.secciones.forEach(sec => {
+                const secDiv = document.createElement('div');
+                secDiv.classList.add('seccion');
 
-                secciones.forEach(sec => {
-                    const secDiv = document.createElement('div');
-                    secDiv.classList.add('seccion');
+                for (let n = sec.inicio; n <= sec.fin; n++) {
+                    const asiento = document.createElement('div');
+                    const idAsiento = letra + n;
 
-                    for (let n = sec.inicio; n <= sec.fin; n++) {
-                        const asiento = document.createElement('div');
-                        const idAsiento = letra + n;
-
-                        if ((letra === "M" && (n < 12 || n > 27)) ||
-                            (letra === "L" && (n >= 17 && n <= 22)) ||
-                            (letra === "M" && (n >= 16 && n <= 23))) {
-
-                            asiento.classList.add('hueco');
-
-                        } else {
-                            asiento.classList.add('asiento');
-                            asiento.textContent = idAsiento;
-
-                            pintarAsiento(asiento, idAsiento, configRenderer);
-                        }
-
-                        secDiv.appendChild(asiento);
-                    }
-
-                    filaDiv.appendChild(secDiv);
-                });
-
-                zonaSuperior.appendChild(filaDiv);
-            });
-        }
-
-        // ===============================
-        //  TEATRO
-        // ===============================
-        const teatro = document.querySelector('.teatro');
-        const letrasTeatro = "JIHGFEDCBA";
-
-        if (teatro) {
-            for (let f = 0; f < letrasTeatro.length; f++) {
-                const filaDiv = document.createElement('div');
-                filaDiv.classList.add('fila');
-
-                let secciones = [
-                    { inicio: 1, fin: 7 },
-                    { inicio: 8, fin: 23 },
-                    { inicio: 24, fin: 30 }
-                ];
-
-                if (f === (letrasTeatro.length - 10)) {
-                    secciones = [{ inicio: 1, fin: 34 }];
-                }
-
-                secciones.forEach(sec => {
-                    const secDiv = document.createElement('div');
-                    secDiv.classList.add('seccion');
-
-                    for (let n = sec.inicio; n <= sec.fin; n++) {
-                        const asiento = document.createElement('div');
-                        const idAsiento = letrasTeatro[f] + n;
-
+                    if (configZS.esHueco(letra, n)) {
+                        asiento.classList.add('hueco');
+                    } else {
                         asiento.classList.add('asiento');
                         asiento.textContent = idAsiento;
-
                         pintarAsiento(asiento, idAsiento, configRenderer);
-
-                        secDiv.appendChild(asiento);
                     }
 
-                    filaDiv.appendChild(secDiv);
-                });
+                    secDiv.appendChild(asiento);
+                }
 
-                teatro.appendChild(filaDiv);
-            }
-        }
+                filaDiv.appendChild(secDiv);
+            });
+
+            zonaSuperior.appendChild(filaDiv);
+        });
+    }
+
+    // ===============================
+    //  TEATRO
+    // ===============================
+    const teatro = document.querySelector('.teatro');
+
+    if (teatro) {
+        const configT = THEATER_CONFIG.teatro;
+        configT.letras.forEach(letra => {
+            const filaDiv = document.createElement('div');
+            filaDiv.classList.add('fila');
+
+            // Determinar las secciones a utilizar (especial para fila J)
+            const secciones = (letra === 'J' && configT.seccionesFilaJ)
+                ? configT.seccionesFilaJ
+                : configT.seccionesNormales;
+
+            secciones.forEach(sec => {
+                const secDiv = document.createElement('div');
+                secDiv.classList.add('seccion');
+
+                for (let n = sec.inicio; n <= sec.fin; n++) {
+                    const asiento = document.createElement('div');
+                    const idAsiento = letra + n;
+
+                    asiento.classList.add('asiento');
+                    asiento.textContent = idAsiento;
+
+                    pintarAsiento(asiento, idAsiento, configRenderer);
+
+                    secDiv.appendChild(asiento);
+                }
+
+                filaDiv.appendChild(secDiv);
+            });
+
+            teatro.appendChild(filaDiv);
+        });
+    }
 });
