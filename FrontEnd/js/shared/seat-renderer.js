@@ -8,14 +8,30 @@
  * @param {string} idAsiento - Seat ID (e.g., 'A1').
  * @param {Object} config - Configuration (userType, occupiedSeats, studentSeat, groupSeats).
  */
+/**
+ * Checks if a seat identifier exists in the collection (supports Set.has and Array.includes).
+ */
+const hasSeat = (collection, id) => {
+    if (!collection) return false;
+    if (typeof collection.has === 'function') return collection.has(id);
+    if (Array.isArray(collection)) return collection.includes(id);
+    return false;
+};
+
+/**
+ * Applies styles to a seat element based on its status.
+ * @param {HTMLElement} element - The seat div.
+ * @param {string} idAsiento - Seat ID (e.g., 'A1').
+ * @param {Object} config - Configuration (userType, occupiedSeats, studentSeat, groupSeats).
+ */
 export function pintarAsiento(element, idAsiento, config = {}) {
     const { 
         userType = 'alumno', 
-        occupiedSeats = [], 
-        confirmedSeats = [],
-        scannedSeats = [],
+        occupiedSeats = null, 
+        confirmedSeats = null,
+        scannedSeats = null,
         studentSeat = null, 
-        groupSeats = [] 
+        groupSeats = null 
     } = config;
 
     // Reset classes
@@ -24,7 +40,7 @@ export function pintarAsiento(element, idAsiento, config = {}) {
 
     if (userType === 'alumno') {
         // Group seats
-        if (groupSeats.includes(idAsiento)) {
+        if (hasSeat(groupSeats, idAsiento)) {
             element.classList.remove('disponible');
             element.classList.add('grupo');
         }
@@ -35,13 +51,13 @@ export function pintarAsiento(element, idAsiento, config = {}) {
             element.classList.add('mi-asiento');
         }
     } else if (userType === 'admin') {
-        if (scannedSeats.includes(idAsiento)) {
+        if (hasSeat(scannedSeats, idAsiento)) {
             element.classList.remove('disponible');
             element.classList.add('escaneado');
-        } else if (confirmedSeats.includes(idAsiento)) {
+        } else if (hasSeat(confirmedSeats, idAsiento)) {
             element.classList.remove('disponible');
             element.classList.add('confirmado');
-        } else if (occupiedSeats.includes(idAsiento)) {
+        } else if (hasSeat(occupiedSeats, idAsiento)) {
             element.classList.remove('disponible');
             element.classList.add('ocupado');
         }

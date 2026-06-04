@@ -37,11 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const configRenderer = {
         userType: data.tipoUsuario,
-        occupiedSeats: data.asientosOcupados || [],
-        confirmedSeats: data.asientosConfirmados || [],
-        scannedSeats: data.asientosEscaneados || [],
+        occupiedSeats: new Set(data.asientosOcupados || []),
+        confirmedSeats: new Set(data.asientosConfirmados || []),
+        scannedSeats: new Set(data.asientosEscaneados || []),
         studentSeat: data.miAsiento,
-        groupSeats: data.asientosGrupo || []
+        groupSeats: new Set(data.asientosGrupo || [])
     };
 
     // ===============================
