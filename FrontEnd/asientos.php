@@ -5,14 +5,16 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once "config.php";
 require_once "auth_middleware.php";
+require_once "helpers/api_helper.php";
 
 $authData = verify_access(['alumno', 'admin']);
 
 $token = $authData['token'];
 $tipoUsuario = $authData['tipo'];
 
-//  IMPORTANTE → obtener evento desde URL
-$evento = $_GET['evento'] ?? 'li';
+//  IMPORTANTE → obtener evento desde URL y sanitizar
+$eventoInput = $_GET['evento'] ?? 'li';
+$evento = ($eventoInput === 'lisi') ? 'lisi' : 'li';
 
 // ==============================
 //  OBTENER MI ASIENTO (ALUMNO)
@@ -22,20 +24,7 @@ $asientosGrupo = [];
 
 if ($tipoUsuario === "alumno") {
   //  MI ASIENTO
-  $ch = curl_init();
-  curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . "/asientos/misAsiento?evento=" . $evento,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-      'Authorization: Bearer ' . $token
-    ],
-    CURLOPT_SSL_VERIFYPEER => false
-  ]);
-
-  $response = curl_exec($ch);
-  curl_close($ch);
-
-  $data = json_decode($response, true);
+  $data = api_get("/asientos/misAsiento?evento=" . $evento, $token);
 
   if ($data && $data['success']) {
     $asientoData = $data['data'];
@@ -43,24 +32,8 @@ if ($tipoUsuario === "alumno") {
   }
 
   //  MAPA (grupo)
-  $endpoint = ($evento === 'lisi')
-    ? "/asientos/mapa/lisi"
-    : "/asientos/mapa/li";
-
-  $ch = curl_init();
-  curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . $endpoint,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-      'Authorization: Bearer ' . $token
-    ],
-    CURLOPT_SSL_VERIFYPEER => false
-  ]);
-
-  $responseMapa = curl_exec($ch);
-  curl_close($ch);
-
-  $dataMapa = json_decode($responseMapa, true);
+  $endpoint = "/asientos/mapa/" . $evento;
+  $dataMapa = api_get($endpoint, $token);
 
   if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
     foreach ($dataMapa['data']['asientos'] as $asiento) {
@@ -77,24 +50,8 @@ $asientosConfirmados = [];
 $asientosEscaneados = [];
 
 if ($tipoUsuario === "admin") {
-  $endpoint = ($evento === 'lisi')
-    ? "/asientos/mapa/lisi"
-    : "/asientos/mapa/li";
-
-  $ch = curl_init();
-  curl_setopt_array($ch, [
-    CURLOPT_URL => $BASE_API_URL . $endpoint,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-      'Authorization: Bearer ' . $token
-    ],
-    CURLOPT_SSL_VERIFYPEER => false
-  ]);
-
-  $response = curl_exec($ch);
-  curl_close($ch);
-
-  $data = json_decode($response, true);
+  $endpoint = "/asientos/mapa/" . $evento;
+  $data = api_get($endpoint, $token);
 
   if ($data && $data['success'] && isset($data['data']['asientos'])) {
     foreach ($data['data']['asientos'] as $asiento) {
