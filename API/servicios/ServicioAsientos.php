@@ -14,15 +14,12 @@ class ServicioAsientos
         $this->modeloAlumno = new AlumnoModel();
     }
 
-    public function obtenerMapaAsientos($evento, $numCuenta = null)
+    public function obtenerMapaAsientos($evento, $numCuenta = null, $jwtEventoId = null, $jwtAdminId = null)
     {
         $evento = strtolower(trim($evento));
         if (!in_array($evento, ['li', 'lisi'])) {
             return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
         }
-
-        $jwtEventoId = $_SERVER['JWT_EVENTO_ID'] ?? null;
-        $jwtAdminId = $_SERVER['JWT_ADMIN_ID'] ?? null;
 
         if ($jwtAdminId === null && $jwtEventoId !== null && $jwtEventoId !== $evento) {
             return $this->respuesta(false, "No tienes acceso a este evento", 403);
@@ -96,7 +93,7 @@ class ServicioAsientos
             $prefix = 'LI';
         }
 
-        $turnoNum = ($turnoUpper === 'M' || $turnoUpper === 'V') ? 'M' : 'V';
+        $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';
 
         return "{$prefix}4-{$turnoNum}";
     }
