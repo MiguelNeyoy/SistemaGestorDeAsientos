@@ -4,78 +4,40 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 require_once "config.php";
-require_once "auth_middleware.php";
 require_once "helpers/api_helper.php";
 
-$authData = verify_access(['alumno', 'admin']);
+if (!isset($_SESSION['jwt_token']) || empty($_SESSION['jwt_token'])) {
+  header("Location: index.php");
+  exit;
+}
 
-$token = $authData['token'];
-$tipoUsuario = $authData['tipo'];
+$token = $_SESSION['jwt_token'];
 
-//  IMPORTANTE → obtener evento desde URL y sanitizar
 $eventoInput = $_GET['evento'] ?? 'li';
 $evento = ($eventoInput === 'lisi') ? 'lisi' : 'li';
 
-// ==============================
-//  OBTENER MI ASIENTO (ALUMNO)
-// ==============================
 $miAsiento = null;
 $asientosGrupo = [];
+$asientosEscaneados = [];
 
-if ($tipoUsuario === "alumno") {
-  //  MI ASIENTO
-  $data = api_get("/asientos/misAsiento?evento=" . $evento, $token);
+$data = api_get("/asientos/misAsiento?evento=" . $evento, $token);
 
-  if ($data && $data['success']) {
-    $asientoData = $data['data'];
-    $miAsiento = $asientoData['letra'] . $asientoData['numero'];
-  }
-
-  //  MAPA (grupo)
-  $endpoint = "/asientos/mapa/" . $evento;
-  $dataMapa = api_get($endpoint, $token);
-
-  $asientosEscaneados = [];
-
-  if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
-    foreach ($dataMapa['data']['asientos'] as $asiento) {
-      $asientosGrupo[] = trim($asiento['id_asiento']);
-      if (!empty($asiento['escaneado'])) {
-        $asientosEscaneados[] = trim($asiento['id_asiento']);
-      }
-    }
-  }
+if ($data && $data['success']) {
+  $asientoData = $data['data'];
+  $miAsiento = $asientoData['letra'] . $asientoData['numero'];
 }
 
-// ==============================
-//  ADMIN 
-// ==============================
-$asientosOcupados = [];
-$asientosConfirmados = [];
-if (!isset($asientosEscaneados)) {
-    $asientosEscaneados = [];
-}
+$dataMapa = api_get("/asientos/mapa/" . $evento, $token);
 
-if ($tipoUsuario === "admin") {
-  $endpoint = "/asientos/mapa/" . $evento;
-  $data = api_get($endpoint, $token);
-
-  if ($data && $data['success'] && isset($data['data']['asientos'])) {
-    foreach ($data['data']['asientos'] as $asiento) {
-      if (isset($asiento['estado']) && $asiento['estado'] === "ocupado") {
-        if (isset($asiento['escaneado']) && $asiento['escaneado'] === true) {
-          $asientosEscaneados[] = $asiento['id_asiento'];
-        } elseif (isset($asiento['confirmado']) && $asiento['confirmado'] === true) {
-          $asientosConfirmados[] = $asiento['id_asiento'];
-        } else {
-          $asientosOcupados[] = $asiento['id_asiento'];
-        }
-      }
+if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
+  foreach ($dataMapa['data']['asientos'] as $asiento) {
+    $asientosGrupo[] = trim($asiento['id_asiento']);
+    if (!empty($asiento['escaneado'])) {
+      $asientosEscaneados[] = trim($asiento['id_asiento']);
     }
   }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -84,77 +46,30 @@ if ($tipoUsuario === "admin") {
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/asientos.css?v=<?= filemtime(__DIR__ . '/css/asientos.css') ?>">
-  <!-- Panzoom Library -->
   <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
 </head>
 
-<body class="<?= (isset($_GET['hideNavbar']) && $_GET['hideNavbar'] == '1') ? 'navbar-hidden' : '' ?>">
+<body>
 
-<!-- Mensaje de instrucción (flotante) -->
 <div id="panzoom-instruction" class="panzoom-msg">
   <span class="d-none d-md-inline">Haz clic y arrastra para mover. Usa <b>Ctrl + Rueda</b> para zoom.</span>
   <span class="d-md-none">Arrastra para mover. Usa dos dedos para zoom.</span>
 </div>
 
-<!-- NAVBAR (Condicional) -->
-<?php if (!isset($_GET['hideNavbar']) || $_GET['hideNavbar'] != '1'): ?>
-<nav class="navbar navbar-dark shadow-sm sticky-top">
+<nav class="navbar navbar-dark navbar-seatmap ">
   <div class="container-fluid d-flex justify-content-between align-items-center">
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <a href="admin/view_admin" class="btn btn-outline-light btn-sm">
+    <a href="home_alumno" class="btn btn-light btn-sm">
       ← Regresar
     </a>
-    <?php endif; ?>
-    <?php if ($tipoUsuario === 'alumno'): ?>
-    <a href="home_alumno" class="btn btn-outline-light btn-sm">
-      ← Regresar
-    </a>
-    <?php endif; ?>
-
     <span class="navbar-brand">
       Mapa de Asientos
     </span>
-
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <!-- SELECT EVENTO (solo visible para admin) -->
-    <div class="d-flex align-items-center">
-      <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
-        <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
-        <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
-      </select>
-      <span id="eventoDescripcion" class="text-white fw-bold"></span>
-    </div>
-    <?php endif; ?>
-
+    <span></span>
   </div>
-<?php endif; ?>
+</nav>
 
-<!-- Barra de Leyenda de Colores (solo para admin) -->
-<?php if ($tipoUsuario === 'admin'): ?>
-<div class="bg-light py-2 border-bottom shadow-sm">
-  <div class="container-fluid d-flex justify-content-center align-items-center flex-wrap gap-4" style="font-size: 0.9rem;">
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #727171; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Disponible</span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Ocupado (Pre-asignado)</span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #4CAF50; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Confirmado (Por el Alumno)</span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #eb0e0e; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Escaneado / Presente</span>
-    </div>
-  </div>
-</div>
-<?php elseif ($tipoUsuario === 'alumno'): ?>
 <aside class="bg-dark bg-opacity-75 py-2 border-bottom border-secondary">
-  <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0" style="font-size: 0.9rem;">
+  <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0 legend-list">
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #d32f2f; box-shadow: 0 0 6px rgba(211, 47, 47, 0.5);"></span>
       <span class="text-white">Mi Asiento</span>
@@ -169,8 +84,7 @@ if ($tipoUsuario === "admin") {
     </li>
   </ul>
 </aside>
-<?php endif; ?>
-<!-- CONTENEDOR -->
+
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
     <div class="cabina">Cabina</div>
@@ -180,38 +94,18 @@ if ($tipoUsuario === "admin") {
   </div>
 </div>
 
-<!-- PASAR DATOS A JS -->
 <script>
   window.__SEAT_DATA__ = {
-    tipoUsuario: "<?php echo $tipoUsuario; ?>",
+    tipoUsuario: "alumno",
     miAsiento: "<?php echo $miAsiento; ?>",
     asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
-    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
-    asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
+    asientosOcupados: [],
+    asientosConfirmados: [],
     asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
   };
 </script>
 
 <script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const selectEvento = document.getElementById("selectEvento");
-  const eventoDescripcion = document.getElementById("eventoDescripcion");
-
-  if (selectEvento && eventoDescripcion) {
-    function actualizarDescripcion() {
-      if (selectEvento.value === "li") {
-        eventoDescripcion.textContent = "Licenciatura en Informática";
-      } else if (selectEvento.value === "lisi") {
-        eventoDescripcion.textContent = "Licenciatura en Ingeniería en Sistemas de Información";
-      }
-    }
-    actualizarDescripcion();
-    selectEvento.addEventListener("change", actualizarDescripcion);
-  }
-});
-</script>
 
 </body>
 </html>

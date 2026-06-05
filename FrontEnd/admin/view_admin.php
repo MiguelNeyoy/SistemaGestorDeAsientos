@@ -51,7 +51,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
                     </select>
                 </div>
                 <div id="asientos-container" class="admin-hidden">
-                    <iframe id="asientosIframe" src="../asientos.php?evento=li&hideNavbar=1" style="width: 100%; height: 75vh; border: none;"></iframe>
+                    <iframe id="asientosIframe" src="mapa_asientos.php?evento=li" style="width: 100%; height: 75vh; border: none;"></iframe>
                 </div>
             </div>
         </main>

@@ -98,11 +98,6 @@ header {
   opacity: 0.45;
 }
 
-.asiento.ocupado {
-  background-color: #111167; /* azul marino ocupado */
-  color: white;
-}
-
 .mi-asiento {
   background-color: #d32f2f; /* rojo */
   color: white;
@@ -110,18 +105,8 @@ header {
   box-shadow: 0 0 12px rgba(211, 47, 47, 0.7);
 }
 
-.asiento.grupo {
-  background-color: #1d1174; /* azul */
-  color: white;
-}
-
-.asiento.confirmado {
-  background-color: #4CAF50 ; /* verde */
-  color: white;
-}
-
 .asiento.escaneado {
-  background-color: #1565c0 ; /* azul */
+  background-color: #1565c0; /* azul */
   color: white;
 }
 
@@ -173,14 +158,6 @@ header {
   cursor: grab;
 }
 
-.navbar-brand {
-  color : black;
-}
-
-.navbar-hidden .contenedor-scroll {
-  height: 100vh;
-}
-
 .contenedor-scroll:active {
   cursor: grabbing;
 }
@@ -223,6 +200,15 @@ header {
   box-shadow: 
     0 12px 16px rgba(0,0,0,0.5),
     inset 0 2px 4px rgba(255,255,255,0.3);
+}
+
+/* NAVBAR */
+.navbar-seatmap {
+  background-color: #0B3C5D;
+}
+
+.legend-list {
+  font-size: 0.9rem;
 }
 
 /* MOBILE */
