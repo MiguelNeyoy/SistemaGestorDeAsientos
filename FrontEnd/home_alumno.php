@@ -52,7 +52,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
 
 </head>
 
-<body>
+<body style="background-image: url('img/logoFondo.webp');>
 
     <!-- HEADER -->
 
@@ -63,7 +63,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="header-text">
 
             <h1>
-                Sistema Gestor de Confirmación y Asistencia
+                Confirmacion De Registro de Asistencia - UAS
             </h1>
 
 

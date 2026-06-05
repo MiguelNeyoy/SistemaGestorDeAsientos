@@ -39,16 +39,12 @@ export function pintarAsiento(element, idAsiento, config = {}) {
     element.classList.add('disponible');
 
     if (userType === 'alumno') {
-        // Group seats
-        if (hasSeat(groupSeats, idAsiento)) {
-            element.classList.remove('disponible');
-            element.classList.add('grupo');
-        }
-
-        // Student's own seat (priority)
         if (idAsiento === studentSeat) {
-            element.classList.remove('grupo', 'disponible');
+            element.classList.remove('disponible');
             element.classList.add('mi-asiento');
+        } else if (hasSeat(scannedSeats, idAsiento)) {
+            element.classList.remove('disponible');
+            element.classList.add('escaneado');
         }
     } else if (userType === 'admin') {
         if (hasSeat(scannedSeats, idAsiento)) {
