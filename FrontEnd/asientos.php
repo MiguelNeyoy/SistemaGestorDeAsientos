@@ -35,9 +35,14 @@ if ($tipoUsuario === "alumno") {
   $endpoint = "/asientos/mapa/" . $evento;
   $dataMapa = api_get($endpoint, $token);
 
+  $asientosEscaneados = [];
+
   if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
     foreach ($dataMapa['data']['asientos'] as $asiento) {
-      $asientosGrupo[] = trim($asiento['id_asiento']); //  trim por seguridad
+      $asientosGrupo[] = trim($asiento['id_asiento']);
+      if (!empty($asiento['escaneado'])) {
+        $asientosEscaneados[] = trim($asiento['id_asiento']);
+      }
     }
   }
 }
@@ -47,7 +52,9 @@ if ($tipoUsuario === "alumno") {
 // ==============================
 $asientosOcupados = [];
 $asientosConfirmados = [];
-$asientosEscaneados = [];
+if (!isset($asientosEscaneados)) {
+    $asientosEscaneados = [];
+}
 
 if ($tipoUsuario === "admin") {
   $endpoint = "/asientos/mapa/" . $evento;
@@ -91,7 +98,7 @@ if ($tipoUsuario === "admin") {
 
 <!-- NAVBAR (Condicional) -->
 <?php if (!isset($_GET['hideNavbar']) || $_GET['hideNavbar'] != '1'): ?>
-<nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
+<nav class="navbar navbar-dark shadow-sm sticky-top">
   <div class="container-fluid d-flex justify-content-between align-items-center">
 
     <?php if ($tipoUsuario === 'admin'): ?>
@@ -99,8 +106,13 @@ if ($tipoUsuario === "admin") {
       ← Regresar
     </a>
     <?php endif; ?>
+    <?php if ($tipoUsuario === 'alumno'): ?>
+    <a href="home_alumno" class="btn btn-outline-light btn-sm">
+      ← Regresar
+    </a>
+    <?php endif; ?>
 
-    <span class="navbar-brand fw-bold text-white">
+    <span class="navbar-brand">
       Mapa de Asientos
     </span>
 
@@ -140,6 +152,23 @@ if ($tipoUsuario === "admin") {
     </div>
   </div>
 </div>
+<?php elseif ($tipoUsuario === 'alumno'): ?>
+<aside class="bg-dark bg-opacity-75 py-2 border-bottom border-secondary">
+  <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0" style="font-size: 0.9rem;">
+    <li class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #d32f2f; box-shadow: 0 0 6px rgba(211, 47, 47, 0.5);"></span>
+      <span class="text-white">Mi Asiento</span>
+    </li>
+    <li class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #1565c0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="text-white">Ya Presente</span>
+    </li>
+    <li class="d-flex align-items-center gap-2">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="text-white">Disponible</span>
+    </li>
+  </ul>
+</aside>
 <?php endif; ?>
 <!-- CONTENEDOR -->
 <div class="contenedor-scroll">

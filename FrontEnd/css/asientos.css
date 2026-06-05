@@ -1,12 +1,14 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  background: #0a0a0a;
   text-align: center;
   margin: 0;
   padding: 0;
-  background-image: url("../img/logo.png");
-  background-repeat: repeat;
-  background-size: 1300px;
+  background-image: url("../img/logoFondo.webp");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 /* HEADER */
@@ -92,7 +94,8 @@ header {
 /* ========================= */
 
 .asiento.disponible {
-  background-color: #727171; /* gris */
+  background-color: #5c5c5c; /* gris más opaco */
+  opacity: 0.45;
 }
 
 .asiento.ocupado {
@@ -100,10 +103,11 @@ header {
   color: white;
 }
 
-.asiento.mi-asiento {
-  background-color: #28a745; /* verde */
+.mi-asiento {
+  background-color: #d32f2f; /* rojo */
   color: white;
   font-weight: bold;
+  box-shadow: 0 0 12px rgba(211, 47, 47, 0.7);
 }
 
 .asiento.grupo {
@@ -112,12 +116,12 @@ header {
 }
 
 .asiento.confirmado {
-  background-color: #4CAF50; /* verde */
+  background-color: #4CAF50 ; /* verde */
   color: white;
 }
 
 .asiento.escaneado {
-  background-color: #eb0e0e; /* rojo */
+  background-color: #1565c0 ; /* azul */
   color: white;
 }
 
@@ -167,6 +171,10 @@ header {
   align-items: center; 
   padding: 0;
   cursor: grab;
+}
+
+.navbar-brand {
+  color : black;
 }
 
 .navbar-hidden .contenedor-scroll {
