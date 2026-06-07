@@ -114,6 +114,7 @@ if ($tipoUsuario === "admin") {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Mapa de Asientos Teatro</title>
@@ -126,106 +127,107 @@ if ($tipoUsuario === "admin") {
 
 <body class="<?= (isset($_GET['hideNavbar']) && $_GET['hideNavbar'] == '1') ? 'navbar-hidden' : '' ?>">
 
-<!-- Mensaje de instrucción (flotante) -->
-<div id="panzoom-instruction" class="panzoom-msg">
-  <span class="d-none d-md-inline">Haz clic y arrastra para mover. Usa <b>Ctrl + Rueda</b> para zoom.</span>
-  <span class="d-md-none">Arrastra para mover. Usa dos dedos para zoom.</span>
-</div>
+  <!-- Mensaje de instrucción (flotante) -->
+  <div id="panzoom-instruction" class="panzoom-msg">
+    <span class="d-none d-md-inline">Haz clic y arrastra para mover. Usa <b>Ctrl + Rueda</b> para zoom.</span>
+    <span class="d-md-none">Arrastra para mover. Usa dos dedos para zoom.</span>
+  </div>
 
-<!-- NAVBAR (Condicional) -->
-<?php if (!isset($_GET['hideNavbar']) || $_GET['hideNavbar'] != '1'): ?>
-<nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
+  <!-- NAVBAR (Condicional) -->
+  <?php if (!isset($_GET['hideNavbar']) || $_GET['hideNavbar'] != '1'): ?>
+    <nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
 
-    <?php if ($tipoUsuario === 'admin'): ?>
-    <a href="admin/view_admin" class="btn btn-outline-light btn-sm">
-      ← Regresar
-    </a>
+        <?php if ($tipoUsuario === 'admin'): ?>
+          <a href="admin/view_admin" class="btn btn-outline-light btn-sm">
+            ← Regresar
+          </a>
+        <?php endif; ?>
+
+        <span class="navbar-brand fw-bold text-white">
+          Mapa de Asientos
+        </span>
+
+        <?php if ($tipoUsuario === 'admin'): ?>
+          <!-- SELECT EVENTO (solo visible para admin) -->
+          <div class="d-flex align-items-center">
+            <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
+              <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
+              <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
+            </select>
+            <span id="eventoDescripcion" class="text-white fw-bold"></span>
+          </div>
+        <?php endif; ?>
+
+      </div>
     <?php endif; ?>
 
-    <span class="navbar-brand fw-bold text-white">
-      Mapa de Asientos
-    </span>
-
+    <!-- Barra de Leyenda de Colores (solo para admin) -->
     <?php if ($tipoUsuario === 'admin'): ?>
-    <!-- SELECT EVENTO (solo visible para admin) -->
-    <div class="d-flex align-items-center">
-      <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
-        <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
-        <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
-      </select>
-      <span id="eventoDescripcion" class="text-white fw-bold"></span>
-    </div>
+      <div class="bg-light py-2 border-bottom shadow-sm">
+        <div class="container-fluid d-flex justify-content-center align-items-center flex-wrap gap-4" style="font-size: 0.9rem;">
+          <div class="d-flex align-items-center gap-2">
+            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #727171; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+            <span class="fw-semibold text-secondary">Disponible</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+            <span class="fw-semibold text-secondary">Ocupado (Pre-asignado)</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #4CAF50; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+            <span class="fw-semibold text-secondary">Confirmado (Por el Alumno)</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #eb0e0e; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+            <span class="fw-semibold text-secondary">Escaneado / Presente</span>
+          </div>
+        </div>
+      </div>
     <?php endif; ?>
-
-  </div>
-<?php endif; ?>
-
-<!-- Barra de Leyenda de Colores (solo para admin) -->
-<?php if ($tipoUsuario === 'admin'): ?>
-<div class="bg-light py-2 border-bottom shadow-sm">
-  <div class="container-fluid d-flex justify-content-center align-items-center flex-wrap gap-4" style="font-size: 0.9rem;">
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #727171; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Disponible</span>
+    <!-- CONTENEDOR -->
+    <div class="contenedor-scroll">
+      <div class="mapa-envoltura">
+        <div class="cabina">Cabina</div>
+        <div class="zona-superior"></div>
+        <div class="teatro"></div>
+        <div class="mesa">Escenario</div>
+      </div>
     </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Ocupado (Pre-asignado)</span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #4CAF50; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Confirmado (Por el Alumno)</span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #eb0e0e; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="fw-semibold text-secondary">Escaneado / Presente</span>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
-<!-- CONTENEDOR -->
-<div class="contenedor-scroll">
-  <div class="mapa-envoltura">
-    <div class="cabina">Cabina</div>
-    <div class="zona-superior"></div>
-    <div class="teatro"></div>
-    <div class="mesa">Escenario</div>
-  </div>
-</div>
 
-<!-- PASAR DATOS A JS -->
-<script>
-  window.__SEAT_DATA__ = {
-    tipoUsuario: "<?php echo $tipoUsuario; ?>",
-    miAsiento: "<?php echo $miAsiento; ?>",
-    asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
-    asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
-    asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
-    asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
-  };
-</script>
+    <!-- PASAR DATOS A JS -->
+    <script>
+      window.__SEAT_DATA__ = {
+        tipoUsuario: "<?php echo $tipoUsuario; ?>",
+        miAsiento: "<?php echo $miAsiento; ?>",
+        asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
+        asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
+        asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
+        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
+      };
+    </script>
 
-<script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
+    <script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const selectEvento = document.getElementById("selectEvento");
-  const eventoDescripcion = document.getElementById("eventoDescripcion");
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const selectEvento = document.getElementById("selectEvento");
+        const eventoDescripcion = document.getElementById("eventoDescripcion");
 
-  if (selectEvento && eventoDescripcion) {
-    function actualizarDescripcion() {
-      if (selectEvento.value === "li") {
-        eventoDescripcion.textContent = "Licenciatura en Informática";
-      } else if (selectEvento.value === "lisi") {
-        eventoDescripcion.textContent = "Licenciatura en Ingeniería en Sistemas de Información";
-      }
-    }
-    actualizarDescripcion();
-    selectEvento.addEventListener("change", actualizarDescripcion);
-  }
-});
-</script>
+        if (selectEvento && eventoDescripcion) {
+          function actualizarDescripcion() {
+            if (selectEvento.value === "li") {
+              eventoDescripcion.textContent = "Licenciatura en Informática";
+            } else if (selectEvento.value === "lisi") {
+              eventoDescripcion.textContent = "Licenciatura en Ingeniería en Sistemas de Información";
+            }
+          }
+          actualizarDescripcion();
+          selectEvento.addEventListener("change", actualizarDescripcion);
+        }
+      });
+    </script>
 
 </body>
+
 </html>

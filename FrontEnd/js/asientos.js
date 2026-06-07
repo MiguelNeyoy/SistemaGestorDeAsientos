@@ -50,45 +50,49 @@ document.addEventListener("DOMContentLoaded", () => {
         const letrasSuperior = "KLM";
 
         if (zonaSuperior) {
-            letrasSuperior.split("").reverse().forEach(letra => {
-                const filaDiv = document.createElement('div');
-                filaDiv.classList.add('fila');
+            if (data.tipoUsuario === 'alumno') {
+                zonaSuperior.style.display = 'none';
+            } else {
+                letrasSuperior.split("").reverse().forEach(letra => {
+                    const filaDiv = document.createElement('div');
+                    filaDiv.classList.add('fila');
 
-                const secciones = [
-                    { inicio: 1, fin: 11 },
-                    { inicio: 12, fin: 27 },
-                    { inicio: 28, fin: 38 }
-                ];
+                    const secciones = [
+                        { inicio: 1, fin: 11 },
+                        { inicio: 12, fin: 27 },
+                        { inicio: 28, fin: 38 }
+                    ];
 
-                secciones.forEach(sec => {
-                    const secDiv = document.createElement('div');
-                    secDiv.classList.add('seccion');
+                    secciones.forEach(sec => {
+                        const secDiv = document.createElement('div');
+                        secDiv.classList.add('seccion');
 
-                    for (let n = sec.inicio; n <= sec.fin; n++) {
-                        const asiento = document.createElement('div');
-                        const idAsiento = letra + n;
+                        for (let n = sec.inicio; n <= sec.fin; n++) {
+                            const asiento = document.createElement('div');
+                            const idAsiento = letra + n;
 
-                        if ((letra === "M" && (n < 12 || n > 27)) ||
-                            (letra === "L" && (n >= 17 && n <= 22)) ||
-                            (letra === "M" && (n >= 16 && n <= 23))) {
+                            if ((letra === "M" && (n < 12 || n > 27)) ||
+                                (letra === "L" && (n >= 17 && n <= 22)) ||
+                                (letra === "M" && (n >= 16 && n <= 23))) {
 
-                            asiento.classList.add('hueco');
+                                asiento.classList.add('hueco');
 
-                        } else {
-                            asiento.classList.add('asiento');
-                            asiento.textContent = idAsiento;
+                            } else {
+                                asiento.classList.add('asiento');
+                                asiento.textContent = idAsiento;
 
-                            pintarAsiento(asiento, idAsiento, configRenderer);
+                                pintarAsiento(asiento, idAsiento, configRenderer);
+                            }
+
+                            secDiv.appendChild(asiento);
                         }
 
-                        secDiv.appendChild(asiento);
-                    }
+                        filaDiv.appendChild(secDiv);
+                    });
 
-                    filaDiv.appendChild(secDiv);
+                    zonaSuperior.appendChild(filaDiv);
                 });
-
-                zonaSuperior.appendChild(filaDiv);
-            });
+            }
         }
 
         // ===============================
@@ -110,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (f === (letrasTeatro.length - 10)) {
                     secciones = [{ inicio: 1, fin: 34 }];
+                }
+
+                if (data.tipoUsuario === 'alumno') {
+                    secciones = [{ inicio: 8, fin: 23 }];
                 }
 
                 secciones.forEach(sec => {
