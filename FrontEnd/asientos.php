@@ -31,7 +31,9 @@ $dataMapa = api_get("/asientos/mapa/" . $evento, $token);
 
 if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
   foreach ($dataMapa['data']['asientos'] as $asiento) {
-    $asientosGrupo[] = trim($asiento['id_asiento']);
+    if ($asiento['estado'] === 'ocupado') {
+      $asientosGrupo[] = trim($asiento['id_asiento']);
+    }
     if (!empty($asiento['escaneado'])) {
       $asientosEscaneados[] = trim($asiento['id_asiento']);
     }
@@ -77,7 +79,7 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
     </li>
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Alumnos del Grupo</span>
+      <span class="text-white">Asignado</span>
     </li>
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; opacity: 0.45; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>

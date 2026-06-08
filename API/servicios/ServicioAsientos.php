@@ -48,7 +48,7 @@ class ServicioAsientos
             $alumno = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
             if ($alumno) {
                 $miGrupo = $this->calcularGrupo($alumno['carrera'] ?? '', $alumno['turno']);
-                return $this->modelo->obtenerAsientosPorEventoYTurno($evento, $alumno['turno']);
+                return $this->modelo->obtenerTodosLosAsientosConTurno($evento);
             }
             return [];
         }
@@ -73,6 +73,7 @@ class ServicioAsientos
                 'id_asiento' => $idAsiento,
                 'fila' => $asiento['letra'],
                 'numero' => $asiento['numero'],
+                'turno' => $asiento['turno'] ?? null,
                 'estado' => $tieneNumCuenta ? 'ocupado' : 'libre',
                 'asignado' => $esAsignado,
                 'confirmado' => isset($asiento['asistencia_estado']) && $asiento['asistencia_estado'] == 1,
