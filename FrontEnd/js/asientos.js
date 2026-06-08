@@ -68,6 +68,26 @@ document.addEventListener("DOMContentLoaded", () => {
         groupSeats: new Set(data.asientosGrupo || [])
     };
 
+    function addSectionHeaders(container, secciones, labels) {
+        const fila = document.createElement('div');
+        fila.classList.add('fila');
+        secciones.forEach((sec, i) => {
+            const div = document.createElement('div');
+            div.classList.add('seccion', 'section-header');
+            for (let n = sec.inicio; n <= sec.fin; n++) {
+                const h = document.createElement('span');
+                h.classList.add('hueco');
+                div.appendChild(h);
+            }
+            const label = document.createElement('span');
+            label.classList.add('section-label');
+            label.textContent = labels[i];
+            div.appendChild(label);
+            fila.appendChild(div);
+        });
+        container.insertBefore(fila, container.firstChild);
+    }
+
     // ===============================
     //  ZONA SUPERIOR
     // ===============================
@@ -75,6 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (zonaSuperior) {
         const configZS = THEATER_CONFIG.zonaSuperior;
+        addSectionHeaders(zonaSuperior, configZS.secciones, [
+            'Sup. Izq.', 'Sup. Central', 'Sup. Der.'
+        ]);
         configZS.letras.forEach(letra => {
             const filaDiv = document.createElement('div');
             filaDiv.classList.add('fila');
@@ -111,14 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const teatro = document.querySelector('.teatro');
 
     if (teatro) {
-        const configT = data.tipoUsuario === 'alumno'
-            ? THEATER_CONFIG.teatroCentro
-            : THEATER_CONFIG.teatro;
+        const configT = THEATER_CONFIG.teatro;
+        addSectionHeaders(teatro, configT.seccionesNormales, [
+            'Izquierda', 'Central', 'Derecha'
+        ]);
         configT.letras.forEach(letra => {
             const filaDiv = document.createElement('div');
             filaDiv.classList.add('fila');
 
-            // Determinar las secciones a utilizar (especial para fila J)
             const secciones = (letra === 'J' && configT.seccionesFilaJ)
                 ? configT.seccionesFilaJ
                 : configT.seccionesNormales;
