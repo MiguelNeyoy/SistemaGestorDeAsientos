@@ -40,6 +40,7 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Mapa de Asientos Teatro</title>
@@ -105,7 +106,27 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
   };
 </script>
 
-<script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
+    <script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const selectEvento = document.getElementById("selectEvento");
+        const eventoDescripcion = document.getElementById("eventoDescripcion");
+
+        if (selectEvento && eventoDescripcion) {
+          function actualizarDescripcion() {
+            if (selectEvento.value === "li") {
+              eventoDescripcion.textContent = "Licenciatura en Informática";
+            } else if (selectEvento.value === "lisi") {
+              eventoDescripcion.textContent = "Licenciatura en Ingeniería en Sistemas de Información";
+            }
+          }
+          actualizarDescripcion();
+          selectEvento.addEventListener("change", actualizarDescripcion);
+        }
+      });
+    </script>
 
 </body>
+
 </html>

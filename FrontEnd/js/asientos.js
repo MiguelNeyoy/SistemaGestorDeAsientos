@@ -17,8 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const panzoom = Panzoom(envoltura, {
             maxScale: 5,
             minScale: 0.1,
-            contain: false, 
-            cursor: 'default'
+            contain: false,
+            cursor: 'default',
+            touchAction: 'none'
         });
 
         // Zoom con la rueda del mouse + Ctrl
@@ -26,13 +27,36 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!event.ctrlKey) return;
             event.preventDefault();
             panzoom.zoomWithWheel(event);
-        });
+        }, { passive: false });
 
-        // Centrar inicialmente con una escala más alejada
-        setTimeout(() => {
-            panzoom.zoom(0.5, { animate: false });
-            panzoom.pan(0, 0);
-        }, 100);
+        // Centrar inicialmente con auto-foco en asiento del alumno
+        requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            let panX = 0, panY = 0;
+
+            if (data.miAsiento && data.tipoUsuario === 'alumno') {
+                const seatEl = Array.from(document.querySelectorAll('.asiento'))
+                    .find(el => el.textContent.trim() === data.miAsiento);
+
+                if (seatEl) {
+                    const envolturaRect = envoltura.getBoundingClientRect();
+                    const seatRect = seatEl.getBoundingClientRect();
+
+                    const seatCenterX = seatRect.left + seatRect.width / 2 - envolturaRect.left;
+                    const seatCenterY = seatRect.top + seatRect.height / 2 - envolturaRect.top;
+
+                    const envCenterX = envolturaRect.width / 2;
+                    const envCenterY = envolturaRect.height / 2;
+
+                    panX = envCenterX - seatCenterX;
+                    panY = envCenterY - seatCenterY;
+                }
+            }
+
+            panzoom.zoom(1.2, { animate: true });
+            panzoom.pan(panX, panY);
+        });
+        });
     }
 
     const configRenderer = {

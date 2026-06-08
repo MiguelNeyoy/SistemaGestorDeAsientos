@@ -46,6 +46,14 @@ if (!isset($error)) {
     } else {
         $qrToken = $qrData['data']['token'];
         $alumno = $estadoAlumno['data'];
+        
+        // Consultar el asiento asignado del alumno
+        $asientoResp = apiRequest($BASE_API_URL . "/asientos/misAsiento", $token);
+        if ($asientoResp && $asientoResp['success']) {
+            $alumno['asiento'] = $asientoResp['data']['letra'] . $asientoResp['data']['numero'];
+        } else {
+            $alumno['asiento'] = 'Sin asignar';
+        }
     }
 }
 ?>
