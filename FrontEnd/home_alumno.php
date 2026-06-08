@@ -63,7 +63,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
         <div class="header-text">
 
             <h1>
-                Confirmacion De Registro de Asistencia - UAS
+                Registro de Asistencia a Ceremonia de Graduación
             </h1>
 
 

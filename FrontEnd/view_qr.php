@@ -95,7 +95,7 @@ if (!isset($error)) {
           <?php echo htmlspecialchars($error); ?>
         </div>
         <?php if (strpos($error, "asistencia") !== false): ?>
-          <a href="view_confirmacion.php" class="btn btn-primary mt-3">Ir a Confirmación</a>
+          <a href="asientos.php" class="btn btn-primary mt-3">Mira tu asiento </a>
         <?php endif; ?>
       <?php else: ?>
         <div id="qrcode" class="d-flex justify-content-center my-4"></div>
