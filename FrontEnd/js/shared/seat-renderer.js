@@ -42,9 +42,9 @@ export function pintarAsiento(element, idAsiento, config = {}) {
         if (idAsiento === studentSeat) {
             element.classList.remove('disponible');
             element.classList.add('mi-asiento');
-        } else if (hasSeat(scannedSeats, idAsiento)) {
+        } else if (hasSeat(groupSeats, idAsiento)) {
             element.classList.remove('disponible');
-            element.classList.add('escaneado');
+            element.classList.add('grupo');
         }
     } else if (userType === 'admin') {
         if (hasSeat(scannedSeats, idAsiento)) {

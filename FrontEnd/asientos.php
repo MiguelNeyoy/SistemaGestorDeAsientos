@@ -72,15 +72,15 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
 <aside class="bg-dark bg-opacity-75 py-2 border-bottom border-secondary">
   <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0 legend-list">
     <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #d32f2f; box-shadow: 0 0 6px rgba(211, 47, 47, 0.5);"></span>
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 0 6px rgba(17, 17, 103, 0.5);"></span>
       <span class="text-white">Mi Asiento</span>
     </li>
     <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #1565c0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Ya Presente</span>
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span class="text-white">Alumnos del Grupo</span>
     </li>
     <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; opacity: 0.45; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
       <span class="text-white">Disponible</span>
     </li>
   </ul>
@@ -89,7 +89,7 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
     <div class="cabina">Cabina</div>
-    <p class="seatmap-section-msg">Zona Central (Asientos 8-23)</p>
+    <div class="zona-superior"></div>
     <div class="teatro"></div>
     <div class="mesa">Escenario</div>
   </div>
