@@ -111,7 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const teatro = document.querySelector('.teatro');
 
     if (teatro) {
-        const configT = THEATER_CONFIG.teatro;
+        const configT = data.tipoUsuario === 'alumno'
+            ? THEATER_CONFIG.teatroCentro
+            : THEATER_CONFIG.teatro;
         configT.letras.forEach(letra => {
             const filaDiv = document.createElement('div');
             filaDiv.classList.add('fila');

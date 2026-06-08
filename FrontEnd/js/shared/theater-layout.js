@@ -16,6 +16,12 @@ export const THEATER_CONFIG = {
                    (letra === "M" && (n >= 16 && n <= 23));
         }
     },
+    teatroCentro: {
+        letras: ["J", "I", "H", "G", "F", "E", "D", "C", "B", "A"],
+        seccionesNormales: [
+            { inicio: 8, fin: 23 }
+        ]
+    },
     teatro: {
         letras: ["J", "I", "H", "G", "F", "E", "D", "C", "B", "A"], // Filas de atrás hacia adelante
         seccionesNormales: [

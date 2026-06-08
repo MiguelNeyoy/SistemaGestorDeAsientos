@@ -89,7 +89,7 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">
     <div class="cabina">Cabina</div>
-    <div class="zona-superior"></div>
+    <p class="seatmap-section-msg">Zona Central (Asientos 8-23)</p>
     <div class="teatro"></div>
     <div class="mesa">Escenario</div>
   </div>
