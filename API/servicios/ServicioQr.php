@@ -19,15 +19,46 @@ class ServicioQr
 
     public function obtenerQrAlumno($numCuenta)
     {
-        return $this->qrModelo->obtenerPorNumCuenta($numCuenta);
+        $qr = $this->qrModelo->obtenerPorNumCuentaConGrupo($numCuenta);
+        if ($qr && isset($qr['qr_habilitado']) && $qr['qr_habilitado'] == 0) {
+            throw new Exception("El acceso por código QR para tu grupo está deshabilitado temporalmente.");
+        }
+        return $qr;
+    }
+
+    public function validarTokenSolo($token)
+    {
+        $qr = $this->qrModelo->obtenerPorTokenConGrupo($token);
+
+        if (!$qr) {
+            return ["success" => false, "message" => "Token inválido"];
+        }
+
+        if (isset($qr['qr_habilitado']) && $qr['qr_habilitado'] == 0) {
+            return ["success" => false, "message" => "El acceso por código QR para este grupo está deshabilitado temporalmente", "data" => $qr];
+        }
+
+        if ($qr['escaneado'] == 1) {
+            return ["success" => false, "message" => "Este pase ya ha sido utilizado", "data" => $qr];
+        }
+
+        return [
+            "success" => true,
+            "message" => "QR válido y disponible",
+            "data" => $qr
+        ];
     }
 
     public function validarAcceso($token)
     {
-        $qr = $this->qrModelo->obtenerPorToken($token);
+        $qr = $this->qrModelo->obtenerPorTokenConGrupo($token);
 
         if (!$qr) {
             return ["success" => false, "message" => "Token inválido"];
+        }
+
+        if (isset($qr['qr_habilitado']) && $qr['qr_habilitado'] == 0) {
+            return ["success" => false, "message" => "El acceso por código QR para este grupo está deshabilitado temporalmente", "data" => $qr];
         }
 
         if ($qr['escaneado'] == 1) {
@@ -79,5 +110,19 @@ class ServicioQr
     public function obtenerEstadoGrupo($grupo)
     {
         return $this->grupoModelo->obtenerEstado($grupo);
+    }
+
+    public function marcarEscaneado($token)
+    {
+        return $this->qrModelo->marcarEscaneado($token);
+    }
+
+    public function resetearEvento($evento)
+    {
+        $evento = strtolower(trim($evento));
+        if (!in_array($evento, ['li', 'lisi'])) {
+            throw new Exception("Evento inválido. Debe ser 'li' o 'lisi'.");
+        }
+        return $this->qrModelo->resetearPorEvento($evento);
     }
 }

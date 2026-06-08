@@ -15,7 +15,9 @@ class ControladorAsientos
     {
         try {
             $numCuenta = $_SERVER['JWT_NUMERO_CUENTA'] ?? null;
-            $res = $this->servicioAsientos->obtenerMapaAsientos($evento, $numCuenta);
+            $jwtEventoId = $_SERVER['JWT_EVENTO_ID'] ?? null;
+            $jwtAdminId = $_SERVER['JWT_ADMIN_ID'] ?? null;
+            $res = $this->servicioAsientos->obtenerMapaAsientos($evento, $numCuenta, $jwtEventoId, $jwtAdminId);
             echo json_encode($res);
         } catch (Exception $e) {
             http_response_code(500);

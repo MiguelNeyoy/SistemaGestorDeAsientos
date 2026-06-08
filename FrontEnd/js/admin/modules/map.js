@@ -32,7 +32,7 @@ export function show(evento = 'li') {
 
     if (iframe) {
         // Preservar hideNavbar=1 para evitar redundancia en el panel admin
-        iframe.src = `../asientos.php?evento=${evento}&hideNavbar=1`;
+        iframe.src = `mapa_asientos.php?evento=${evento}`;
     }
 }
 

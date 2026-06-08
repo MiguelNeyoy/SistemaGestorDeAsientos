@@ -35,6 +35,32 @@ class QrModelo
         return $stmt->fetch();
     }
 
+    public function obtenerPorTokenConGrupo($token)
+    {
+        $query = "SELECT q.*, a.nombre, a.apellido, a.carrera, a.turno, a.cantInvitado, g.qr_habilitado
+                  FROM " . $this->table . " q
+                  JOIN alumno a ON q.numCuenta = a.numCuenta
+                  JOIN grupos g ON (g.carrera = a.carrera AND g.turno = a.turno)
+                  WHERE q.token = :token LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':token', $token);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerPorNumCuentaConGrupo($numCuenta)
+    {
+        $query = "SELECT q.*, a.nombre, a.apellido, a.carrera, a.turno, a.cantInvitado, g.qr_habilitado
+                  FROM " . $this->table . " q
+                  JOIN alumno a ON q.numCuenta = a.numCuenta
+                  JOIN grupos g ON (g.carrera = a.carrera AND g.turno = a.turno)
+                  WHERE q.numCuenta = :numCuenta LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':numCuenta', $numCuenta);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     public function crear($numCuenta, $token)
     {
@@ -83,11 +109,16 @@ class QrModelo
 
     public function deshabilitarGrupo($alumnos)
     {
-        if (empty($alumnos))
-            return true;
-        $placeholders = implode(',', array_fill(0, count($alumnos), '?'));
-        $query = "DELETE FROM " . $this->table . " WHERE numCuenta IN ($placeholders)";
+        return true;
+    }
+
+    public function resetearPorEvento($evento)
+    {
+        $tablaAsientos = "asiento_evento_" . strtolower($evento);
+        $query = "UPDATE " . $this->table . " q
+                  JOIN {$tablaAsientos} a ON q.numCuenta = a.numCuenta
+                  SET q.escaneado = 0, q.fecha_escaneado = NULL";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute($alumnos);
+        return $stmt->execute();
     }
 }

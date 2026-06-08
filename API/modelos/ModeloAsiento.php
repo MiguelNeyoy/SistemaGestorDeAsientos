@@ -10,13 +10,27 @@ class ModeloAsiento
         $this->db = Conexion::Conectar();
     }
 
+    private function validarTabla($tabla)
+    {
+        $tablasPermitidas = ['asiento_evento_li', 'asiento_evento_lisi'];
+        if (!in_array($tabla, $tablasPermitidas, true)) {
+            throw new InvalidArgumentException("Tabla no permitida: " . $tabla);
+        }
+        return $tabla;
+    }
+
     public function obtenerTodosLosAsientos($tabla)
     {
         try {
+            $tabla = $this->validarTabla($tabla);
             $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
-                           al.nombre, al.apellido
+                           al.nombre, al.apellido,
+                           COALESCE(asi.estado, 0) AS asistencia_estado,
+                           COALESCE(q.escaneado, 0) AS escaneado
                     FROM {$tabla} a
                     LEFT JOIN alumno al ON a.numCuenta = al.numCuenta
+                    LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                    LEFT JOIN qr q ON a.numCuenta = q.numCuenta
                     ORDER BY a.letra, a.numero";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -30,9 +44,14 @@ class ModeloAsiento
     {
         try {
             $tabla = "asiento_evento_" . $evento;
-            $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado
+            $tabla = $this->validarTabla($tabla);
+            $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
+                           COALESCE(asi.estado, 0) AS asistencia_estado,
+                           COALESCE(q.escaneado, 0) AS escaneado
                     FROM {$tabla} a
                     JOIN alumno al ON a.numCuenta = al.numCuenta
+                    LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                    LEFT JOIN qr q ON a.numCuenta = q.numCuenta
                     WHERE al.turno = ?
                     ORDER BY a.letra, a.numero";
             $stmt = $this->db->prepare($sql);
@@ -64,6 +83,7 @@ class ModeloAsiento
     public function reiniciarTeatro($tabla)
     {
         try {
+            $tabla = $this->validarTabla($tabla);
             $sql = "UPDATE {$tabla} SET estado = 0";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute();

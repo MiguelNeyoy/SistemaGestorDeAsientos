@@ -1,6 +1,8 @@
 <aside class="admin-sidebar">
     <div class="admin-sidebar__header">
-        <img src="../img/logo-vector-uas.webp" alt="UAS Logo" class="admin-sidebar__logo">
+        <a href="javascript:void(0)" id="link-logo-dashboard" style="display: block; width: 100%; text-align: center;">
+            <img src="../img/convision.png" alt="Convision Logo" class="admin-sidebar__logo" style="max-height: 50px; object-fit: contain;">
+        </a>
     </div>
     <nav class="admin-sidebar__nav">
         <div class="admin-sidebar__section-title">Navegación</div>
@@ -35,6 +37,18 @@
                     <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-lisi" data-filter="LISI">
                         <span class="admin-icon admin-icon--chair"></span>
                         <span>LISI (Sistemas)</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item admin-sidebar__item--warning" style="margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning" id="btnResetQrLi" style="color: #ff9800; display: flex; align-items: center; gap: 8px;">
+                        <span class="admin-icon" style="mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23fff%22 d=%22M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z%22/></svg>') no-repeat center; -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23fff%22 d=%22M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z%22/></svg>') no-repeat center; background-color: #ff9800; width: 16px; height: 16px; display: inline-block;"></span>
+                        <span style="font-weight: 500;">Restablecer QRs LI</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item admin-sidebar__item--warning">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning" id="btnResetQrLisi" style="color: #ff9800; display: flex; align-items: center; gap: 8px;">
+                        <span class="admin-icon" style="mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23fff%22 d=%22M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z%22/></svg>') no-repeat center; -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23fff%22 d=%22M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z%22/></svg>') no-repeat center; background-color: #ff9800; width: 16px; height: 16px; display: inline-block;"></span>
+                        <span style="font-weight: 500;">Restablecer QRs LISI</span>
                     </a>
                 </li>
             </ul>
