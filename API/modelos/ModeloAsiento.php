@@ -40,25 +40,25 @@ class ModeloAsiento
         }
     }
 
-    public function obtenerAsientosPorEventoYTurno($evento, $turno)
+    public function obtenerTodosLosAsientosConTurno($evento)
     {
         try {
             $tabla = "asiento_evento_" . $evento;
             $tabla = $this->validarTabla($tabla);
             $sql = "SELECT a.idAsiento, a.numCuenta, a.letra, a.numero, a.estado,
+                           al.turno,
                            COALESCE(asi.estado, 0) AS asistencia_estado,
                            COALESCE(q.escaneado, 0) AS escaneado
                     FROM {$tabla} a
-                    JOIN alumno al ON a.numCuenta = al.numCuenta
+                    LEFT JOIN alumno al ON a.numCuenta = al.numCuenta
                     LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
                     LEFT JOIN qr q ON a.numCuenta = q.numCuenta
-                    WHERE al.turno = ?
                     ORDER BY a.letra, a.numero";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$turno]);
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error en ModeloAsiento: Fallo al obtener asientos por grupo - " . $e->getMessage());
+            throw new Exception("Error en ModeloAsiento: Fallo al obtener todos los asientos con turno - " . $e->getMessage());
         }
     }
 
