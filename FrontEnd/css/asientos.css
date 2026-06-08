@@ -163,8 +163,9 @@ header {
 .contenedor-scroll {
   width: 100%;
   height: calc(100vh - 80px);
-  overflow: hidden; /* Importante para Panzoom */
+  overflow: hidden;
   position: relative;
+  touch-action: manipulation;
   background-color: transparent;
   display: flex;
   justify-content: center;
