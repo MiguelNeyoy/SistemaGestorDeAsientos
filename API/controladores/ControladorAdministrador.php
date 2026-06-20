@@ -36,4 +36,10 @@ class ControladorAdministrador
         $respuesta = $this->servicioAdmin->editarAlumno($input);
         echo json_encode($respuesta);
     }
+
+    public function resetearConfirmaciones()
+    {
+        $respuesta = $this->servicioAdmin->resetearConfirmaciones();
+        echo json_encode($respuesta);
+    }
 }
