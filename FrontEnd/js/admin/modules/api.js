@@ -82,3 +82,10 @@ export async function resetQrEvento(evento) {
     });
     return await response.json();
 }
+
+export async function resetearConfirmaciones() {
+    const response = await coreFetch('/admin/confirmaciones/reset', {
+        method: 'POST'
+    });
+    return await response.json();
+}

@@ -158,6 +158,16 @@ class ServicioAdministrador
         return $this->respuesta(true, "Datos del alumno actualizados correctamente", 200);
     }
 
+    public function resetearConfirmaciones()
+    {
+        try {
+            $this->modeloAlumno->resetearConfirmaciones();
+            return $this->respuesta(true, "Confirmaciones reseteadas correctamente", 200);
+        } catch (Exception $e) {
+            return $this->respuesta(false, "Error al resetear: " . $e->getMessage(), 500);
+        }
+    }
+
     private function respuesta($success, $message, $code, $data = null)
     {
         http_response_code($code);
