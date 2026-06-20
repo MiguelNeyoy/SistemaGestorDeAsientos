@@ -6,7 +6,7 @@ import { initQRScanner } from './modules/qrscanner.js';
 import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
-import { resetQrEvento } from './modules/api.js';
+import { resetQrEvento, resetearConfirmaciones } from './modules/api.js';
 import { toast } from '../core/toast.js';
 
 /**
@@ -123,6 +123,29 @@ function setupNavigation() {
         btnResetLisi.onclick = (e) => {
             e.preventDefault();
             handleReset('lisi', 'LISI (Sistemas)');
+        };
+    }
+
+    const btnResetConfirmaciones = document.getElementById('btnResetConfirmaciones');
+    if (btnResetConfirmaciones) {
+        btnResetConfirmaciones.onclick = async (e) => {
+            e.preventDefault();
+            if (!confirm('⚠️ ¿Estás seguro de resetear TODAS las confirmaciones?')) return;
+            if (!confirm('⚠️ Esta acción no se puede deshacer. ¿Confirmar?')) return;
+            
+            try {
+                toast.info('Reseteando confirmaciones...');
+                const result = await resetearConfirmaciones();
+                if (result.success) {
+                    toast.success(result.message || 'Confirmaciones reseteadas correctamente.');
+                    refreshData();
+                } else {
+                    toast.error(result.message || 'Error al resetear confirmaciones.');
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error('Error al comunicarse con el servidor.');
+            }
         };
     }
 

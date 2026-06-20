@@ -113,4 +113,25 @@ class AlumnoModel
         $stmt->execute([$carrera, $turno]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function resetearConfirmaciones()
+    {
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Eliminar todos los registros de asistencia
+            $this->db->exec('DELETE FROM asistencia');
+
+            // 2. Resetear cantidad de invitados
+            $this->db->exec('UPDATE alumno SET cantInvitado = 0');
+
+            $this->db->exec('UPDATE alumno SET email = 0');
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
 }
