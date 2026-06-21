@@ -21,8 +21,10 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administrador - Clausura</title>
     <!-- Se mantiene Bootstrap por compatibilidad con otras vistas y modales (Grid y JS) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href='./admin.css?v=<?= filemtime(__DIR__ . '/admin.css') ?>'>
+    <link rel="stylesheet" href='../css/pages/admin.css?v=<?= filemtime(__DIR__ . '/../css/pages/admin.css') ?>'>
 </head>
 
 <body class="admin-body">
