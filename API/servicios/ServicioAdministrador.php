@@ -168,6 +168,30 @@ class ServicioAdministrador
         }
     }
 
+    public function obtenerEscaneados($evento)
+    {
+        $eventosPermitidos = ['li', 'lisi'];
+        if (!in_array($evento, $eventosPermitidos)) {
+            return $this->respuesta(false, "Evento no válido. Use 'li' o 'lisi'.", 400);
+        }
+
+        try {
+            $alumnos = $this->modeloAlumno->obtenerEscaneadosPorEvento($evento);
+
+            $tituloEvento = ($evento === 'li')
+                ? 'Licenciatura en Informática (LI)'
+                : 'Lic. en Ingeniería en Sistemas (LISI)';
+
+            return $this->respuesta(true, "Alumnos escaneados obtenidos", 200, [
+                'evento' => $tituloEvento,
+                'total' => count($alumnos),
+                'alumnos' => $alumnos
+            ]);
+        } catch (\Exception $e) {
+            return $this->respuesta(false, "Error al obtener escaneados: " . $e->getMessage(), 500);
+        }
+    }
+
     private function respuesta($success, $message, $code, $data = null)
     {
         http_response_code($code);
