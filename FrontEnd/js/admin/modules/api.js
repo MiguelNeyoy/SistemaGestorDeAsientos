@@ -89,3 +89,8 @@ export async function resetearConfirmaciones() {
     });
     return await response.json();
 }
+
+export async function fetchEscaneados(evento) {
+    const response = await coreFetch(`/admin/alumnos/exportar-pdf/${evento}`);
+    return await response.json();
+}
