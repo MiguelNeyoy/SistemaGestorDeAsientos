@@ -165,4 +165,26 @@ class AlumnoModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function eliminarAlumno($numCuenta)
+    {
+        $sql = 'DELETE FROM alumno WHERE numCuenta = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$numCuenta]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function eliminarAsistencia($numCuenta)
+    {
+        $sql = 'DELETE FROM asistencia WHERE numCuenta = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$numCuenta]);
+    }
+
+    public function eliminarQr($numCuenta)
+    {
+        $sql = 'DELETE FROM qr WHERE numCuenta = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$numCuenta]);
+    }
 }
