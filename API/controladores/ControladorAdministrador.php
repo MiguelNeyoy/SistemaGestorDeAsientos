@@ -48,4 +48,11 @@ class ControladorAdministrador
         $respuesta = $this->servicioAdmin->obtenerEscaneados($evento);
         echo json_encode($respuesta);
     }
+
+    public function eliminarAlumnos()
+    {
+        $input = json_decode(file_get_contents('php://input'), true) ?? [];
+        $respuesta = $this->servicioAdmin->eliminarAlumnos($input);
+        echo json_encode($respuesta);
+    }
 }
