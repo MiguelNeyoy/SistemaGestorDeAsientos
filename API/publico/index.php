@@ -41,6 +41,9 @@ $rutas = [
     '/admin/confirmaciones/reset' => [
         'POST' => ['ControladorAdministrador', 'resetearConfirmaciones']
     ],
+    '/admin/alumnos/exportar-pdf/{evento}' => [
+        'GET' => ['ControladorAdministrador', 'exportarEscaneados']
+    ],
     // Cambio: Para validar, usamos POST para no enviar datos sensibles y retornamos JWT
     '/alumnos/validar' => [
         'POST' => ['ControladorAlumno', 'validarAlumno']
@@ -110,7 +113,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento', '/asientos/mapa/{evento}', '/alumnos/qr'];
-            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/admin/confirmaciones/reset', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar', '/admin/qr/marcar', '/admin/qr/reset-evento'];
+            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/admin/confirmaciones/reset', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar', '/admin/qr/marcar', '/admin/qr/reset-evento', '/admin/alumnos/exportar-pdf/{evento}'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;

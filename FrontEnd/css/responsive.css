@@ -107,19 +107,59 @@ body::before{
 
 .header-bottom{
 
+    position:relative;
+
     background:#005baa;
 
     color:white;
 
     text-align:center;
 
-    padding:10px;
+    padding:10px 20px;
 
     font-size:clamp(10px, 2vw, 20px);
 
     letter-spacing:clamp(2px, 1vw, 10px);
 
     word-break:break-word;
+}
+
+/* BOTÓN CERRAR SESIÓN EN FRANJA */
+
+.logout-header-btn{
+
+    position:absolute;
+
+    right:20px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:clamp(11px, 1.2vw, 14px);
+
+    letter-spacing:normal;
+
+    padding:4px 12px;
+
+    border:1px solid rgba(255,255,255,0.5);
+
+    border-radius:6px;
+
+    transition:0.2s;
+
+    white-space:nowrap;
+}
+
+.logout-header-btn:hover{
+
+    background:rgba(255,255,255,0.15);
+
+    color:white;
 }
 
 /* =========================
@@ -283,6 +323,12 @@ body::before{
     font-size:16px;
 
     padding:15px 20px;
+
+    max-width:600px;
+
+    margin-left:auto;
+
+    margin-right:auto;
 }
 
 /* =========================

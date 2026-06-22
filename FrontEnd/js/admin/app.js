@@ -7,6 +7,7 @@ import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
 import { resetQrEvento, resetearConfirmaciones } from './modules/api.js';
+import { exportarPdf } from './modules/pdf_export.js?v=1';
 import { toast } from '../core/toast.js';
 
 /**
@@ -144,8 +145,25 @@ function setupNavigation() {
                 }
             } catch (error) {
                 console.error(error);
-                toast.error('Error al comunicarse con el servidor.');
+                toast.error('Error al resetear confirmaciones.');
             }
+        };
+    }
+
+    // PDF Export
+    const btnExportLi = document.getElementById('btnExportarPdfLi');
+    const btnExportLisi = document.getElementById('btnExportarPdfLisi');
+
+    if (btnExportLi) {
+        btnExportLi.onclick = (e) => {
+            e.preventDefault();
+            exportarPdf('li', 'LI (Informática)');
+        };
+    }
+    if (btnExportLisi) {
+        btnExportLisi.onclick = (e) => {
+            e.preventDefault();
+            exportarPdf('lisi', 'LISI (Sistemas)');
         };
     }
 

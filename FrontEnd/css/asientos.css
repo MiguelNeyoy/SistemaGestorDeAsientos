@@ -94,8 +94,12 @@ header {
 /* ========================= */
 
 .asiento.disponible {
-  background-color: #5c5c5c; /* gris más opaco */
-  opacity: 0.45;
+  background-color: rgba(114, 113, 113, 0.75) ; /* gris 75% opacidad */
+}
+
+.asiento.ocupado {
+  background-color: rgba(114, 113, 113, 0.75); /* gris 75% opacidad */
+  color: white;
 }
 
 .mi-asiento {
@@ -109,6 +113,20 @@ header {
   background-color: #5c5c5c; /* gris fuerte */
   color: white;
 }
+
+.asiento.confirmado {
+  background-color: #727171 !important; /* gris sin opacidad */
+  color: white;
+}
+
+.asiento.escaneado {
+  background-color: #111167 !important; /* azul */
+  color: white;
+}
+
+/* (Se mantienen por compatibilidad si los usas en otro lado) */
+.libre { background-color: #454645; }
+.no-disponible { background-color: #eb0e0e;  }
 
 /* ZONA SUPERIOR */
 .zona-superior {

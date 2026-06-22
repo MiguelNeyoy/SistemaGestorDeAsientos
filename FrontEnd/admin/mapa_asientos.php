@@ -54,26 +54,7 @@ if ($data && $data['success'] && isset($data['data']['asientos'])) {
   <span class="d-md-none">Arrastra para mover. Usa dos dedos para zoom.</span>
 </div>
 
-<aside class="bg-dark bg-opacity-75 py-2 border-bottom border-secondary">
-  <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0" style="font-size: 0.9rem;">
-    <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Disponible</span>
-    </li>
-    <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Ocupado (Pre-asignado)</span>
-    </li>
-    <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #4CAF50; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Confirmado</span>
-    </li>
-    <li class="d-flex align-items-center gap-2">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #1565c0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Escaneado / Presente</span>
-    </li>
-  </ul>
-</aside>
+
 
 <div class="contenedor-scroll">
   <div class="mapa-envoltura">

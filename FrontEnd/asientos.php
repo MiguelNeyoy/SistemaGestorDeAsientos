@@ -97,16 +97,42 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
   </div>
 </div>
 
-<script>
-  window.__SEAT_DATA__ = {
-    tipoUsuario: "alumno",
-    miAsiento: "<?php echo $miAsiento; ?>",
-    asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
-    asientosOcupados: [],
-    asientosConfirmados: [],
-    asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
-  };
-</script>
+        <span class="navbar-brand fw-bold text-white">
+          Mapa de Asientos
+        </span>
+
+        <?php if ($tipoUsuario === 'admin'): ?>
+          <!-- SELECT EVENTO (solo visible para admin) -->
+          <div class="d-flex align-items-center">
+            <select id="selectEvento" class="form-select form-select-sm" style="width: 150px; margin-right:10px;">
+              <option value="li" <?= $evento === 'li' ? 'selected' : '' ?>>Evento 1</option>
+              <option value="lisi" <?= $evento === 'lisi' ? 'selected' : '' ?>>Evento 2</option>
+            </select>
+            <span id="eventoDescripcion" class="text-white fw-bold"></span>
+          </div>
+        <?php endif; ?>
+
+    <!-- CONTENEDOR -->
+    <div class="contenedor-scroll">
+      <div class="mapa-envoltura">
+        <div class="cabina">Cabina</div>
+        <div class="zona-superior"></div>
+        <div class="teatro"></div>
+        <div class="mesa">Escenario</div>
+      </div>
+    </div>
+
+    <!-- PASAR DATOS A JS -->
+    <script>
+      window.__SEAT_DATA__ = {
+        tipoUsuario: "<?php echo $tipoUsuario; ?>",
+        miAsiento: "<?php echo $miAsiento; ?>",
+        asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
+        asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
+        asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
+        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
+      };
+    </script>
 
     <script type="module" src="js/asientos.js?v=<?= filemtime(__DIR__ . '/js/asientos.js') ?>"></script>
 

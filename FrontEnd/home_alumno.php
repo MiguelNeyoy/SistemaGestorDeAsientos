@@ -46,7 +46,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
     <title>Home Alumno</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/responsive.css?v=<?= filemtime(__DIR__ . '/css/responsive.css') ?>">
 
 
 
@@ -79,7 +79,9 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
 
     <div class="header-bottom">
 
-        UNIVERSIDAD AUTÓNOMA DE SINALOA
+        <span>UNIVERSIDAD AUTÓNOMA DE SINALOA</span>
+
+        <a href="index?logout=1" class="logout-header-btn">Cerrar Sesión</a>
 
     </div>
 
@@ -109,7 +111,7 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
 
             </a>
 
-            <a href="index" class="logout-btn">
+            <a href="index?logout=1" class="logout-btn">
 
                 Cerrar Sesión
 

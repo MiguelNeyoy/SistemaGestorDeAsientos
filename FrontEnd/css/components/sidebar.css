@@ -144,3 +144,90 @@
     opacity: 1;
     overflow: hidden;
 }
+
+/* Custom Sidebar Item Divider */
+.admin-sidebar__item--divider {
+    margin-top: 10px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+/* Info link class for PDF export */
+.admin-sidebar__link--info {
+    color: #2196F3 !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-sidebar__link--info:hover {
+    background-color: rgba(33, 150, 243, 0.1) !important;
+    color: #44a8ff !important;
+}
+
+.admin-sidebar__link--info span {
+    font-weight: 500;
+}
+
+/* Warning and Danger link classes */
+.admin-sidebar__link--warning-custom {
+    color: #ff9800 !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-sidebar__link--warning-custom:hover {
+    background-color: rgba(255, 152, 0, 0.1) !important;
+    color: #ffb74d !important;
+}
+
+.admin-sidebar__link--warning-custom span {
+    font-weight: 500;
+}
+
+.admin-sidebar__link--danger-custom {
+    color: #f44336 !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-sidebar__link--danger-custom:hover {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+    color: #ff7961 !important;
+}
+
+.admin-sidebar__link--danger-custom span {
+    font-weight: 500;
+}
+
+/* Icons for custom sidebar links */
+.admin-icon--pdf {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232196F3'><path d='M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V8H10c.83 0 1.5.67 1.5 1.5zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V8h2.5c.83 0 1.5.67 1.5 1.5v2zm4-3.5h-3v1.5h2.5V11H18v2h-1.5V8h4v1.5zm-9 1H10v-1H9v1h1v1zm4.5 1.5v-2h-1v2h1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z'/></svg>") !important;
+    filter: none !important;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+.admin-icon--warning-custom {
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>') no-repeat center;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>') no-repeat center;
+    background-color: #ff9800;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    filter: none !important;
+}
+
+.admin-icon--danger-custom {
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>') no-repeat center;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>') no-repeat center;
+    background-color: #f44336;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    filter: none !important;
+}
+
