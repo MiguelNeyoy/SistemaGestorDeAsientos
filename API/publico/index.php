@@ -41,12 +41,9 @@ $rutas = [
     '/admin/confirmaciones/reset' => [
         'POST' => ['ControladorAdministrador', 'resetearConfirmaciones']
     ],
-<<<<<<< HEAD
-=======
     '/admin/alumnos/exportar-pdf/{evento}' => [
         'GET' => ['ControladorAdministrador', 'exportarEscaneados']
     ],
->>>>>>> cc2f24262af243a4a4b412cfebef6cf9bebfb3ab
     // Cambio: Para validar, usamos POST para no enviar datos sensibles y retornamos JWT
     '/alumnos/validar' => [
         'POST' => ['ControladorAlumno', 'validarAlumno']
