@@ -79,7 +79,7 @@ export function renderTable() {
     if (filtered.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="7" class="admin-table__loading">
+                <td colspan="9" class="admin-table__loading">
                     <div class="admin-table__loading-content">
                         <span class="admin-text-muted">No se encontraron alumnos con los criterios seleccionados.</span>
                     </div>

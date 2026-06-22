@@ -38,7 +38,7 @@
                 </thead>
                 <tbody id="alumnosTableBody">
                     <tr>
-                        <td colspan="7" class="admin-table__loading">
+                        <td colspan="9" class="admin-table__loading">
                             <div class="admin-loader"></div>
                             <span>Cargando directorio...</span>
                         </td>
