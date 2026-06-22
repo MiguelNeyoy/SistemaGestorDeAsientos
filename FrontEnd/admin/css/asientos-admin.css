@@ -1,5 +1,5 @@
 .asiento.ocupado {
-  background-color: #111167;
+  background-color: #5c5c5c;
   color: white;
 }
 
@@ -9,12 +9,12 @@
 }
 
 .asiento.escaneado {
-  background-color: #1565c0;
+  background-color: #111167;
   color: white;
 }
 
 .asiento.disponible {
   background-color: #5c5c5c;
-  opacity: 0.85;
+  opacity: 0.48;
   color: white;
 }
