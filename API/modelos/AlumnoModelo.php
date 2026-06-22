@@ -12,6 +12,11 @@ class AlumnoModel
         $this->db = Conexion::Conectar();
     }
 
+    public function getDb()
+    {
+        return $this->db;
+    }
+
     public function obtenerAlumnos()
     {
         $sql = 'SELECT a.*, asi.estado as asistencia_estado,

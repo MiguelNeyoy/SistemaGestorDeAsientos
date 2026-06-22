@@ -207,17 +207,23 @@ class ServicioAdministrador
 
         foreach ($alumnos as $numCuenta) {
             try {
+                $db = $this->modeloAlumno->getDb();
+                $db->beginTransaction();
+
                 $this->modeloAsiento->liberarAsientoPorAlumno($numCuenta);
                 $this->modeloAlumno->eliminarAsistencia($numCuenta);
                 $this->modeloAlumno->eliminarQr($numCuenta);
                 $resultado = $this->modeloAlumno->eliminarAlumno($numCuenta);
 
                 if ($resultado) {
+                    $db->commit();
                     $eliminados[] = $numCuenta;
                 } else {
+                    $db->rollBack();
                     $errores[] = ['numCuenta' => $numCuenta, 'error' => 'Alumno no encontrado'];
                 }
             } catch (Exception $e) {
+                $db?->rollBack();
                 $errores[] = ['numCuenta' => $numCuenta, 'error' => $e->getMessage()];
             }
         }
