@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 require_once __DIR__ . '/../modelos/AdministradorModelo.php';
+require_once __DIR__ . '/../modelos/ModeloAsiento.php';
 
 use Firebase\JWT\JWT;
 
@@ -9,11 +10,13 @@ class ServicioAdministrador
 {
     private $modeloAlumno;
     private $modeloAdmin;
+    private $modeloAsiento;
 
     public function __construct()
     {
         $this->modeloAlumno = new AlumnoModel();
         $this->modeloAdmin = new AdministradorModelo();
+        $this->modeloAsiento = new ModeloAsiento();
     }
 
     public function loginAdmin($data)
@@ -190,6 +193,49 @@ class ServicioAdministrador
         } catch (\Exception $e) {
             return $this->respuesta(false, "Error al obtener escaneados: " . $e->getMessage(), 500);
         }
+    }
+
+    public function eliminarAlumnos($data)
+    {
+        if (empty($data['alumnos']) || !is_array($data['alumnos'])) {
+            return $this->respuesta(false, "Debe proporcionar un array de números de cuenta", 400);
+        }
+
+        $alumnos = $data['alumnos'];
+        $eliminados = [];
+        $errores = [];
+
+        foreach ($alumnos as $numCuenta) {
+            try {
+                $this->modeloAsiento->liberarAsientoPorAlumno($numCuenta);
+                $this->modeloAlumno->eliminarAsistencia($numCuenta);
+                $this->modeloAlumno->eliminarQr($numCuenta);
+                $resultado = $this->modeloAlumno->eliminarAlumno($numCuenta);
+
+                if ($resultado) {
+                    $eliminados[] = $numCuenta;
+                } else {
+                    $errores[] = ['numCuenta' => $numCuenta, 'error' => 'Alumno no encontrado'];
+                }
+            } catch (Exception $e) {
+                $errores[] = ['numCuenta' => $numCuenta, 'error' => $e->getMessage()];
+            }
+        }
+
+        if (count($eliminados) > 0) {
+            $msg = count($errores) > 0
+                ? "Se eliminaron " . count($eliminados) . " de " . count($alumnos) . " alumno(s)"
+                : "Se eliminaron " . count($eliminados) . " alumno(s) permanentemente";
+            return $this->respuesta(true, $msg, 200, [
+                'eliminados' => $eliminados,
+                'errores' => $errores
+            ]);
+        }
+
+        return $this->respuesta(false, "No se pudo eliminar ningún alumno", 400, [
+            'eliminados' => $eliminados,
+            'errores' => $errores
+        ]);
     }
 
     private function respuesta($success, $message, $code, $data = null)
