@@ -1,0 +1,55 @@
+/* Seating map styles */
+
+.contenedor-scroll {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.mapa-envoltura {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    transform-origin: top center;
+}
+
+.zona-superior, .teatro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fila {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.seccion {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.asiento {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.asiento.disponible { background-color: rgba(114, 113, 113, 0.75); color: #64748B; }
+.asiento.ocupado { background-color: rgba(114, 113, 113, 0.75); color: white; cursor: not-allowed; }
+.asiento.mi-asiento { background-color: var(--color-accent); color: var(--color-navy); }
+.asiento.grupo { background-color: var(--color-info); color: white; }
+.asiento.hueco { visibility: hidden; }
+
+.asiento:hover:not(.ocupado, .hueco) {
+    transform: scale(1.1);
+}
