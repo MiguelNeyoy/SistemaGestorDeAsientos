@@ -90,6 +90,14 @@ export async function resetearConfirmaciones() {
     return await response.json();
 }
 
+export async function eliminarAlumnos(alumnos) {
+    const response = await coreFetch('/admin/alumnos/eliminar', {
+        method: 'POST',
+        body: JSON.stringify({ alumnos })
+    });
+    return await response.json();
+}
+
 export async function fetchEscaneados(evento) {
     const response = await coreFetch(`/admin/alumnos/exportar-pdf/${evento}`);
     return await response.json();
