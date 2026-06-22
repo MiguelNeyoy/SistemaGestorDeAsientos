@@ -46,6 +46,14 @@ if (!isset($error)) {
     } else {
         $qrToken = $qrData['data']['token'];
         $alumno = $estadoAlumno['data'];
+        
+        // Consultar el asiento asignado del alumno
+        $asientoResp = apiRequest($BASE_API_URL . "/asientos/misAsiento", $token);
+        if ($asientoResp && $asientoResp['success']) {
+            $alumno['asiento'] = $asientoResp['data']['letra'] . $asientoResp['data']['numero'];
+        } else {
+            $alumno['asiento'] = 'Sin asignar';
+        }
     }
 }
 ?>
@@ -87,7 +95,7 @@ if (!isset($error)) {
           <?php echo htmlspecialchars($error); ?>
         </div>
         <?php if (strpos($error, "asistencia") !== false): ?>
-          <a href="view_confirmacion.php" class="btn btn-primary mt-3">Ir a Confirmación</a>
+          <a href="asientos.php" class="btn btn-primary mt-3">Mira tu asiento </a>
         <?php endif; ?>
       <?php else: ?>
         <div id="qrcode" class="d-flex justify-content-center my-4"></div>

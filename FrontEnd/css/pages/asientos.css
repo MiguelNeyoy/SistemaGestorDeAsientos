@@ -44,8 +44,8 @@
     transition: var(--transition-fast);
 }
 
-.asiento.disponible { background-color: #E2E8F0; color: #64748B; }
-.asiento.ocupado { background-color: var(--color-error); color: white; cursor: not-allowed; }
+.asiento.disponible { background-color: rgba(114, 113, 113, 0.75); color: #64748B; }
+.asiento.ocupado { background-color: rgba(114, 113, 113, 0.75); color: white; cursor: not-allowed; }
 .asiento.mi-asiento { background-color: var(--color-accent); color: var(--color-navy); }
 .asiento.grupo { background-color: var(--color-info); color: white; }
 .asiento.hueco { visibility: hidden; }

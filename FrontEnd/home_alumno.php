@@ -9,9 +9,11 @@ if (!isset($_SESSION['jwt_token'])) {
 
 $token = $_SESSION['jwt_token'];
 
-// Consultar estado del alumno
+// CONSULTAR ESTADO DEL ALUMNO
 $apiEstado = $BASE_API_URL . "/alumnos/estado";
+
 $ch = curl_init();
+
 curl_setopt_array($ch, [
     CURLOPT_URL => $apiEstado,
     CURLOPT_RETURNTRANSFER => true,
@@ -20,94 +22,243 @@ curl_setopt_array($ch, [
     ],
     CURLOPT_SSL_VERIFYPEER => false
 ]);
+
 $responseEstado = curl_exec($ch);
+
 curl_close($ch);
 
 $dataEstado = json_decode($responseEstado, true);
+
 $alumno = $dataEstado['data'] ?? null;
+
 $estado = $alumno['asistencia'] ?? "Pendiente";
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Home Alumno</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: url('img/logo.png') no-repeat center center fixed;
-      background-size: cover; /* La imagen se ajusta a toda la pantalla */
-    }
-    .card {
-      background-color: rgba(255,255,255,0.9); /* Fondo blanco semitransparente para legibilidad */
-    }
-    @media (max-width: 768px) {
-      body {
-        background: url('img/logo.png') no-repeat center top;
-        background-size: contain; /* En móviles muestra la imagen completa */
-      }
-    }
-  </style>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Home Alumno</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/responsive.css">
+
+
+
 </head>
-<body>
 
-<nav class="navbar navbar-dark shadow-sm sticky-top" style="background-color: #0B3C5D;">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-    <span class="navbar-brand fw-bold text-white">Facultad de Informática</span>
-    <span class="text-white">Bienvenido, <?php echo htmlspecialchars($alumno['nombre'] ?? 'Alumno'); ?></span>
-  </div>
-</nav>
+<body style="background-image: url('img/logoFondo.webp');>
 
-<div class="container mt-4">
-  <!-- Estado de asistencia -->
-  <?php if ($estado === "Si"): ?>
-    <div class="alert alert-success text-center">
-      ✅ Tu asistencia ha sido confirmada.
-    </div>
-  <?php elseif ($estado === "No"): ?>
-    <div class="alert alert-danger text-center">
-      ❌ Indicaste que no asistirás a la ceremonia.
-    </div>
-  <?php else: ?>
-    <div class="alert alert-warning text-center">
-      Tu asistencia aún está pendiente.
-    </div>
-  <?php endif; ?>
+    <!-- HEADER -->
 
-  <!-- Opciones en cards -->
-  <div class="row mt-4">
-    <div class="col-md-6 mb-3">
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">Código QR</h5>
-          <p class="card-text">Accede a tu código QR personal para el evento.</p>
-          <a href="view_qr.php" class="btn btn-primary">Ver QR</a>
+    <div class="header-container">
+
+        <!-- TEXTO -->
+
+        <div class="header-text">
+
+            <h1>
+                Registro de Asistencia a Ceremonia de Graduación
+            </h1>
+
+
+
         </div>
-      </div>
+
+
+
+
     </div>
 
-    <div class="col-md-6 mb-3">
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">Mapa de Asientos</h5>
-          <p class="card-text">Consulta tu asiento asignado y el mapa completo.</p>
-          <a href="asientos" class="btn btn-secondary">Ver Asientos</a>
-        </div>
-      </div>
+    <!-- FRANJA -->
+
+    <div class="header-bottom">
+
+        <span>UNIVERSIDAD AUTÓNOMA DE SINALOA</span>
+
+        <a href="index?logout=1" class="logout-header-btn">Cerrar Sesión</a>
+
     </div>
 
-    <div class="col-md-6 mb-3">
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">Cerrar Sesión</h5>
-          <p class="card-text">Salir de tu cuenta de manera segura.</p>
-          <a href="index" class="btn btn-outline-danger">Cerrar Sesión</a>
+    <!-- BOTÓN HAMBURGUESA -->
+
+    <button class="menu-toggle" id="menuToggle">
+
+        ☰
+
+    </button>
+
+    <!-- NAVBAR / MENÚ -->
+
+    <div class="navbar-custom" id="mobileMenu">
+
+        <div class="mobile-links">
+
+            <a href="view_qr" class="mobile-link">
+
+                Código QR
+
+            </a>
+
+            <a href="asientos" class="mobile-link">
+
+                Mapa de Asientos
+
+            </a>
+
+            <a href="index?logout=1" class="logout-btn">
+
+                Cerrar Sesión
+
+            </a>
+
         </div>
-      </div>
+
     </div>
-  </div>
-</div>
+
+    <!-- CONTENIDO -->
+
+    <div class="main-container">
+
+        <!-- ALERTAS -->
+
+        <div class="alerts-container">
+
+            <!-- BIENVENIDA -->
+
+            <div class="alert alert-primary text-center shadow-sm custom-alert fade-alert">
+
+                Bienvenido,
+
+                <strong>
+                    <?php echo htmlspecialchars($alumno['nombre'] ?? 'Alumno'); ?>
+                </strong>
+
+            </div>
+
+            <!-- ESTADO -->
+
+            <?php if ($estado === "Si"): ?>
+
+                <div class="alert alert-success text-center shadow-sm custom-alert fade-alert delay-1">
+
+                    Tu asistencia ha sido confirmada.
+
+                </div>
+
+            <?php elseif ($estado === "No"): ?>
+
+                <div class="alert alert-danger text-center shadow-sm custom-alert fade-alert delay-1">
+
+                    Indicaste que no asistirás a la ceremonia.
+
+                </div>
+
+            <?php else: ?>
+
+                <div class="alert alert-warning text-center shadow-sm custom-alert fade-alert delay-1">
+
+                    Tu asistencia aún está pendiente.
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+        <!-- CARDS SOLO DESKTOP -->
+
+        <div class="row-cards desktop-cards">
+
+            <!-- QR -->
+
+            <div class="col-responsive">
+
+                <div class="card option-card h-100">
+
+                    <div class="card-header-custom"></div>
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+
+                            Código QR
+
+                        </h5>
+
+                        <p class="card-text">
+
+                            Accede a tu código QR personal para el evento.
+
+                        </p>
+
+                        <a href="view_qr" class="btn btn-primary btn-custom">
+
+                            Ver QR
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ASIENTOS -->
+
+            <div class="col-responsive">
+
+                <div class="card option-card h-100">
+
+                    <div class="card-header-custom"></div>
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+
+                            Mapa de Asientos
+
+                        </h5>
+
+                        <p class="card-text">
+
+                            Consulta tu asiento asignado y el mapa completo.
+
+                        </p>
+
+                        <a href="asientos" class="btn btn-secondary btn-custom">
+
+                            Ver Asientos
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        menuToggle.addEventListener("click", () => {
+
+            mobileMenu.classList.toggle("active");
+
+        });
+    </script>
 
 </body>
+
 </html>

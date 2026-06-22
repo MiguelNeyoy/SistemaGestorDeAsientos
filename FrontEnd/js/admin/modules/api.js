@@ -50,6 +50,14 @@ export async function validarQR(token) {
     return await response.json();
 }
 
+export async function marcarQR(token) {
+    const response = await coreFetch('/admin/qr/marcar', {
+        method: 'POST',
+        body: JSON.stringify({ token })
+    });
+    return await response.json();
+}
+
 /**
  * Seats Management
  */
@@ -64,5 +72,25 @@ export async function enviarCorreoIndividual(numCuenta) {
         method: 'POST',
         body: JSON.stringify({ numCuenta })
     });
+    return await response.json();
+}
+
+export async function resetQrEvento(evento) {
+    const response = await coreFetch('/admin/qr/reset-evento', {
+        method: 'POST',
+        body: JSON.stringify({ evento })
+    });
+    return await response.json();
+}
+
+export async function resetearConfirmaciones() {
+    const response = await coreFetch('/admin/confirmaciones/reset', {
+        method: 'POST'
+    });
+    return await response.json();
+}
+
+export async function fetchEscaneados(evento) {
+    const response = await coreFetch(`/admin/alumnos/exportar-pdf/${evento}`);
     return await response.json();
 }

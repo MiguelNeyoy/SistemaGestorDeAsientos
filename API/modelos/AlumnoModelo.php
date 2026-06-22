@@ -113,4 +113,56 @@ class AlumnoModel
         $stmt->execute([$carrera, $turno]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function resetearConfirmaciones()
+    {
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Eliminar todos los registros de asistencia
+            $this->db->exec('DELETE FROM asistencia');
+
+            // 2. Resetear cantidad de invitados
+            $this->db->exec('UPDATE alumno SET cantInvitado = 0');
+
+            $this->db->exec('UPDATE alumno SET email = 0');
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Obtiene los alumnos que ya escanearon su QR y tienen asiento asignado en el evento.
+     * Ordenados por turno (Matutino primero) y luego alfabéticamente por apellido.
+     *
+     * @param string $evento 'li' o 'lisi'
+     * @return array Lista de alumnos escaneados
+     */
+    public function obtenerEscaneadosPorEvento($evento)
+    {
+        $tablasPermitidas = ['li' => 'asiento_evento_li', 'lisi' => 'asiento_evento_lisi'];
+        if (!isset($tablasPermitidas[$evento])) {
+            throw new \InvalidArgumentException("Evento no válido: " . $evento);
+        }
+        $tabla = $tablasPermitidas[$evento];
+
+        $sql = "SELECT a.numCuenta, a.nombre, a.apellido, a.carrera, a.turno,
+                       ae.letra, ae.numero
+                FROM alumno a
+                INNER JOIN qr q ON a.numCuenta = q.numCuenta
+                INNER JOIN {$tabla} ae ON a.numCuenta = ae.numCuenta
+                WHERE q.escaneado = 1
+                ORDER BY
+                    CASE WHEN UPPER(a.turno) IN ('M', '1') THEN 0 ELSE 1 END ASC,
+                    a.apellido ASC,
+                    a.nombre ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

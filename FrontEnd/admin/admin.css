@@ -22,8 +22,7 @@
 /* Layouts */
 @import '../css/layouts/admin-layout.css';
 
-/* Pages */
-@import '../css/pages/admin.css';
+/* Pages - loaded via <link> in view_admin.php for reliability */
 
 /* Responsive */
 @import '../css/responsive/admin-responsive.css';

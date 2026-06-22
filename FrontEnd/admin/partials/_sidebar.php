@@ -1,6 +1,8 @@
 <aside class="admin-sidebar">
     <div class="admin-sidebar__header">
-        <img src="../img/logo-vector-uas.webp" alt="UAS Logo" class="admin-sidebar__logo">
+        <a href="javascript:void(0)" id="link-logo-dashboard" style="display: block; width: 100%; text-align: center;">
+            <img src="../img/convision.png" alt="Convision Logo" class="admin-sidebar__logo" style="max-height: 50px; object-fit: contain;">
+        </a>
     </div>
     <nav class="admin-sidebar__nav">
         <div class="admin-sidebar__section-title">Navegación</div>
@@ -35,6 +37,37 @@
                     <a href="javascript:void(0)" class="admin-sidebar__link" id="link-filter-lisi" data-filter="LISI">
                         <span class="admin-icon admin-icon--chair"></span>
                         <span>LISI (Sistemas)</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item admin-sidebar__item--divider">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning-custom" id="btnResetQrLi">
+                        <span class="admin-icon admin-icon--warning-custom"></span>
+                        <span>Restablecer QRs LI</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning-custom" id="btnResetQrLisi">
+                        <span class="admin-icon admin-icon--warning-custom"></span>
+                        <span>Restablecer QRs LISI</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item mt-1">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--danger-custom" id="btnResetConfirmaciones">
+                        <span class="admin-icon admin-icon--danger-custom"></span>
+                        <span>Resetear Confirmaciones</span>
+                    </a>
+                </li>
+                <!-- Exportar PDF -->
+                <li class="admin-sidebar__item admin-sidebar__item--divider">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnExportarPdfLi">
+                        <span class="admin-icon admin-icon--pdf"></span>
+                        <span>Exportar PDF LI</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnExportarPdfLisi">
+                        <span class="admin-icon admin-icon--pdf"></span>
+                        <span>Exportar PDF LISI</span>
                     </a>
                 </li>
             </ul>

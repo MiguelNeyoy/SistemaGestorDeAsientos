@@ -29,10 +29,10 @@
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-primary btn-lg py-3 fw-bold" id="btnQrConfirmar">
+                    <button type="button" class="btn btn-primary btn-lg py-3 fw-bold" id="btnQrConfirmar" onclick="confirmarLlegada()">
                         <i class="bi bi-check-circle-fill me-2"></i>Confirmar Llegada
                     </button>
-                    <button type="button" class="btn btn-outline-secondary" id="btnQrRescan">
+                    <button type="button" class="btn btn-outline-secondary" id="btnQrRescan" onclick="reescanearQR()">
                         <i class="bi bi-arrow-repeat me-1"></i>Volver a Escanear
                     </button>
                 </div>

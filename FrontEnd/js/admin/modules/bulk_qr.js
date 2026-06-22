@@ -38,18 +38,20 @@ function renderBulkButton(grupo, estado) {
                     <span class="admin-icon admin-icon--scan admin-icon--white"></span>
                     Habilitar QRs ${grupo}
                 </button>
-            ` : ''}
-            <button class="admin-btn admin-btn--outline" id="btnDisableGroupQR">
-                <span class="admin-icon admin-icon--student-disable"></span>
-                Deshabilitar QRs ${grupo}
-            </button>
+            ` : `
+                <button class="admin-btn admin-btn--outline" id="btnDisableGroupQR">
+                    <span class="admin-icon admin-icon--student-disable"></span>
+                    Deshabilitar QRs ${grupo}
+                </button>
+            `}
         </div>
     `;
 
     if (!qrHabilitado) {
         document.getElementById('btnEnableGroupQR').onclick = () => handleBulkAction(grupo, 'habilitar');
+    } else {
+        document.getElementById('btnDisableGroupQR').onclick = () => handleBulkAction(grupo, 'deshabilitar');
     }
-    document.getElementById('btnDisableGroupQR').onclick = () => handleBulkAction(grupo, 'deshabilitar');
 }
 
 async function handleBulkAction(grupo, accion) {
