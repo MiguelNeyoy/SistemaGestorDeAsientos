@@ -27,14 +27,18 @@ export async function exportarPdf(evento, label) {
         // 3. Construir el HTML del reporte y pasarlo como string
         const html = construirHtml(tituloEvento, total, matutino, vespertino);
 
-        // 4. Generar PDF con html2pdf.js desde string (crea su propio iframe interno)
+        // 4. Generar PDF con html2pdf.js desde un elemento temporal
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        document.body.appendChild(container);
         await window.html2pdf().set({
             margin:       [10, 10, 10, 10],
             filename:     `Lista_Asistencia_${evento.toUpperCase()}.pdf`,
             image:        { type: 'jpeg', quality: 0.95 },
             html2canvas:  { scale: 2, useCORS: true, logging: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(html, 'string').save();
+        }).from(container).save();
+        container.remove();
 
         toast.success('PDF descargado correctamente.');
 
