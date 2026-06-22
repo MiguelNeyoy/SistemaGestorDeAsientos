@@ -27,5 +27,8 @@
             <span class="admin-icon admin-icon--add admin-icon--white"></span>
             <span class="d-none d-md-inline">Agregar Alumno</span>
         </button>
+        <button class="admin-btn admin-btn--danger" id="btnEliminarAlumnos" disabled>
+            <span class="d-none d-md-inline">Eliminar (<span id="selectedCount">0</span>)</span>
+        </button>
     </div>
 </header>

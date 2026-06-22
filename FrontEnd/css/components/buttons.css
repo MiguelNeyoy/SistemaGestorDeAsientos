@@ -53,6 +53,11 @@
     transform: translateY(0);
 }
 
+.admin-btn--danger {
+    background-color: #dc3545;
+    color: var(--color-white);
+}
+
 .admin-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;

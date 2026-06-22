@@ -79,7 +79,7 @@ export function renderTable() {
     if (filtered.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="admin-table__loading">
+                <td colspan="7" class="admin-table__loading">
                     <div class="admin-table__loading-content">
                         <span class="admin-text-muted">No se encontraron alumnos con los criterios seleccionados.</span>
                     </div>
@@ -97,6 +97,9 @@ export function renderTable() {
 
         return `
             <tr>
+                <td>
+                    <input type="checkbox" class="alumno-checkbox" data-numcuenta="${alumno.numCuenta}">
+                </td>
                 <td class="fw-bold">${alumno.numCuenta}</td>
                 <td class="text-uppercase">${alumno.apellido} ${alumno.nombre}</td>
                 <td><span class="admin-badge admin-badge--outline">${grupo}</span></td>
