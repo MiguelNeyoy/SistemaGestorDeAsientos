@@ -134,4 +134,35 @@ class AlumnoModel
             throw $e;
         }
     }
+
+    /**
+     * Obtiene los alumnos que ya escanearon su QR y tienen asiento asignado en el evento.
+     * Ordenados por turno (Matutino primero) y luego alfabéticamente por apellido.
+     *
+     * @param string $evento 'li' o 'lisi'
+     * @return array Lista de alumnos escaneados
+     */
+    public function obtenerEscaneadosPorEvento($evento)
+    {
+        $tablasPermitidas = ['li' => 'asiento_evento_li', 'lisi' => 'asiento_evento_lisi'];
+        if (!isset($tablasPermitidas[$evento])) {
+            throw new \InvalidArgumentException("Evento no válido: " . $evento);
+        }
+        $tabla = $tablasPermitidas[$evento];
+
+        $sql = "SELECT a.numCuenta, a.nombre, a.apellido, a.carrera, a.turno,
+                       ae.letra, ae.numero
+                FROM alumno a
+                INNER JOIN qr q ON a.numCuenta = q.numCuenta
+                INNER JOIN {$tabla} ae ON a.numCuenta = ae.numCuenta
+                WHERE q.escaneado = 1
+                ORDER BY
+                    CASE WHEN UPPER(a.turno) IN ('M', '1') THEN 0 ELSE 1 END ASC,
+                    a.apellido ASC,
+                    a.nombre ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

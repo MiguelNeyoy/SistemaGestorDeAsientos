@@ -42,4 +42,10 @@ class ControladorAdministrador
         $respuesta = $this->servicioAdmin->resetearConfirmaciones();
         echo json_encode($respuesta);
     }
+
+    public function exportarEscaneados($evento)
+    {
+        $respuesta = $this->servicioAdmin->obtenerEscaneados($evento);
+        echo json_encode($respuesta);
+    }
 }

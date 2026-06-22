@@ -175,10 +175,6 @@ if (isset($_POST['buscar'])) {
                 Ceremonia de Graduación 2026
             </h1>
 
-            <h3 class="sistema">
-                Sistema Gestor de Confirmación y Asistencia
-            </h3>
-
         </div>
 
         <img src="img/convision.png" alt="Vision" class="icon">
@@ -226,8 +222,6 @@ if (isset($_POST['buscar'])) {
 
             Ingresa tu número de cuenta
             <strong>sin incluir el guion</strong>.
-
-            <br><br>
 
             En caso de no contar con dicha información,
             deberá solicitarla en la ventanilla del
