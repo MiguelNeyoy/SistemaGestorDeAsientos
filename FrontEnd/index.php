@@ -4,6 +4,14 @@ session_start();
 // URL base de la API
 require_once "config.php";
 
+// Logout handler
+if (isset($_GET['logout'])) {
+    unset($_SESSION['jwt_token']);
+    session_destroy();
+    header("Location: index");
+    exit;
+}
+
 $error = "";
 
 if (isset($_POST['buscar'])) {
