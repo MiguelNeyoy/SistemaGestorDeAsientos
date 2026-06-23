@@ -7,7 +7,7 @@ import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
 import { initEliminar } from './modules/eliminar.js';
-import { resetQrEvento, resetearConfirmaciones } from './modules/api.js';
+import { resetQrEvento, resetearConfirmaciones, limpiarAsignaciones, ejecutarAsignacion, estadoAsignacion, publicarResultados } from './modules/api.js';
 import { exportarPdf } from './modules/pdf_export.js?v=1';
 import { toast } from '../core/toast.js';
 
@@ -152,6 +152,129 @@ function setupNavigation() {
         };
     }
 
+    // === Dynamic Assignment Handlers ===
+    const btnLimpiar = document.getElementById('btnLimpiarAsignaciones');
+    const btnAsignar = document.getElementById('btnAsignarAsientos');
+    const switchPublicar = document.getElementById('switchPublicar');
+
+    if (btnLimpiar) {
+        btnLimpiar.onclick = async (e) => {
+            e.preventDefault();
+            if (!confirm('¿Seguro de limpiar todas las asignaciones? Los alumnos perderán su asiento.')) return;
+            try {
+                toast.info('Limpiando asignaciones...');
+                const res = await limpiarAsignaciones();
+                if (res.success) {
+                    toast.success(res.message || 'Asignaciones limpiadas');
+                    refreshData();
+                } else {
+                    toast.error(res.message || 'Error al limpiar');
+                }
+            } catch (err) {
+                toast.error('Error al comunicarse con el servidor.');
+            }
+        };
+    }
+
+    if (btnAsignar) {
+        btnAsignar.onclick = async (e) => {
+            e.preventDefault();
+            try {
+                // Step 1: Dry run
+                toast.info('Obteniendo vista previa...');
+                const preview = await ejecutarAsignacion(true);
+                if (!preview.success) {
+                    toast.error(preview.message || 'Error en vista previa');
+                    return;
+                }
+                const d = preview.data;
+                const body = document.getElementById('vistaPreviaBody');
+                if (body) {
+                    body.innerHTML = `
+                        <p>Se asignarán:</p>
+                        <ul class="list-unstyled">
+                            <li><strong>LI:</strong> ${d.li} alumnos → ${d.li} asientos</li>
+                            <li><strong>LISI:</strong> ${d.lisi} alumnos → ${d.lisi} asientos</li>
+                        </ul>
+                        ${d.sin_asiento > 0 ? `<div class="alert alert-warning mb-0">${d.sin_asiento} alumno(s) sin asiento disponible</div>` : '<p class="text-muted mb-0">Todos los alumnos tienen asiento disponible.</p>'}
+                    `;
+                }
+                const modalEl = document.getElementById('modalVistaPrevia');
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            } catch (err) {
+                toast.error('Error al obtener vista previa.');
+            }
+        };
+    }
+
+    // Confirmar asignación (button inside the vista previa modal)
+    const btnConfirmar = document.getElementById('btnConfirmarAsignacion');
+    if (btnConfirmar) {
+        btnConfirmar.onclick = async () => {
+            // Close preview modal
+            const previewModal = bootstrap.Modal.getInstance(document.getElementById('modalVistaPrevia'));
+            if (previewModal) previewModal.hide();
+
+            // Show progress modal
+            const progressModalEl = document.getElementById('modalProgreso');
+            if (!progressModalEl) return;
+            const progressModal = new bootstrap.Modal(progressModalEl);
+            progressModal.show();
+
+            const bar = document.getElementById('barraProgreso');
+            const texto = document.getElementById('progresoTexto');
+            if (bar) bar.style.width = '30%';
+            if (texto) texto.textContent = 'Asignando asientos...';
+
+            try {
+                const res = await ejecutarAsignacion(false);
+                if (res.success) {
+                    const d = res.data;
+                    if (bar) bar.style.width = '100%';
+                    if (texto) {
+                        texto.innerHTML = `<span class="text-success">✓ Asignación completada</span><br><small>LI: ${d.li} asientos | LISI: ${d.lisi} asientos</small>`;
+                    }
+                    toast.success(res.message || 'Asignación completada');
+                    refreshData();
+                } else {
+                    if (bar) bar.classList.replace('progress-bar-animated', 'bg-danger');
+                    if (texto) texto.innerHTML = `<span class="text-danger">✗ Error: ${res.message}</span>`;
+                    toast.error(res.message || 'Error en asignación');
+                }
+            } catch (err) {
+                if (texto) texto.innerHTML = '<span class="text-danger">✗ Error de conexión</span>';
+                toast.error('Error al comunicarse con el servidor.');
+            }
+
+            // Auto-close progress modal after 3s
+            setTimeout(() => {
+                const pm = bootstrap.Modal.getInstance(progressModalEl);
+                if (pm) pm.hide();
+            }, 3000);
+        };
+    }
+
+    // Switch publicar
+    if (switchPublicar) {
+        switchPublicar.onchange = async function() {
+            try {
+                const res = await publicarResultados(this.checked);
+                if (res.success) {
+                    toast.success(this.checked ? 'Resultados publicados' : 'Resultados ocultados');
+                } else {
+                    this.checked = !this.checked;
+                    toast.error(res.message || 'Error al publicar');
+                }
+            } catch (err) {
+                this.checked = !this.checked;
+                toast.error('Error de conexión');
+            }
+        };
+    }
+
     // PDF Export
     const btnExportLi = document.getElementById('btnExportarPdfLi');
     const btnExportLisi = document.getElementById('btnExportarPdfLisi');
@@ -175,6 +298,19 @@ function setupNavigation() {
             refreshData();
         };
     }
+
+    // Load initial estado for switch
+    (async function initSwitchState() {
+        try {
+            const res = await estadoAsignacion();
+            if (res.success && res.data) {
+                const sw = document.getElementById('switchPublicar');
+                if (sw) sw.checked = res.data.publicado;
+            }
+        } catch (e) {
+            // Silent fail — switch stays unchecked
+        }
+    })();
 
     // Modal Triggers
     if (btnScan) {
