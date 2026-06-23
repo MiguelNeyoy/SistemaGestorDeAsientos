@@ -5,7 +5,7 @@
 # ==========================================
 
 BASE_URL="http://localhost/SistemaGestorDeAsientos/API/publico"
-CUENTA_TEST="2219729" # Cambia esto por un número de cuenta real de tu BD para probar
+CUENTA_TEST="2219777" # Cambia esto por un número de cuenta real de tu BD para probar
 
 # Colores para la salida
 GREEN='\033[0;32m'
@@ -148,7 +148,7 @@ echo "----------------------------------------"
 # ==========================================
 # 7. Autenticar Administrador (POST)
 # ==========================================
-ADMIN_USER="One"    # Ajustar a un usuario real para pruebas
+ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
 ADMIN_PASS="123456"    # Ajustar a contraseña real
 echo -e "${YELLOW}Prueba 7: Autenticar administrador y obtener JWT...${NC}"
 HTTP_STATUS=$(curl -s -o /tmp/resp7.txt -w "%{http_code}" -X POST $BASE_URL/admin/login \
