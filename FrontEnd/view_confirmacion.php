@@ -280,6 +280,26 @@ if (isset($_POST['actualizar_correo'])) {
                         <?php echo htmlspecialchars($errorApi); ?>
                     </p>
                 <?php } ?>
+
+                <?php
+                $carreraInvH = strtolower($alumno['carrera'] ?? '');
+                $esLI = strpos($carreraInvH, 'informática') !== false || strpos($carreraInvH, 'informatica') !== false;
+                ?>
+
+                <div class="alert alert-info text-center shadow-sm custom-alert fade-alert mb-2">
+                    <strong>🎓 Ceremonia de Clausura — 15 de Julio de 2026</strong><br>
+                    <?= $esLI ? 'Horario: 11:30 AM' : 'Horario: 10:00 AM' ?>
+                </div>
+
+                <div class="alert alert-info text-center shadow-sm custom-alert fade-alert mb-2">
+                    <strong>📅 Cierre de confirmaciones: 9 de Julio de 2026</strong><br>
+                    Después de esta fecha no podrás modificar tu asistencia.
+                </div>
+
+                <div class="alert alert-info text-center shadow-sm custom-alert fade-alert mb-2">
+                    <strong>💺 Los asientos se asignarán una vez que cierre el periodo de confirmaciones.</strong>
+                </div>
+
                 <p>¿Asistirás a la clausura?</p>
 
                 <label>
