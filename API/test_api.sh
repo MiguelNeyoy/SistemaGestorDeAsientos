@@ -376,4 +376,78 @@ if [ -n "$ADMIN_TOKEN" ]; then
     echo "----------------------------------------"
 fi
 
+# ==========================================
+# 20. Obtener estado de asignación (GET)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 20: Obtener estado de asignación como administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp20.txt -w "%{http_code}" -X GET $BASE_URL/admin/asignacion/estado \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Estado de asignación obtenido correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp20.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 21. Limpiar asignaciones (POST)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 21: Limpiar asignaciones...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp21.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/limpiar \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Asignaciones limpiadas correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp21.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 22. Vista previa de asignación (dry-run)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 22: Vista previa de asignación (dry-run)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp22.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/ejecutar \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"dry_run": true}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Vista previa obtenida correctamente.${NC}"
+        if grep -q '"li"' /tmp/resp22.txt; then
+            echo -e "${GREEN}✅ La respuesta incluye conteo de LI.${NC}"
+        fi
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp22.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 23. Acceder a estado sin token (debe fallar)
+# ==========================================
+echo -e "${YELLOW}Prueba 23: Obtener estado de asignación sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp23.txt -w "%{http_code}" -X GET $BASE_URL/admin/asignacion/estado)
+
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó la petición sin token (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401 Unauthorized)${NC}"
+    cat /tmp/resp23.txt
+    echo ""
+fi
+echo "----------------------------------------"
+
 echo -e "\n${YELLOW}Pruebas terminadas.${NC}"
