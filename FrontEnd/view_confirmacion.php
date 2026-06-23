@@ -354,9 +354,10 @@ if (isset($_POST['actualizar_correo'])) {
 
                 <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
 
-                <?php if ($estadoAsistencia == "Si") { ?>
+            <?php if ($estadoAsistencia == "Si") { ?>
                     <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
-                <?php } ?>
+                    <p>Tu asiento se asignará al cerrar el registro.</p>
+                <?php } ?> 
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>

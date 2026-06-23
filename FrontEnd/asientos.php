@@ -29,7 +29,9 @@ if ($data && $data['success']) {
 
 $dataMapa = api_get("/asientos/mapa/" . $evento, $token);
 
+$asignacionPublicada = false;
 if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
+  $asignacionPublicada = $dataMapa['data']['asignacion_publicada'] ?? false;
   foreach ($dataMapa['data']['asientos'] as $asiento) {
     if ($asiento['estado'] === 'ocupado') {
       $asientosGrupo[] = trim($asiento['id_asiento']);
@@ -130,7 +132,8 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
         asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
         asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
         asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
-        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
+        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>,
+        asignacionPublicada: <?php echo json_encode($asignacionPublicada); ?>
       };
     </script>
 

@@ -54,6 +54,12 @@ if (!isset($error)) {
         } else {
             $alumno['asiento'] = 'Sin asignar';
         }
+
+        // Determine event and check if assignment is published
+        $carrera = strtolower($alumno['carrera'] ?? '');
+        $evento = (strpos($carrera, 'informática') !== false || strpos($carrera, 'informatica') !== false) ? 'li' : 'lisi';
+        $mapaResp = apiRequest($BASE_API_URL . "/asientos/mapa/" . $evento, $token);
+        $asignacionPublicada = $mapaResp['data']['asignacion_publicada'] ?? false;
     }
 }
 ?>
@@ -100,7 +106,7 @@ if (!isset($error)) {
       <?php else: ?>
         <div id="qrcode" class="d-flex justify-content-center my-4"></div>
         <h5><?php echo htmlspecialchars($alumno['nombre']); ?></h5>
-        <p>Asiento: <?php echo htmlspecialchars($alumno['asiento']); ?> | Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
+        <p>Asiento: <?php echo $asignacionPublicada ? htmlspecialchars($alumno['asiento']) : 'No disponible'; ?> | Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
         <p class="text-muted">Presenta este código al ingresar al teatro.</p>
         <button id="downloadBtn" class="btn btn-success mt-3">Descargar mi pase</button>
       <?php endif; ?>

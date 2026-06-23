@@ -59,12 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const isPublished = data.asignacionPublicada === true || data.asignacionPublicada === '1';
     const configRenderer = {
         userType: data.tipoUsuario,
         occupiedSeats: new Set(data.asientosOcupados || []),
         confirmedSeats: new Set(data.asientosConfirmados || []),
         scannedSeats: new Set(data.asientosEscaneados || []),
-        studentSeat: data.miAsiento,
+        studentSeat: isPublished ? data.miAsiento : null,
         groupSeats: new Set(data.asientosGrupo || [])
     };
 

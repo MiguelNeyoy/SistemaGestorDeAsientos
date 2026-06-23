@@ -32,10 +32,14 @@ class ServicioAsientos
             $miAsiento = null;
             $asientosProcesados = $this->procesarAsientosMapa($asientosRaw, $numCuenta, $jwtAdminId, $miAsiento);
 
+            $config = $this->modelo->obtenerEstadoConfig();
+            $asignacionPublicada = (bool)($config['publicado'] ?? false);
+
             return $this->respuesta(true, "Mapa de asientos obtenido", 200, [
                 'mi_grupo' => $miGrupo,
                 'mi_asiento' => $miAsiento,
-                'asientos' => $asientosProcesados
+                'asientos' => $asientosProcesados,
+                'asignacion_publicada' => $asignacionPublicada
             ]);
         } catch (Exception $e) {
             return $this->respuesta(false, "Error en ServicioAsientos: No se pudo obtener el mapa. Detalle: " . $e->getMessage(), 500);
