@@ -11,6 +11,7 @@ if (!isset($_SESSION['jwt_token']) || empty($_SESSION['jwt_token'])) {
   exit;
 }
 
+$tipoUsuario = 'alumno';
 $token = $_SESSION['jwt_token'];
 
 $eventoInput = $_GET['evento'] ?? 'li';
@@ -29,7 +30,9 @@ if ($data && $data['success']) {
 
 $dataMapa = api_get("/asientos/mapa/" . $evento, $token);
 
+$asignacionPublicada = false;
 if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
+  $asignacionPublicada = $dataMapa['data']['asignacion_publicada'] ?? false;
   foreach ($dataMapa['data']['asientos'] as $asiento) {
     if ($asiento['estado'] === 'ocupado') {
       $asientosGrupo[] = trim($asiento['id_asiento']);
@@ -71,19 +74,19 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
   </div>
 </nav>
 
-<aside class="bg-dark bg-opacity-75 py-2 border-bottom border-secondary">
+<aside class=" py-2 border-bottom border-secondary">
   <ul class="d-flex justify-content-center align-items-center flex-wrap gap-4 list-unstyled mb-0 legend-list">
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #111167; box-shadow: 0 0 6px rgba(17, 17, 103, 0.5);"></span>
-      <span class="text-white">Mi Asiento</span>
+      <span class="text-black">Mi Asiento</span>
     </li>
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Asignado</span>
+      <span class="text-black">Asignado</span>
     </li>
     <li class="d-flex align-items-center gap-2">
       <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background-color: #5c5c5c; opacity: 0.45; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-      <span class="text-white">Disponible</span>
+      <span class="text-black">Disponible</span>
     </li>
   </ul>
 </aside>
@@ -115,10 +118,10 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
     <!-- CONTENEDOR -->
     <div class="contenedor-scroll">
       <div class="mapa-envoltura">
-        <div class="cabina">Cabina</div>
+        <!-- <div class="cabina">Cabina</div> -->
         <div class="zona-superior"></div>
         <div class="teatro"></div>
-        <div class="mesa">Escenario</div>
+        <!-- <div class="mesa">Escenario</div> -->
       </div>
     </div>
 
@@ -130,7 +133,8 @@ if ($dataMapa && $dataMapa['success'] && isset($dataMapa['data']['asientos'])) {
         asientosGrupo: <?php echo json_encode($asientosGrupo); ?>,
         asientosOcupados: <?php echo json_encode($asientosOcupados); ?>,
         asientosConfirmados: <?php echo json_encode($asientosConfirmados); ?>,
-        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>
+        asientosEscaneados: <?php echo json_encode($asientosEscaneados); ?>,
+        asignacionPublicada: <?php echo json_encode($asignacionPublicada); ?>
       };
     </script>
 

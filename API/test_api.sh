@@ -5,7 +5,7 @@
 # ==========================================
 
 BASE_URL="http://localhost/SistemaGestorDeAsientos/API/publico"
-CUENTA_TEST="2219729" # Cambia esto por un número de cuenta real de tu BD para probar
+CUENTA_TEST="2219777" # Cambia esto por un número de cuenta real de tu BD para probar
 
 # Colores para la salida
 GREEN='\033[0;32m'
@@ -148,7 +148,7 @@ echo "----------------------------------------"
 # ==========================================
 # 7. Autenticar Administrador (POST)
 # ==========================================
-ADMIN_USER="One"    # Ajustar a un usuario real para pruebas
+ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
 ADMIN_PASS="123456"    # Ajustar a contraseña real
 echo -e "${YELLOW}Prueba 7: Autenticar administrador y obtener JWT...${NC}"
 HTTP_STATUS=$(curl -s -o /tmp/resp7.txt -w "%{http_code}" -X POST $BASE_URL/admin/login \
@@ -375,5 +375,170 @@ if [ -n "$ADMIN_TOKEN" ]; then
     fi
     echo "----------------------------------------"
 fi
+
+# ==========================================
+# 20. Obtener estado de asignación (GET)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 20: Obtener estado de asignación como administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp20.txt -w "%{http_code}" -X GET $BASE_URL/admin/asignacion/estado \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Estado de asignación obtenido correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp20.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 21. Limpiar asignaciones (POST)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 21: Limpiar asignaciones...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp21.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/limpiar \
+        -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Asignaciones limpiadas correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp21.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 22. Vista previa de asignación (dry-run)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 22: Vista previa de asignación (dry-run)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp22.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/ejecutar \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"dry_run": true}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Vista previa obtenida correctamente.${NC}"
+        if grep -q '"li"' /tmp/resp22.txt; then
+            echo -e "${GREEN}✅ La respuesta incluye conteo de LI.${NC}"
+        fi
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp22.txt
+        echo ""
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 23. Ejecutar asignación real (POST)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ] && [ "${RUN_DESTRUCTIVE_TESTS:-0}" = "1" ]; then
+    echo -e "${YELLOW}Prueba 23: Ejecutar asignación real...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp23.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/ejecutar \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"dry_run": false}')
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Asignación ejecutada correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp23.txt
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 24. Publicar resultados (POST)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 24: Publicar resultados...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp24.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/publicar \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"publicado": true}')
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Resultados publicados.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp24.txt
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 25. Ocultar resultados (POST)
+# ==========================================
+if [ -n "$ADMIN_TOKEN" ]; then
+    echo -e "${YELLOW}Prueba 25: Ocultar resultados...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp25.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/publicar \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"publicado": false}')
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Resultados ocultados.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp25.txt
+    fi
+    echo "----------------------------------------"
+fi
+
+# ==========================================
+# 26. Sin token acceder a limpiar (debe fallar)
+# ==========================================
+echo -e "${YELLOW}Prueba 26: Acceder a limpiar sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp26.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/limpiar)
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 27. Sin token acceder a ejecutar (debe fallar)
+# ==========================================
+echo -e "${YELLOW}Prueba 27: Acceder a ejecutar sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp27.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/ejecutar \
+    -H "Content-Type: application/json" \
+    -d '{"dry_run": true}')
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 28. Sin token acceder a publicar (debe fallar)
+# ==========================================
+echo -e "${YELLOW}Prueba 28: Acceder a publicar sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp28.txt -w "%{http_code}" -X POST $BASE_URL/admin/asignacion/publicar \
+    -H "Content-Type: application/json" \
+    -d '{"publicado": true}')
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 29. Sin token acceder a estado (debe fallar)
+# ==========================================
+echo -e "${YELLOW}Prueba 29: Acceder a estado sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp29.txt -w "%{http_code}" -X GET $BASE_URL/admin/asignacion/estado)
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+fi
+echo "----------------------------------------"
 
 echo -e "\n${YELLOW}Pruebas terminadas.${NC}"

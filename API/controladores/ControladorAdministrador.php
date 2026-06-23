@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . '/../servicios/ServicioAdministrador.php');
+require_once(__DIR__ . '/../servicios/ServicioAsientos.php');
 
 class ControladorAdministrador
 {
@@ -54,5 +55,37 @@ class ControladorAdministrador
         $input = json_decode(file_get_contents('php://input'), true) ?? [];
         $respuesta = $this->servicioAdmin->eliminarAlumnos($input);
         echo json_encode($respuesta);
+    }
+
+    public function limpiarAsignaciones()
+    {
+        $servicio = new ServicioAsientos();
+        $resultado = $servicio->limpiarAsignaciones();
+        echo json_encode($resultado);
+    }
+
+    public function ejecutarAsignacion()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $dryRun = isset($data['dry_run']) ? (bool)$data['dry_run'] : false;
+        $servicio = new ServicioAsientos();
+        $resultado = $servicio->ejecutarAsignacion($dryRun);
+        echo json_encode($resultado);
+    }
+
+    public function estadoAsignacion()
+    {
+        $servicio = new ServicioAsientos();
+        $resultado = $servicio->obtenerEstadoAsignacion();
+        echo json_encode($resultado);
+    }
+
+    public function publicarResultados()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $publicado = isset($data['publicado']) ? (bool)$data['publicado'] : false;
+        $servicio = new ServicioAsientos();
+        $resultado = $servicio->publicarResultados($publicado);
+        echo json_encode($resultado);
     }
 }

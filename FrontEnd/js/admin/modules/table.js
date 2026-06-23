@@ -67,8 +67,8 @@ export function renderTable() {
     // 1. Filter
     let filtered = filterStudents(allStudents, filterType, searchText);
 
-    // 2. Sort (default by seat)
-    filtered = sortBySeat(filtered);
+    // 2. Sort by seat when filtering by event, otherwise by name
+    filtered = (filterType === 'LI' || filterType === 'LISI') ? sortBySeat(filtered) : sortByName(filtered);
 
     // 3. Performance: Simple data check to avoid flickering
     const currentHash = JSON.stringify(filtered.map(s => `${s.numCuenta}-${s.asistencia_estado}-${s.email}`)) + searchText + filterType;

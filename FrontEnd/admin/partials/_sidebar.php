@@ -57,6 +57,28 @@
                         <span>Resetear Confirmaciones</span>
                     </a>
                 </li>
+                <!-- Asignacion Dinamica -->
+                <li class="admin-sidebar__item admin-sidebar__item--divider">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning-custom" id="btnLimpiarAsignaciones">
+                        <span class="admin-icon admin-icon--warning-custom"></span>
+                        <span>Limpiar asignaciones</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnAsignarAsientos">
+                        <span class="admin-icon admin-icon--chair"></span>
+                        <span>Asignar asientos</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <div class="admin-sidebar__link sidebar-switch-item">
+                        <span>Publicar resultados</span>
+                        <label class="switch">
+                            <input type="checkbox" id="switchPublicar">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </li>
                 <!-- Exportar PDF -->
                 <li class="admin-sidebar__item admin-sidebar__item--divider">
                     <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnExportarPdfLi">

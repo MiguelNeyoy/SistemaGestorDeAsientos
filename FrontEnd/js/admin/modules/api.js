@@ -102,3 +102,33 @@ export async function fetchEscaneados(evento) {
     const response = await coreFetch(`/admin/alumnos/exportar-pdf/${evento}`);
     return await response.json();
 }
+
+/**
+ * Dynamic Assignment
+ */
+
+export async function limpiarAsignaciones() {
+    const response = await coreFetch('/admin/asignacion/limpiar', { method: 'POST' });
+    return await response.json();
+}
+
+export async function ejecutarAsignacion(dryRun = false) {
+    const response = await coreFetch('/admin/asignacion/ejecutar', {
+        method: 'POST',
+        body: JSON.stringify({ dry_run: dryRun })
+    });
+    return await response.json();
+}
+
+export async function estadoAsignacion() {
+    const response = await coreFetch('/admin/asignacion/estado');
+    return await response.json();
+}
+
+export async function publicarResultados(publicado) {
+    const response = await coreFetch('/admin/asignacion/publicar', {
+        method: 'POST',
+        body: JSON.stringify({ publicado })
+    });
+    return await response.json();
+}
