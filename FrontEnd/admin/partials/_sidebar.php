@@ -71,11 +71,11 @@
                     </a>
                 </li>
                 <li class="admin-sidebar__item">
-                    <div class="admin-sidebar__link" style="display:flex;align-items:center;justify-content:space-between;padding:10px 15px;color:#ccc;font-size:14px;cursor:default;">
+                    <div class="admin-sidebar__link sidebar-switch-item">
                         <span>Publicar resultados</span>
-                        <label class="switch" style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
-                            <input type="checkbox" id="switchPublicar" style="opacity:0;width:0;height:0;">
-                            <span class="slider round" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#555;transition:.3s;border-radius:24px;"></span>
+                        <label class="switch">
+                            <input type="checkbox" id="switchPublicar">
+                            <span class="slider round"></span>
                         </label>
                     </div>
                 </li>
