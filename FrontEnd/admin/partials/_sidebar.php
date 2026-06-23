@@ -57,6 +57,28 @@
                         <span>Resetear Confirmaciones</span>
                     </a>
                 </li>
+                <!-- Asignacion Dinamica -->
+                <li class="admin-sidebar__item admin-sidebar__item--divider">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--warning-custom" id="btnLimpiarAsignaciones">
+                        <span class="admin-icon admin-icon--warning-custom"></span>
+                        <span>Limpiar asignaciones</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnAsignarAsientos">
+                        <span class="admin-icon admin-icon--chair"></span>
+                        <span>Asignar asientos</span>
+                    </a>
+                </li>
+                <li class="admin-sidebar__item">
+                    <div class="admin-sidebar__link" style="display:flex;align-items:center;justify-content:space-between;padding:10px 15px;color:#ccc;font-size:14px;cursor:default;">
+                        <span>Publicar resultados</span>
+                        <label class="switch" style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
+                            <input type="checkbox" id="switchPublicar" style="opacity:0;width:0;height:0;">
+                            <span class="slider round" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#555;transition:.3s;border-radius:24px;"></span>
+                        </label>
+                    </div>
+                </li>
                 <!-- Exportar PDF -->
                 <li class="admin-sidebar__item admin-sidebar__item--divider">
                     <a href="javascript:void(0)" class="admin-sidebar__link admin-sidebar__link--info" id="btnExportarPdfLi">

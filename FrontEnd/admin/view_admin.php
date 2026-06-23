@@ -74,6 +74,45 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <?php include 'modals/modal_enviar_qr.php'; ?>
     <?php include 'modals/modal_eliminar_alumno.php'; ?>
 
+    <!-- Modal Vista Previa Asignacion -->
+    <div class="modal fade" id="modalVistaPrevia" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Vista previa de asignación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body" id="vistaPreviaBody">
+            <p class="text-center">Cargando...</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnConfirmarAsignacion">Asignar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Progreso Asignacion -->
+    <div class="modal fade" id="modalProgreso" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Asignando asientos...</h5>
+          </div>
+          <div class="modal-body text-center" id="progresoBody">
+            <div class="spinner-border text-primary mb-3" role="status" style="width:3rem;height:3rem;">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <div class="progress mb-3">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" id="barraProgreso" style="width:0%"></div>
+            </div>
+            <p id="progresoTexto" class="mb-0">Procesando asignación...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
