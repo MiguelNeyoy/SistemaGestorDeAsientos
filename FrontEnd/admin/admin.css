@@ -46,6 +46,16 @@
     visibility: visible;
 }
 
+/* Sidebar switch item */
+.sidebar-switch-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    color: #ccc;
+    font-size: 14px;
+}
+
 /* Switch toggle */
 .switch {
     position: relative;
