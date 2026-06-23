@@ -25,6 +25,7 @@
             <table class="admin-table">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="checkboxToggleAll"></th>
                         <th>No. Cuenta</th>
                         <th>Nombre Completo</th>
                         <th>Carrera / Turno</th>
@@ -37,7 +38,7 @@
                 </thead>
                 <tbody id="alumnosTableBody">
                     <tr>
-                        <td colspan="6" class="admin-table__loading">
+                        <td colspan="9" class="admin-table__loading">
                             <div class="admin-loader"></div>
                             <span>Cargando directorio...</span>
                         </td>

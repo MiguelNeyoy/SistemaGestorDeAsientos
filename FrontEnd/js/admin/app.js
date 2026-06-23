@@ -6,6 +6,7 @@ import { initQRScanner } from './modules/qrscanner.js';
 import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
+import { initEliminar } from './modules/eliminar.js';
 import { resetQrEvento, resetearConfirmaciones } from './modules/api.js';
 import { exportarPdf } from './modules/pdf_export.js?v=1';
 import { toast } from '../core/toast.js';
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initEditModal();
         initBulkQR();
         initMap();
+        initEliminar();
 
         // 2. Global UI Listeners
         setupNavigation();

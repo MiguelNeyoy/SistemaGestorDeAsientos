@@ -91,4 +91,19 @@ class ModeloAsiento
             throw new Exception("Error en ModeloAsiento: Fallo al reiniciar asientos - " . $e->getMessage());
         }
     }
+
+    public function liberarAsientoPorAlumno($numCuenta)
+    {
+        try {
+            $sql = 'UPDATE asiento_evento_li SET numCuenta = NULL, estado = 0 WHERE numCuenta = ?';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$numCuenta]);
+
+            $sql = 'UPDATE asiento_evento_lisi SET numCuenta = NULL, estado = 0 WHERE numCuenta = ?';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$numCuenta]);
+        } catch (PDOException $e) {
+            throw new Exception("Error en ModeloAsiento: Fallo al liberar asiento por alumno - " . $e->getMessage());
+        }
+    }
 }

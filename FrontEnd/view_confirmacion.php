@@ -280,6 +280,13 @@ if (isset($_POST['actualizar_correo'])) {
                         <?php echo htmlspecialchars($errorApi); ?>
                     </p>
                 <?php } ?>
+
+                <?php
+                $carreraInvH = strtolower($alumno['carrera'] ?? '');
+                $esLI = strpos($carreraInvH, 'informática') !== false || strpos($carreraInvH, 'informatica') !== false;
+                ?>
+
+
                 <p>¿Asistirás a la clausura?</p>
 
                 <label>

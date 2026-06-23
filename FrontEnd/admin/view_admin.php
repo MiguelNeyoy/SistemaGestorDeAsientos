@@ -72,6 +72,7 @@ if (!isset($_SESSION['admin_token']) || empty($_SESSION['admin_token'])) {
     <?php include 'modals/modal_escaner_qr.php'; ?>
     <?php include 'modals/modal_resultado_qr.php'; ?>
     <?php include 'modals/modal_enviar_qr.php'; ?>
+    <?php include 'modals/modal_eliminar_alumno.php'; ?>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
