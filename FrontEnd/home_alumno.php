@@ -252,17 +252,17 @@ $estado = $alumno['asistencia'] ?? "Pendiente";
 
         <article class="d-flex flex-row gap-2 mt-3">
             <div class="alert alert-info text-center shadow-sm custom-alert flex-fill mb-0">
-                <strong>🎓 Ceremonia de Clausura — 15 de Julio de 2026</strong><br>
+                <strong> Ceremonia de Clausura — 15 de Julio de 2026</strong><br>
                 <?= $esLI ? 'Horario: 11:30 AM' : 'Horario: 10:00 AM' ?>
             </div>
 
             <div class="alert alert-info text-center shadow-sm custom-alert flex-fill mb-0">
-                <strong>📅 Cierre de confirmaciones: 9 de Julio de 2026</strong><br>
+                <strong> Cierre de confirmaciones: 9 de Julio de 2026</strong><br>
                 Después de esta fecha no podrás modificar tu asistencia.
             </div>
 
             <div class="alert alert-info text-center shadow-sm custom-alert flex-fill mb-0">
-                <strong>💺 Los asientos se asignarán una vez que cierre el periodo de confirmaciones.</strong>
+                <strong> Los asientos se asignarán una vez que cierre el periodo de confirmaciones.</strong>
             </div>
         </article>
 
