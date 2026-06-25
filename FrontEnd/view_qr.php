@@ -142,6 +142,7 @@ if (!isset($error)) {
 </div>
 
 <?php if (!isset($error)): ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-5EJwY71EN4A3x5OYdpP2+OYvBxUbzH3CF5sYIOzTMk7kLB/7SIDlJLl7Y7tRP67iqRYVtXe3yJN4RrSFH4lX2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   // Generar QR dinámico
   var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -174,12 +175,14 @@ if (!isset($error)) {
       html2canvas:  { scale: 2, useCORS: true, allowTaint: false },
       jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().catch(function(err) {
+      console.error("Error al generar PDF:", err);
+      alert("Error al generar el PDF. Intenta de nuevo.");
+    });
   });
 </script>
 <?php endif; ?>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-5EJwY71EN4A3x5OYdpP2+OYvBxUbzH3CF5sYIOzTMk7kLB/7SIDlJLl7Y7tRP67iqRYVtXe3yJN4RrSFH4lX2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
 
