@@ -68,7 +68,7 @@ export async function getMapaAsientos(evento) {
 }
 
 export async function enviarCorreoIndividual(numCuenta) {
-    const response = await coreFetch('/admin/alumnos/correo', {
+    const response = await coreFetch('/admin/enviar-qr-individual', {
         method: 'POST',
         body: JSON.stringify({ numCuenta })
     });

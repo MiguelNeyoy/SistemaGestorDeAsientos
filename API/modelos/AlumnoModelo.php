@@ -108,6 +108,31 @@ class AlumnoModel
         return $stmt->rowCount() > 0;
     }
 
+    public function obtenerConfirmadosConQRPorGrupo($carrera, $turno)
+    {
+        $conditions = ['asi.estado = 1'];
+        $params = [];
+
+        if ($carrera !== 'ALL') {
+            $conditions[] = 'a.carrera = ?';
+            $params[] = $carrera;
+        }
+        if ($turno !== 'ALL') {
+            $conditions[] = 'a.turno = ?';
+            $params[] = $turno;
+        }
+
+        $sql = "SELECT a.numCuenta, a.nombre, a.apellido, a.email, a.carrera, a.turno, q.token
+                FROM alumno a
+                JOIN asistencia asi ON a.numCuenta = asi.numCuenta
+                JOIN qr q ON a.numCuenta = q.numCuenta
+                WHERE " . implode(' AND ', $conditions);
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function obtenerConfirmadosPorGrupo($carrera, $turno)
     {
         $sql = 'SELECT a.numCuenta 

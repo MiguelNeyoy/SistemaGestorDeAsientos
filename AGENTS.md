@@ -6,9 +6,7 @@ composer install && cd API && composer install  # Two separate installs needed
 cp API/.env.example API/.env                    # Configure DB + JWT_KEY
 ```
 
-## Dev URLs
-- Frontend: `http://localhost/SistemaGestorDeAsientos/FrontEnd/`
-- API: `http://localhost/SistemaGestorDeAsientos/API/publico/`
+
 
 ## Architecture
 - **API entry**: `API/publico/index.php` - routing, JWT validation, CORS headers
