@@ -541,4 +541,76 @@ else
 fi
 echo "----------------------------------------"
 
+# ==========================================
+# 30. Envío individual sin token (debe fallar 401)
+# ==========================================
+echo -e "${YELLOW}Prueba 30: Enviar QR individual sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp30.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qr-individual \
+    -H "Content-Type: application/json" \
+    -d '{"numCuenta": "'$CUENTA_TEST'"}')
+
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó el envío individual sin token (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+    cat /tmp/resp30.txt
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 31. Envío grupal sin token (debe fallar 401)
+# ==========================================
+echo -e "${YELLOW}Prueba 31: Enviar QR grupal sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp31.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qrs \
+    -H "Content-Type: application/json" \
+    -d '{"carrera":"INF","turno":"M"}')
+
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó el envío grupal sin token (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+    cat /tmp/resp31.txt
+fi
+echo "----------------------------------------"
+
+if [ -n "$ADMIN_TOKEN" ]; then
+    # ==========================================
+    # 32. Envío individual con token admin
+    # ==========================================
+    echo -e "${YELLOW}Prueba 32: Enviar QR individual como administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp32.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qr-individual \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"numCuenta": "'$CUENTA_TEST'"}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Correo individual enviado correctamente.${NC}"
+    elif [ "$HTTP_STATUS" -eq 400 ] || [ "$HTTP_STATUS" -eq 404 ]; then
+        echo -e "${YELLOW}⚠️ Aviso: HTTP $HTTP_STATUS - $(cat /tmp/resp32.txt | grep -o '"message":"[^"]*' | head -1)${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp32.txt
+    fi
+    echo "----------------------------------------"
+
+    # ==========================================
+    # 33. Envío grupal con token admin
+    # ==========================================
+    echo -e "${YELLOW}Prueba 33: Enviar QR grupal como administrador (ALL)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp33.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qrs \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"carrera":"ALL","turno":"ALL"}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Correos enviados correctamente.${NC}"
+    elif [ "$HTTP_STATUS" -eq 404 ]; then
+        echo -e "${YELLOW}⚠️ Aviso: HTTP 404 - No hay alumnos confirmados con correo en ese grupo.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp33.txt
+    fi
+    echo "----------------------------------------"
+fi
+
 echo -e "\n${YELLOW}Pruebas terminadas.${NC}"
