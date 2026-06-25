@@ -5,7 +5,7 @@
 # ==========================================
 
 BASE_URL="http://localhost/SistemaGestorDeAsientos/API/publico"
-CUENTA_TEST="0154847" # Cambia esto por un número de cuenta real de tu BD para probar
+CUENTA_TEST="1187733" # Cambia esto por un número de cuenta real de tu BD para probar
 ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
 ADMIN_PASS="admin"    # Ajustar a contraseña real
 # Colores para la salida
@@ -34,6 +34,18 @@ if [ "$HTTP_STATUS" -eq 200 ]; then
     if [ -n "$TOKEN" ]; then
         echo -e "${GREEN}✅ Éxito: El alumno existe y se obtuvo el Token JWT.${NC}"
         echo -e "${GREEN}Token obtenido: ${TOKEN:0:15}...${NC}"
+
+        # Extraer evento_id del payload del JWT para saber a qué grupo pertenece el alumno
+        STUDENT_EVENTO=$(echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | grep -o '"evento_id":"[^"]*' | cut -d'"' -f4)
+        if [ "$STUDENT_EVENTO" = "li" ]; then
+            EVENTO_OPUESTO="lisi"
+        elif [ "$STUDENT_EVENTO" = "lisi" ]; then
+            EVENTO_OPUESTO="li"
+        else
+            echo -e "${RED}❌ No se pudo determinar el evento del alumno.${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}Alumno pertenece al evento: $STUDENT_EVENTO (opuesto: $EVENTO_OPUESTO)${NC}"
     else
         echo -e "${RED}❌ Falla: El servidor devolvió 200 pero no se encontró el Token.${NC}"
         cat /tmp/resp1.txt
@@ -234,8 +246,8 @@ if [ -n "$ADMIN_TOKEN" ]; then
     # ==========================================
     # 12. Validar acceso denegado de alumno a evento diferente (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 12: Intentar obtener mapa de evento lisi con token de alumno (evento li)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/lisi \
+    echo -e "${YELLOW}Prueba 12: Intentar obtener mapa del evento OPUESTO ($EVENTO_OPUESTO) con token de alumno...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/$EVENTO_OPUESTO \
         -H "Authorization: Bearer $TOKEN")
 
     if [ "$HTTP_STATUS" -eq 403 ]; then
@@ -250,8 +262,8 @@ if [ -n "$ADMIN_TOKEN" ]; then
     # ==========================================
     # 13. Obtener mapa con evento de SU grupo como alumno (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 13: Obtener mapa de SU evento como alumno (con filtro por turno)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/li \
+    echo -e "${YELLOW}Prueba 13: Obtener mapa de SU evento ($STUDENT_EVENTO) como alumno...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/$STUDENT_EVENTO \
         -H "Authorization: Bearer $TOKEN")
 
     if [ "$HTTP_STATUS" -eq 200 ]; then
