@@ -150,13 +150,31 @@ if (!isset($error)) {
     height: 200
   });
 
-  // Descargar QR como imagen
+  // Descargar QR como PDF
   document.getElementById("downloadBtn").addEventListener("click", function() {
     var canvas = document.querySelector("#qrcode canvas");
-    var link = document.createElement("a");
-    link.download = "mi_pase_qr.png";
-    link.href = canvas.toDataURL();
-    link.click();
+    var qrDataUrl = canvas.toDataURL("image/png");
+
+    document.getElementById("qr-ticket-img").src = qrDataUrl;
+    document.getElementById("ticket-nombre").textContent = "<?php echo htmlspecialchars($alumno['nombre']); ?>";
+    document.getElementById("ticket-asiento").textContent = "Asiento: <?php echo $asignacionPublicada ? htmlspecialchars($alumno['asiento']) : 'No disponible'; ?>";
+    document.getElementById("ticket-carrera").textContent = "<?php echo htmlspecialchars($alumno['carrera']); ?>";
+    <?php
+      $carrera_ticket = strtolower($alumno['carrera'] ?? '');
+      $esLI = strpos($carrera_ticket, 'informática') !== false || strpos($carrera_ticket, 'informatica') !== false;
+      $horario = $esLI ? '11:30 AM' : '10:00 AM';
+    ?>
+    document.getElementById("ticket-horario").textContent = "Horario: <?php echo $horario; ?>";
+
+    var element = document.getElementById("ticket-content");
+    var opt = {
+      margin:       0,
+      filename:     'mi_pase_qr.pdf',
+      image:        { type: 'png', quality: 1 },
+      html2canvas:  { scale: 2, useCORS: true, allowTaint: false },
+      jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
   });
 </script>
 <?php endif; ?>
