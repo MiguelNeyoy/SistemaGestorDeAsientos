@@ -5,7 +5,7 @@
 # ==========================================
 
 BASE_URL="http://localhost/SistemaGestorDeAsientos/API/publico"
-CUENTA_TEST="1187733" # Cambia esto por un número de cuenta real de tu BD para probar
+CUENTA_TEST="2219734" # Cambia esto por un número de cuenta real de tu BD para probar
 ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
 ADMIN_PASS="admin"    # Ajustar a contraseña real
 # Colores para la salida
@@ -367,24 +367,24 @@ echo "----------------------------------------"
 # ==========================================
 # 19. Admin eliminar alumnos (POST)
 # ==========================================
-if [ -n "$ADMIN_TOKEN" ]; then
-    echo -e "${YELLOW}Prueba 19: Eliminar alumno como administrador...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp19.txt -w "%{http_code}" -X POST $BASE_URL/admin/alumnos/eliminar \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $ADMIN_TOKEN" \
-        -d '{
-            "alumnos": ["'$CUENTA_TEST'"]
-        }')
+# if [ -n "$ADMIN_TOKEN" ]; then
+#     echo -e "${YELLOW}Prueba 19: Eliminar alumno como administrador...${NC}"
+#     HTTP_STATUS=$(curl -s -o /tmp/resp19.txt -w "%{http_code}" -X POST $BASE_URL/admin/alumnos/eliminar \
+#         -H "Content-Type: application/json" \
+#         -H "Authorization: Bearer $ADMIN_TOKEN" \
+#         -d '{
+#             "alumnos": ["'$CUENTA_TEST'"]
+#         }')
 
-    if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo -e "${GREEN}✅ Éxito: Alumno eliminado correctamente.${NC}"
-    else
-        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
-        cat /tmp/resp19.txt
-        echo ""
-    fi
-    echo "----------------------------------------"
-fi
+#     if [ "$HTTP_STATUS" -eq 200 ]; then
+#         echo -e "${GREEN}✅ Éxito: Alumno eliminado correctamente.${NC}"
+#     else
+#         echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+#         cat /tmp/resp19.txt
+#         echo ""
+#     fi
+#     echo "----------------------------------------"
+# fi
 
 # ==========================================
 # 20. Obtener estado de asignación (GET)

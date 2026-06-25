@@ -5,7 +5,8 @@ require_once __DIR__ . '/../modelos/QrModelo.php';
 
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use Resend\Resend;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QRGdImagePNG;
 
 class ServicioCorreo
 {
@@ -38,13 +39,16 @@ class ServicioCorreo
             return $this->respuesta(false, "El alumno no tiene correo registrado", 400);
         }
 
+        $alumno = $this->limpiarUtf8($alumno);
+
         $options = new QROptions;
-        $options->outputType = QRCode::OUTPUT_IMAGE_PNG;
+        $options->outputInterface = QRGdImagePNG::class;
+        $options->outputBase64 = false;
         $options->scale = 8;
-        $options->eccLevel = QRCode::ECC_M;
+        $options->eccLevel = EccLevel::M;
         $qrCode = new QRCode($options);
 
-        $resend = Resend::client($apiKey);
+        $resend = \Resend::client($apiKey);
         $from = "{$fromName} <{$fromEmail}>";
 
         try {
@@ -58,7 +62,7 @@ class ServicioCorreo
                 'attachments' => [
                     [
                         'filename' => "QR_{$alumno['numCuenta']}.png",
-                        'content' => $pngData,
+                        'content' => base64_encode($pngData),
                     ],
                 ],
             ]);
@@ -88,18 +92,20 @@ class ServicioCorreo
         }
 
         $options = new QROptions;
-        $options->outputType = QRCode::OUTPUT_IMAGE_PNG;
+        $options->outputInterface = QRGdImagePNG::class;
+        $options->outputBase64 = false;
         $options->scale = 8;
-        $options->eccLevel = QRCode::ECC_M;
+        $options->eccLevel = EccLevel::M;
         $qrCode = new QRCode($options);
 
-        $resend = Resend::client($apiKey);
+        $resend = \Resend::client($apiKey);
         $from = "{$fromName} <{$fromEmail}>";
 
         $enviados = 0;
         $errores = [];
 
         foreach ($alumnos as $alumno) {
+            $alumno = $this->limpiarUtf8($alumno);
             try {
                 if (empty($alumno['email'])) {
                     $errores[] = $alumno['numCuenta'];
@@ -116,7 +122,7 @@ class ServicioCorreo
                     'attachments' => [
                         [
                             'filename' => "QR_{$alumno['numCuenta']}.png",
-                            'content' => $pngData,
+                            'content' => base64_encode($pngData),
                         ],
                     ],
                 ]);
@@ -143,6 +149,19 @@ class ServicioCorreo
             'enviados' => 0,
             'errores' => $errores,
         ]);
+    }
+
+    private function limpiarUtf8($data)
+    {
+        if (is_string($data)) {
+            return mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+        }
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->limpiarUtf8($value);
+            }
+        }
+        return $data;
     }
 
     private function plantillaCorreo($alumno)
@@ -179,7 +198,9 @@ class ServicioCorreo
 
     private function respuesta($success, $message, $code, $data = null)
     {
-        http_response_code($code);
+        if (PHP_SAPI !== 'cli') {
+            http_response_code($code);
+        }
         return array_filter([
             "success" => $success,
             "message" => $message,
