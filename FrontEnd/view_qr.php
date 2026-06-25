@@ -109,6 +109,33 @@ if (!isset($error)) {
         <p>Asiento: <?php echo $asignacionPublicada ? htmlspecialchars($alumno['asiento']) : 'No disponible'; ?> | Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
         <p class="text-muted">Presenta este código al ingresar al teatro.</p>
         <button id="downloadBtn" class="btn btn-success mt-3">Descargar mi pase</button>
+
+        <!-- Template oculto para PDF -->
+        <div id="ticket-content" style="display:none; width: 400px; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; border: 4px solid #D4AF37; border-radius: 12px; overflow: hidden; text-align: center;">
+          <div style="background: #003B71; color: #FDC800; padding: 20px 16px 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <img src="img/logouas.png" alt="UAS" style="height: 50px;">
+              <img src="img/logofimaz.png" alt="FIMAZ" style="height: 50px;">
+            </div>
+            <h2 style="margin: 8px 0 4px; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #FDC800;">CEREMONIA DE GRADUACIÓN</h2>
+            <p style="margin: 0; font-size: 13px; color: #FDC800; opacity: 0.9;">15 de Julio de 2026</p>
+          </div>
+
+          <div style="padding: 24px 16px;">
+            <div style="background: #fff; display: inline-block; padding: 12px; border-radius: 8px; border: 2px solid #D4AF37;">
+              <img id="qr-ticket-img" src="" alt="QR" style="width: 180px; height: 180px;">
+            </div>
+
+            <h3 id="ticket-nombre" style="margin: 16px 0 4px; font-size: 20px; color: #003B71; font-weight: 600;"></h3>
+            <p id="ticket-asiento" style="margin: 4px 0; font-size: 15px; color: #003B71; font-weight: 500;"></p>
+            <p id="ticket-carrera" style="margin: 4px 0 8px; font-size: 13px; color: #555;"></p>
+            <p id="ticket-horario" style="margin: 0; font-size: 12px; color: #888;"></p>
+          </div>
+
+          <div style="border-top: 2px solid #D4AF37; padding: 10px 16px; background: #003B71;">
+            <p style="margin: 0; font-size: 11px; color: #FDC800;">Universidad Autónoma de Sinaloa</p>
+          </div>
+        </div>
       <?php endif; ?>
     </div>
   </div>
@@ -134,6 +161,7 @@ if (!isset($error)) {
 </script>
 <?php endif; ?>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-5EJwY71EN4A3x5OYdpP2+OYvBxUbzH3CF5sYIOzTMk7kLB/7SIDlJLl7Y7tRP67iqRYVtXe3yJN4RrSFH4lX2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
 
