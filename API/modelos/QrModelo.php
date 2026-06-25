@@ -50,7 +50,7 @@ class QrModelo
 
     public function obtenerPorNumCuentaConGrupo($numCuenta)
     {
-        $query = "SELECT q.*, a.nombre, a.apellido, a.carrera, a.turno, a.cantInvitado, g.qr_habilitado
+        $query = "SELECT q.*, a.nombre, a.apellido, a.email, a.carrera, a.turno, a.cantInvitado, g.qr_habilitado
                   FROM " . $this->table . " q
                   JOIN alumno a ON q.numCuenta = a.numCuenta
                   JOIN grupos g ON (g.carrera = a.carrera AND g.turno = a.turno)
