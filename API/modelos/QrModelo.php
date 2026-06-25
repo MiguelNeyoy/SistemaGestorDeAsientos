@@ -112,6 +112,14 @@ class QrModelo
         return true;
     }
 
+    public function marcarEnviado($numCuenta)
+    {
+        $query = "UPDATE " . $this->table . " SET enviado = 1 WHERE numCuenta = :numCuenta";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':numCuenta', $numCuenta);
+        return $stmt->execute();
+    }
+
     public function resetearPorEvento($evento)
     {
         $tablaAsientos = "asiento_evento_" . strtolower($evento);

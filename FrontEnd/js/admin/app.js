@@ -9,6 +9,7 @@ import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
 import { initEliminar } from './modules/eliminar.js';
 import { resetQrEvento, resetearConfirmaciones, limpiarAsignaciones, ejecutarAsignacion, estadoAsignacion, publicarResultados } from './modules/api.js';
 import { exportarPdf } from './modules/pdf_export.js?v=1';
+import { setupEmailFormListener } from './modules/emails.js';
 import { toast } from '../core/toast.js';
 
 /**
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initBulkQR();
         initMap();
         initEliminar();
+        setupEmailFormListener();
 
         // 2. Global UI Listeners
         setupNavigation();
