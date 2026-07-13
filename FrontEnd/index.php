@@ -71,6 +71,11 @@ if (isset($_POST['buscar'])) {
 
             $data = json_decode($response, true);
 
+            if (isset($data['registro_cerrado']) && $data['registro_cerrado'] === true) {
+                header("Location: registro_cerrado");
+                exit;
+            }
+
             if (
                 isset($data['success']) &&
                 $data['success'] === true &&
@@ -146,6 +151,11 @@ if (isset($_POST['buscar'])) {
             if ($response) {
 
                 $data = json_decode($response, true);
+
+                if (isset($data['registro_cerrado']) && $data['registro_cerrado'] === true) {
+                    header("Location: registro_cerrado");
+                    exit;
+                }
 
                 $error = isset($data['message'])
                     ? $data['message']

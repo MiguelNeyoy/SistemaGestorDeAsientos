@@ -28,6 +28,8 @@ class ControladorAlumno
 
         $respuestaDelServicio = $this->servicioAlumno->buscarAlumno(['numero_cuenta' => $numero_cuenta]);
 
+        $this->verificarRegistroCerrado($respuestaDelServicio);
+
         // Si fue exitoso y el alumno fue encontrado, agregamos el token
         if (isset($respuestaDelServicio['success']) && $respuestaDelServicio['success'] === true) {
             $secret_key = $_SERVER['JWT_KEY'];
@@ -102,6 +104,34 @@ class ControladorAlumno
         } else {
             http_response_code(401);
             echo json_encode(["success" => false, "message" => "No autorizado"]);
+        }
+    }
+
+    private function verificarRegistroCerrado(array &$respuesta)
+    {
+        if (!isset($respuesta['success']) || $respuesta['success'] !== true) {
+            return;
+        }
+
+        $asistencia = $respuesta['data']['asistencia'] ?? '';
+        if ($asistencia !== 'Pendiente') {
+            return;
+        }
+
+        $fechaLimite = $_ENV['CONFIRMACION_DEADLINE'] ?? null;
+        if (!$fechaLimite) {
+            return;
+        }
+
+        $ahora = new DateTime();
+        $limite = new DateTime($fechaLimite);
+        if ($ahora > $limite) {
+            $respuesta = [
+                'success' => false,
+                'message' => 'El período de confirmación de asistencia ha finalizado',
+                'registro_cerrado' => true
+            ];
+            http_response_code(403);
         }
     }
 
