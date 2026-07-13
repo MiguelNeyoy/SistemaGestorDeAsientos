@@ -1,3 +1,5 @@
+import { API_URL, TOKEN } from '../../config.js';
+
 export function setupEmailFormListener() {
     const form = document.getElementById("formEnviarQRs");
     if (!form) return;
@@ -17,19 +19,17 @@ export function setupEmailFormListener() {
             return;
         }
 
-        // Estado cargando
         btnEnvio.disabled = true;
         spinner.classList.remove("d-none");
         icon.classList.add("d-none");
         alertBox.classList.add("d-none");
 
         try {
-            // Este endpoint depende de la implementación del backend, la simulamos o apuntamos al real
-            const response = await fetch(`${window.BASE_API_URL}/admin/enviar-qrs`, {
+            const response = await fetch(`${API_URL}/admin/enviar-qrs`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${window.ADMIN_TOKEN}`
+                    "Authorization": `Bearer ${TOKEN}`
                 },
                 body: JSON.stringify({ carrera, turno })
             });

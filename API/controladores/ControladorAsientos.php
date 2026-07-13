@@ -34,6 +34,11 @@ class ControladorAsientos
             $numCuenta = $_SERVER['JWT_NUMERO_CUENTA'] ?? null;
 
             if (!$numCuenta) {
+                if (isset($_SERVER['JWT_ADMIN_ID'])) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "message" => "Acceso denegado. Ruta solo para alumnos."]);
+                    return;
+                }
                 http_response_code(401);
                 echo json_encode(["success" => false, "message" => "No autorizado"]);
                 return;

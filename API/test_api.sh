@@ -5,8 +5,9 @@
 # ==========================================
 
 BASE_URL="http://localhost/SistemaGestorDeAsientos/API/publico"
-CUENTA_TEST="2219777" # Cambia esto por un número de cuenta real de tu BD para probar
-
+CUENTA_TEST="2219734" # Cambia esto por un número de cuenta real de tu BD para probar
+ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
+ADMIN_PASS="admin"    # Ajustar a contraseña real
 # Colores para la salida
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -33,6 +34,18 @@ if [ "$HTTP_STATUS" -eq 200 ]; then
     if [ -n "$TOKEN" ]; then
         echo -e "${GREEN}✅ Éxito: El alumno existe y se obtuvo el Token JWT.${NC}"
         echo -e "${GREEN}Token obtenido: ${TOKEN:0:15}...${NC}"
+
+        # Extraer evento_id del payload del JWT para saber a qué grupo pertenece el alumno
+        STUDENT_EVENTO=$(echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | grep -o '"evento_id":"[^"]*' | cut -d'"' -f4)
+        if [ "$STUDENT_EVENTO" = "li" ]; then
+            EVENTO_OPUESTO="lisi"
+        elif [ "$STUDENT_EVENTO" = "lisi" ]; then
+            EVENTO_OPUESTO="li"
+        else
+            echo -e "${RED}❌ No se pudo determinar el evento del alumno.${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}Alumno pertenece al evento: $STUDENT_EVENTO (opuesto: $EVENTO_OPUESTO)${NC}"
     else
         echo -e "${RED}❌ Falla: El servidor devolvió 200 pero no se encontró el Token.${NC}"
         cat /tmp/resp1.txt
@@ -146,10 +159,7 @@ fi
 echo "----------------------------------------"
 
 # ==========================================
-# 7. Autenticar Administrador (POST)
-# ==========================================
-ADMIN_USER="Informatica"    # Ajustar a un usuario real para pruebas
-ADMIN_PASS="123456"    # Ajustar a contraseña real
+# 7. Autenticar Administrador (
 echo -e "${YELLOW}Prueba 7: Autenticar administrador y obtener JWT...${NC}"
 HTTP_STATUS=$(curl -s -o /tmp/resp7.txt -w "%{http_code}" -X POST $BASE_URL/admin/login \
     -H "Content-Type: application/json" \
@@ -236,8 +246,8 @@ if [ -n "$ADMIN_TOKEN" ]; then
     # ==========================================
     # 12. Validar acceso denegado de alumno a evento diferente (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 12: Intentar obtener mapa de evento lisi con token de alumno (evento li)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/lisi \
+    echo -e "${YELLOW}Prueba 12: Intentar obtener mapa del evento OPUESTO ($EVENTO_OPUESTO) con token de alumno...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp12.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/$EVENTO_OPUESTO \
         -H "Authorization: Bearer $TOKEN")
 
     if [ "$HTTP_STATUS" -eq 403 ]; then
@@ -252,8 +262,8 @@ if [ -n "$ADMIN_TOKEN" ]; then
     # ==========================================
     # 13. Obtener mapa con evento de SU grupo como alumno (GET)
     # ==========================================
-    echo -e "${YELLOW}Prueba 13: Obtener mapa de SU evento como alumno (con filtro por turno)...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/li \
+    echo -e "${YELLOW}Prueba 13: Obtener mapa de SU evento ($STUDENT_EVENTO) como alumno...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp13.txt -w "%{http_code}" -X GET $BASE_URL/asientos/mapa/$STUDENT_EVENTO \
         -H "Authorization: Bearer $TOKEN")
 
     if [ "$HTTP_STATUS" -eq 200 ]; then
@@ -357,24 +367,24 @@ echo "----------------------------------------"
 # ==========================================
 # 19. Admin eliminar alumnos (POST)
 # ==========================================
-if [ -n "$ADMIN_TOKEN" ]; then
-    echo -e "${YELLOW}Prueba 19: Eliminar alumno como administrador...${NC}"
-    HTTP_STATUS=$(curl -s -o /tmp/resp19.txt -w "%{http_code}" -X POST $BASE_URL/admin/alumnos/eliminar \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $ADMIN_TOKEN" \
-        -d '{
-            "alumnos": ["'$CUENTA_TEST'"]
-        }')
+# if [ -n "$ADMIN_TOKEN" ]; then
+#     echo -e "${YELLOW}Prueba 19: Eliminar alumno como administrador...${NC}"
+#     HTTP_STATUS=$(curl -s -o /tmp/resp19.txt -w "%{http_code}" -X POST $BASE_URL/admin/alumnos/eliminar \
+#         -H "Content-Type: application/json" \
+#         -H "Authorization: Bearer $ADMIN_TOKEN" \
+#         -d '{
+#             "alumnos": ["'$CUENTA_TEST'"]
+#         }')
 
-    if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo -e "${GREEN}✅ Éxito: Alumno eliminado correctamente.${NC}"
-    else
-        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
-        cat /tmp/resp19.txt
-        echo ""
-    fi
-    echo "----------------------------------------"
-fi
+#     if [ "$HTTP_STATUS" -eq 200 ]; then
+#         echo -e "${GREEN}✅ Éxito: Alumno eliminado correctamente.${NC}"
+#     else
+#         echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+#         cat /tmp/resp19.txt
+#         echo ""
+#     fi
+#     echo "----------------------------------------"
+# fi
 
 # ==========================================
 # 20. Obtener estado de asignación (GET)
@@ -540,5 +550,77 @@ else
     echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
 fi
 echo "----------------------------------------"
+
+# ==========================================
+# 30. Envío individual sin token (debe fallar 401)
+# ==========================================
+echo -e "${YELLOW}Prueba 30: Enviar QR individual sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp30.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qr-individual \
+    -H "Content-Type: application/json" \
+    -d '{"numCuenta": "'$CUENTA_TEST'"}')
+
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó el envío individual sin token (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+    cat /tmp/resp30.txt
+fi
+echo "----------------------------------------"
+
+# ==========================================
+# 31. Envío grupal sin token (debe fallar 401)
+# ==========================================
+echo -e "${YELLOW}Prueba 31: Enviar QR grupal sin token (debe fallar)...${NC}"
+HTTP_STATUS=$(curl -s -o /tmp/resp31.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qrs \
+    -H "Content-Type: application/json" \
+    -d '{"carrera":"INF","turno":"M"}')
+
+if [ "$HTTP_STATUS" -eq 401 ]; then
+    echo -e "${GREEN}✅ Éxito: La API rechazó el envío grupal sin token (HTTP 401).${NC}"
+else
+    echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS (Se esperaba 401)${NC}"
+    cat /tmp/resp31.txt
+fi
+echo "----------------------------------------"
+
+if [ -n "$ADMIN_TOKEN" ]; then
+    # ==========================================
+    # 32. Envío individual con token admin
+    # ==========================================
+    echo -e "${YELLOW}Prueba 32: Enviar QR individual como administrador...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp32.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qr-individual \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"numCuenta": "'$CUENTA_TEST'"}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Correo individual enviado correctamente.${NC}"
+    elif [ "$HTTP_STATUS" -eq 400 ] || [ "$HTTP_STATUS" -eq 404 ]; then
+        echo -e "${YELLOW}⚠️ Aviso: HTTP $HTTP_STATUS - $(cat /tmp/resp32.txt | grep -o '"message":"[^"]*' | head -1)${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp32.txt
+    fi
+    echo "----------------------------------------"
+
+    # ==========================================
+    # 33. Envío grupal con token admin
+    # ==========================================
+    echo -e "${YELLOW}Prueba 33: Enviar QR grupal como administrador (ALL)...${NC}"
+    HTTP_STATUS=$(curl -s -o /tmp/resp33.txt -w "%{http_code}" -X POST $BASE_URL/admin/enviar-qrs \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -d '{"carrera":"ALL","turno":"ALL"}')
+
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "${GREEN}✅ Éxito: Correos enviados correctamente.${NC}"
+    elif [ "$HTTP_STATUS" -eq 404 ]; then
+        echo -e "${YELLOW}⚠️ Aviso: HTTP 404 - No hay alumnos confirmados con correo en ese grupo.${NC}"
+    else
+        echo -e "${RED}❌ Falla: HTTP $HTTP_STATUS${NC}"
+        cat /tmp/resp33.txt
+    fi
+    echo "----------------------------------------"
+fi
 
 echo -e "\n${YELLOW}Pruebas terminadas.${NC}"

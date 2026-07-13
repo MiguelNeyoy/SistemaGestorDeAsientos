@@ -87,7 +87,7 @@ if (!isset($error)) {
     }
   </style>
 </head>
-<body class="bg-light">
+<body class="bg-light"> 
 
 <div class="container mt-5">
   <a href="home_alumno.php" class="btn btn-outline-primary mb-3">← Regresar</a>
@@ -109,12 +109,40 @@ if (!isset($error)) {
         <p>Asiento: <?php echo $asignacionPublicada ? htmlspecialchars($alumno['asiento']) : 'No disponible'; ?> | Carrera: <?php echo htmlspecialchars($alumno['carrera']); ?></p>
         <p class="text-muted">Presenta este código al ingresar al teatro.</p>
         <button id="downloadBtn" class="btn btn-success mt-3">Descargar mi pase</button>
+
+        <!-- Template oculto para PDF -->
+        <div id="ticket-content" style="display:none; width: 400px; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; border: 4px solid #D4AF37; border-radius: 12px; overflow: hidden; text-align: center;">
+          <div style="background: #003B71; color: #FDC800; padding: 20px 16px 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <img src="img/logouas.png" alt="UAS" style="height: 50px;">
+              <img src="img/logofimaz.png" alt="FIMAZ" style="height: 50px;">
+            </div>
+            <h2 style="margin: 8px 0 4px; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #FDC800;">CEREMONIA DE GRADUACIÓN</h2>
+            <p style="margin: 0; font-size: 13px; color: #FDC800; opacity: 0.9;">15 de Julio de 2026</p>
+          </div>
+
+          <div style="padding: 24px 16px;">
+            <div style="background: #fff; display: inline-block; padding: 12px; border-radius: 8px; border: 2px solid #D4AF37;">
+              <img id="qr-ticket-img" src="" alt="QR" style="width: 180px; height: 180px;">
+            </div>
+
+            <h3 id="ticket-nombre" style="margin: 16px 0 4px; font-size: 20px; color: #003B71; font-weight: 600;"></h3>
+            <p id="ticket-asiento" style="margin: 4px 0; font-size: 15px; color: #003B71; font-weight: 500;"></p>
+            <p id="ticket-carrera" style="margin: 4px 0 8px; font-size: 13px; color: #555;"></p>
+            <p id="ticket-horario" style="margin: 0; font-size: 12px; color: #888;"></p>
+          </div>
+
+          <div style="border-top: 2px solid #D4AF37; padding: 10px 16px; background: #003B71;">
+            <p style="margin: 0; font-size: 11px; color: #FDC800;">Universidad Autónoma de Sinaloa</p>
+          </div>
+        </div>
       <?php endif; ?>
     </div>
   </div>
 </div>
 
 <?php if (!isset($error)): ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 <script>
   // Generar QR dinámico
   var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -123,13 +151,43 @@ if (!isset($error)) {
     height: 200
   });
 
-  // Descargar QR como imagen
+  // Descargar QR como PDF
   document.getElementById("downloadBtn").addEventListener("click", function() {
     var canvas = document.querySelector("#qrcode canvas");
-    var link = document.createElement("a");
-    link.download = "mi_pase_qr.png";
-    link.href = canvas.toDataURL();
-    link.click();
+    var qrDataUrl = canvas.toDataURL("image/png");
+
+    document.getElementById("qr-ticket-img").src = qrDataUrl;
+    document.getElementById("ticket-nombre").textContent = "<?php echo htmlspecialchars($alumno['nombre']); ?>";
+    document.getElementById("ticket-asiento").textContent = "Asiento: <?php echo $asignacionPublicada ? htmlspecialchars($alumno['asiento']) : 'No disponible'; ?>";
+    document.getElementById("ticket-carrera").textContent = "<?php echo htmlspecialchars($alumno['carrera']); ?>";
+    <?php
+      $carrera_ticket = strtolower($alumno['carrera'] ?? '');
+      $esLI = strpos($carrera_ticket, 'informática') !== false || strpos($carrera_ticket, 'informatica') !== false;
+      $horario = $esLI ? '11:30 AM' : '10:00 AM';
+    ?>
+    document.getElementById("ticket-horario").textContent = "Horario: <?php echo $horario; ?>";
+
+    var original = document.getElementById("ticket-content");
+    var clone = original.cloneNode(true);
+    clone.style.position = "static";
+    clone.style.left = "auto";
+    clone.style.display = "block";
+    clone.style.margin = "20px auto";
+    document.body.appendChild(clone);
+
+    var opt = {
+      margin:       0,
+      filename:     'mi_pase_qr.pdf',
+      image:        { type: 'png', quality: 1 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(clone).save().then(function() {
+      document.body.removeChild(clone);
+    }).catch(function(err) {
+      console.error("Error al generar PDF:", err);
+      alert("Error al generar el PDF. Intenta de nuevo.");
+    });
   });
 </script>
 <?php endif; ?>

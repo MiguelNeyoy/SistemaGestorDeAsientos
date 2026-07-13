@@ -88,4 +88,22 @@ class ControladorAdministrador
         $resultado = $servicio->publicarResultados($publicado);
         echo json_encode($resultado);
     }
+
+    public function enviarQRs()
+    {
+        $input = json_decode(file_get_contents('php://input'), true) ?? [];
+        require_once __DIR__ . '/../servicios/ServicioCorreo.php';
+        $servicio = new ServicioCorreo();
+        $respuesta = $servicio->enviarQRsPorGrupo($input['carrera'] ?? '', $input['turno'] ?? '');
+        echo json_encode($respuesta);
+    }
+
+    public function enviarQRIndividual()
+    {
+        $input = json_decode(file_get_contents('php://input'), true) ?? [];
+        require_once __DIR__ . '/../servicios/ServicioCorreo.php';
+        $servicio = new ServicioCorreo();
+        $respuesta = $servicio->enviarQRIndividual($input['numCuenta'] ?? '');
+        echo json_encode($respuesta);
+    }
 }
