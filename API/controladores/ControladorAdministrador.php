@@ -106,47 +106,4 @@ class ControladorAdministrador
         $respuesta = $servicio->enviarQRIndividual($input['numCuenta'] ?? '');
         echo json_encode($respuesta);
     }
-
-    public function testConexion()
-    {
-        $resultados = [];
-
-        // 1. PHP curl extension
-        $resultados['curl_extension'] = extension_loaded('curl');
-        $resultados['curl_version'] = $resultados['curl_extension'] ? curl_version()['version'] : null;
-
-        // 2. Raw curl a Resend API
-        if ($resultados['curl_extension']) {
-            $ch = curl_init('https://api.resend.com/');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            $resp = curl_exec($ch);
-            $resultados['curl_resend_http'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $resultados['curl_resend_error'] = curl_error($ch) ?: null;
-            $resultados['curl_resend_body'] = mb_substr($resp, 0, 200);
-            curl_close($ch);
-        }
-
-        // 3. fopen / stream socket (posible fallback de Guzzle)
-        $ctx = stream_context_create(['http' => ['timeout' => 10]]);
-        $fp = @fopen('https://api.resend.com/', 'r', false, $ctx);
-        $resultados['stream_socket'] = $fp !== false;
-        if ($fp) {
-            fclose($fp);
-        }
-
-        // 4. DNS resolution
-        $ip = @gethostbyname('api.resend.com');
-        $resultados['dns_resolve'] = $ip !== 'api.resend.com' ? $ip : null;
-
-        // 5. Config PHP relevante
-        $resultados['allow_url_fopen'] = ini_get('allow_url_fopen');
-        $resultados['open_basedir'] = ini_get('open_basedir') ?: 'sin restriccion';
-        $resultados['disable_functions'] = ini_get('disable_functions') ?: 'ninguna';
-        $resultados['php_version'] = PHP_VERSION;
-
-        echo json_encode(['success' => true, 'data' => $resultados], JSON_PRETTY_PRINT);
-    }
 }

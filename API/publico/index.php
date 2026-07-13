@@ -8,6 +8,10 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
+foreach ($_ENV as $key => $value) {
+    $_SERVER[$key] = $value;
+}
+
 require_once __DIR__ . '/../controladores/ControladorAlumno.php';
 require_once __DIR__ . '/../controladores/ControladorAsientos.php';
 require_once __DIR__ . '/../controladores/ControladorQr.php';
@@ -105,9 +109,6 @@ $rutas = [
     ],
     '/admin/enviar-qr-individual' => [
         'POST' => ['ControladorAdministrador', 'enviarQRIndividual']
-    ],
-    '/admin/test-conexion' => [
-        'GET' => ['ControladorAdministrador', 'testConexion']
     ]
 ];
 
