@@ -137,7 +137,7 @@ foreach ($rutas as $rutaDefinida => $metodosPermitidos) {
 
             // ------------- VALIDACION JWT -------------
             $rutasProtegidasAlumno = ['/alumnos/asistencia', '/alumnos/correo', '/alumnos/estado', '/asientos/misAsiento', '/asientos/mapa/{evento}', '/alumnos/qr'];
-            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/admin/confirmaciones/reset', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar', '/admin/qr/marcar', '/admin/qr/reset-evento', '/admin/alumnos/exportar-pdf/{evento}', '/admin/alumnos/eliminar', '/admin/asignacion/limpiar', '/admin/asignacion/ejecutar', '/admin/asignacion/estado', '/admin/asignacion/publicar', '/admin/enviar-qrs', '/admin/enviar-qr-individual', '/admin/test-conexion'];
+            $rutasProtegidasAdmin = [ '/admin/alumnos', '/admin/metricas', '/admin/alumnos/editar', '/admin/confirmaciones/reset', '/asientos/reiniciar/{evento}', '/admin/qr/toggle-grupo', '/admin/qr/estado-grupo', '/admin/qr/validar', '/admin/qr/marcar', '/admin/qr/reset-evento', '/admin/alumnos/exportar-pdf/{evento}', '/admin/alumnos/eliminar', '/admin/asignacion/limpiar', '/admin/asignacion/ejecutar', '/admin/asignacion/estado', '/admin/asignacion/publicar', '/admin/enviar-qrs', '/admin/enviar-qr-individual'];
 
             if (in_array($rutaDefinida, $rutasProtegidasAlumno) || in_array($rutaDefinida, $rutasProtegidasAdmin)) {
                 $headers = null;
