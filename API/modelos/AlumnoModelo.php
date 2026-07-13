@@ -19,7 +19,12 @@ class AlumnoModel
 
     public function obtenerAlumnos()
     {
-        $sql = 'SELECT a.*, asi.estado as asistencia_estado,
+        $sql = 'SELECT a.*,
+                       CASE
+                           WHEN asi.estado IS NULL THEN 0
+                           WHEN asi.estado = 1 THEN 1
+                           WHEN asi.estado = 0 THEN 2
+                       END as asistencia_estado,
                        COALESCE(ali.letra, alisi.letra) as letra,
                        COALESCE(ali.numero, alisi.numero) as numero,
                        COALESCE(ali.idAsiento, alisi.idAsiento) as idAsiento

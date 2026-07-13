@@ -213,6 +213,54 @@ class ServicioAsientos
         }
     }
 
+    public function reAsignarEvento($numCuenta)
+    {
+        try {
+            $alumno = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
+            if (!$alumno) {
+                return $this->respuesta(false, "Alumno no encontrado", 404);
+            }
+
+            $evento = $this->determinarEvento($alumno['carrera']);
+            $tabla = 'asiento_evento_' . $evento;
+
+            $todosConfirmados = $this->modelo->obtenerAlumnosConfirmadosPorEvento();
+
+            $alumnosEvento = array_filter($todosConfirmados, function ($a) use ($evento) {
+                return $this->determinarEvento($a['carrera']) === $evento;
+            });
+            $alumnosEvento = array_values($alumnosEvento);
+
+            if (empty($alumnosEvento)) {
+                return $this->respuesta(false, "No hay alumnos confirmados en este evento", 400);
+            }
+
+            $this->modelo->limpiarTabla($tabla);
+
+            $asientos = $this->modelo->obtenerAsientosDisponibles($tabla);
+            $total = min(count($alumnosEvento), count($asientos));
+
+            for ($i = 0; $i < $total; $i += 50) {
+                $batch = [];
+                $limit = min(50, $total - $i);
+                for ($j = 0; $j < $limit; $j++) {
+                    $idx = $i + $j;
+                    $batch[] = [
+                        'numCuenta' => $alumnosEvento[$idx]['numCuenta'],
+                        'idAsiento' => $asientos[$idx]['idAsiento']
+                    ];
+                }
+                $this->modelo->asignarBatch($tabla, $batch);
+            }
+
+            $this->modelo->guardarFechaAsignacion();
+
+            return $this->respuesta(true, "Asientos reasignados correctamente para el evento " . strtoupper($evento), 200);
+        } catch (Exception $e) {
+            return $this->respuesta(false, "Error en ServicioAsientos: Fallo en reAsignarEvento. Detalle: " . $e->getMessage(), 500);
+        }
+    }
+
     private function determinarEvento($carrera)
     {
         $carLower = strtolower(trim($carrera));

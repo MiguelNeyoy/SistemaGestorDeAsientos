@@ -114,6 +114,17 @@ class ControladorAlumno
         }
 
         $asistencia = $respuesta['data']['asistencia'] ?? '';
+
+        if ($asistencia === 'No') {
+            $respuesta = [
+                'success' => false,
+                'message' => 'Indicaste que no asistirás a la clausura',
+                'confirmacion_no' => true
+            ];
+            http_response_code(403);
+            return;
+        }
+
         if ($asistencia !== 'Pendiente') {
             return;
         }

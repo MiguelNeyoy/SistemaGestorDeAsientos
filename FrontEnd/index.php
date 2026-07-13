@@ -76,6 +76,11 @@ if (isset($_POST['buscar'])) {
                 exit;
             }
 
+            if (isset($data['confirmacion_no']) && $data['confirmacion_no'] === true) {
+                header("Location: confirmacion_no");
+                exit;
+            }
+
             if (
                 isset($data['success']) &&
                 $data['success'] === true &&
@@ -154,6 +159,11 @@ if (isset($_POST['buscar'])) {
 
                 if (isset($data['registro_cerrado']) && $data['registro_cerrado'] === true) {
                     header("Location: registro_cerrado");
+                    exit;
+                }
+
+                if (isset($data['confirmacion_no']) && $data['confirmacion_no'] === true) {
+                    header("Location: confirmacion_no");
                     exit;
                 }
 

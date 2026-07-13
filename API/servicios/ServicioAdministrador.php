@@ -128,34 +128,28 @@ class ServicioAdministrador
 
         // 2. Lógica de Asistencia y Número de invitados
         if (isset($data['asistencia_estado']) && isset($data['num_invitados'])) {
-            $estado = (int) $data['asistencia_estado']; // 1 o 0
-            $invitados = (int) $data['num_invitados'];
+            $prevEstado = $this->modeloAlumno->verificarConfirmacion($data['numCuenta']);
+
+            $dropdownVal = (int) $data['asistencia_estado'];
+            $estado = ($dropdownVal === 1) ? 1 : 0;
+            $invitados = ($estado === 0) ? 0 : (int) $data['num_invitados'];
 
             if ($invitados < 0 || $invitados > 4) {
                 return $this->respuesta(false, "El límite de invitados es 4", 400);
             }
 
-            if ($estado === 0) {
-                $invitados = 0;
-            }
-
-            // Actualizar la confirmación/estado y cantidad de invitados directamente en la BD
             $resultado = $this->modeloAlumno->actualizarConfirmacion($data['numCuenta'], $estado, $invitados);
 
             if (!$resultado || (is_array($resultado) && !$resultado['success'])) {
                 return $this->respuesta(false, "Error al actualizar la asistencia", 500);
             }
 
-            // --- INICIO LOGICA DE ASIENTOS COMPENDIDA ---
-            // Aqui se requerira instanciar el ServicioAsientos o llamar la logica
-            // para asignar o liberar el lugar del alumno y de sus invitados. 
-            // Esto depende del cambio de 'estado' (0 a 1 o viceversa), así que quedará en espera.
-            // Ejemplo de uso a futuro:
-            // if ($estado === 1) {
-            //     $this->reservarAsientosTeatro($data['numCuenta'], $invitados + 1);
-            // } else {
-            //     $this->liberarAsientosTeatro($data['numCuenta']);
-            // }
+            if ($estado === 1 && ($prevEstado === false || $prevEstado === 0)) {
+                $servicioAsientos = new ServicioAsientos();
+                $servicioAsientos->reAsignarEvento($data['numCuenta']);
+            } elseif ($estado === 0 && $prevEstado === 1) {
+                $this->modeloAsiento->liberarAsientoPorAlumno($data['numCuenta']);
+            }
         }
 
         return $this->respuesta(true, "Datos del alumno actualizados correctamente", 200);
