@@ -117,7 +117,7 @@ if (isset($_POST['confirmar'])) {
                 $evRedirect = (strpos($carreraAl, 'informática') !== false || strpos($carreraAl, 'informatica') !== false) ? 'li' : 'lisi';
                 header("Location: home_alumno?evento=" . $evRedirect);
             } else {
-                header("Location: view_confirmacion");
+                header("Location: confirmacion_no");
             }
             exit;
         } else {
@@ -346,18 +346,16 @@ if (isset($_POST['actualizar_correo'])) {
                 <p style="color:<?php echo $colorMsg; ?>;"><?php echo htmlspecialchars($mensajeConfirmacion); ?></p>
             <?php endif; ?>
 
-        <?php } else { ?>
+        <?php } elseif ($estadoAsistencia == "Si") { ?>
 
             <!-- ESTADO -->
             <div class="estado">
                 <h3>Tu estado actual</h3>
 
-                <p>Asistencia: <strong><?php echo htmlspecialchars($estadoAsistencia); ?></strong></p>
+                <p>Asistencia: <strong>Si</strong></p>
 
-            <?php if ($estadoAsistencia == "Si") { ?>
-                    <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
-                    <p>Tu asiento se asignará al cerrar el registro.</p>
-                <?php } ?> 
+                <p>Correo: <?php echo htmlspecialchars(isset($alumno['email']) ? $alumno['email'] : ""); ?></p>
+                <p>Tu asiento se asignará al cerrar el registro.</p>
 
                 <!-- Mensaje de resultado de actualización de correo -->
                 <?php if (!empty($mensajeCorreo)): ?>
@@ -374,6 +372,16 @@ if (isset($_POST['actualizar_correo'])) {
                     </a>
                 </div>
 
+                <br>
+                <p style="text-align: center;"><a href="index">Regresar al inicio</a></p>
+            </div>
+
+        <?php } elseif ($estadoAsistencia == "No") { ?>
+
+            <div class="estado">
+                <h3>Tu estado actual</h3>
+                <p>Asistencia: <strong>No</strong></p>
+                <p>Si cambias de opinión, acércate al departamento de Control Escolar de tu facultad.</p>
                 <br>
                 <p style="text-align: center;"><a href="index">Regresar al inicio</a></p>
             </div>

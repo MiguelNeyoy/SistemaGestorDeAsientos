@@ -211,6 +211,32 @@ class ModeloAsiento
         }
     }
 
+    public function obtenerPrimerAsientoDisponible($tabla)
+    {
+        try {
+            $tabla = $this->validarTabla($tabla);
+            $sql = "SELECT idAsiento FROM {$tabla} WHERE numCuenta IS NULL ORDER BY letra ASC, numero ASC LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Error en ModeloAsiento: Fallo al buscar asiento disponible - " . $e->getMessage());
+        }
+    }
+
+    public function asignarAsientoIndividual($tabla, $numCuenta, $idAsiento)
+    {
+        try {
+            $tabla = $this->validarTabla($tabla);
+            $sql = "UPDATE {$tabla} SET numCuenta = ?, estado = 1 WHERE idAsiento = ? AND numCuenta IS NULL";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$numCuenta, $idAsiento]);
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            throw new Exception("Error en ModeloAsiento: Fallo al asignar asiento individual - " . $e->getMessage());
+        }
+    }
+
     public function getDb()
     {
         return $this->db;
