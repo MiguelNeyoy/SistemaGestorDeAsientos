@@ -87,7 +87,7 @@ if (!isset($error)) {
     }
   </style>
 </head>
-<body class="bg-light">
+<body class="bg-light"> 
 
 <div class="container mt-5">
   <a href="home_alumno.php" class="btn btn-outline-primary mb-3">← Regresar</a>
@@ -142,7 +142,7 @@ if (!isset($error)) {
 </div>
 
 <?php if (!isset($error)): ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-5EJwY71EN4A3x5OYdpP2+OYvBxUbzH3CF5sYIOzTMk7kLB/7SIDlJLl7Y7tRP67iqRYVtXe3yJN4RrSFH4lX2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 <script>
   // Generar QR dinámico
   var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -167,15 +167,24 @@ if (!isset($error)) {
     ?>
     document.getElementById("ticket-horario").textContent = "Horario: <?php echo $horario; ?>";
 
-    var element = document.getElementById("ticket-content");
+    var original = document.getElementById("ticket-content");
+    var clone = original.cloneNode(true);
+    clone.style.position = "static";
+    clone.style.left = "auto";
+    clone.style.display = "block";
+    clone.style.margin = "20px auto";
+    document.body.appendChild(clone);
+
     var opt = {
       margin:       0,
       filename:     'mi_pase_qr.pdf',
       image:        { type: 'png', quality: 1 },
-      html2canvas:  { scale: 2, useCORS: true, allowTaint: false },
+      html2canvas:  { scale: 2 },
       jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(element).save().catch(function(err) {
+    html2pdf().set(opt).from(clone).save().then(function() {
+      document.body.removeChild(clone);
+    }).catch(function(err) {
       console.error("Error al generar PDF:", err);
       alert("Error al generar el PDF. Intenta de nuevo.");
     });
