@@ -40,6 +40,13 @@ class GrupoModelo {
         return $stmt->execute();
     }
 
+    public function listarNombresCortos()
+    {
+        $query = "SELECT DISTINCT nombre_corto FROM " . $this->table . " ORDER BY nombre_corto";
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     /**
      * Obtiene las combinaciones de carrera/turno asociadas a un nombre corto
      */

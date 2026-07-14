@@ -16,7 +16,7 @@ export function filterStudents(students, filterType, searchText = '') {
                 case 'LI':
                     return studentGrupo.startsWith('LI4-');
                 case 'LISI':
-                    return studentGrupo.startsWith('LISI4-');
+                    return studentGrupo.startsWith('LISI');
                 case 'CONFIRMADOS':
                     return s.asistencia_estado == 1;
                 case 'RECHAZADOS':

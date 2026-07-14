@@ -121,30 +121,7 @@
                         <span>Asientos Ocupados (<span id="metric-asientos">0</span>)</span>
                     </div>
                 </li>
-                <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-li41" data-filter="LI4-1">
-                        <span class="admin-icon admin-icon--student"></span>
-                        <span>LI 4-1 (<span id="metric-grupo-LI4-1">0</span>)</span>
-                    </a>
-                </li>
-                <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-li42" data-filter="LI4-2">
-                        <span class="admin-icon admin-icon--student"></span>
-                        <span>LI 4-2 (<span id="metric-grupo-LI4-2">0</span>)</span>
-                    </a>
-                </li>
-                <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-lisi41" data-filter="LISI4-1">
-                        <span class="admin-icon admin-icon--student"></span>
-                        <span>LISI 4-1 (<span id="metric-grupo-LISI4-1">0</span>)</span>
-                    </a>
-                </li>
-                <li class="admin-sidebar__item">
-                    <a href="#" class="admin-sidebar__link" id="link-filter-lisi42" data-filter="LISI4-2">
-                        <span class="admin-icon admin-icon--student"></span>
-                        <span>LISI 4-2 (<span id="metric-grupo-LISI4-2">0</span>)</span>
-                    </a>
-                </li>
+                <li id="gruposFilterContainer"></li>
                 <li class="admin-sidebar__item">
                     <a href="#" class="admin-sidebar__link" id="link-filter-rechazados" data-filter="RECHAZADOS">
                         <span class="admin-icon admin-icon--student-disable"

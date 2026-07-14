@@ -14,7 +14,12 @@ if (!isset($_SESSION['jwt_token']) || empty($_SESSION['jwt_token'])) {
 $tipoUsuario = 'alumno';
 $token = $_SESSION['jwt_token'];
 
-$eventoInput = $_GET['evento'] ?? 'li';
+$eventoInput = $_GET['evento'] ?? null;
+if (!$eventoInput) {
+    $parts = explode('.', $token);
+    $payload = json_decode(base64_decode($parts[1]), true);
+    $eventoInput = $payload['data']['evento_id'] ?? 'li';
+}
 $evento = ($eventoInput === 'lisi') ? 'lisi' : 'li';
 
 $miAsiento = null;

@@ -5,6 +5,7 @@ import { initMetrics } from './modules/metrics.js';
 import { initQRScanner } from './modules/qrscanner.js';
 import { initEditModal } from './modules/modal_editar.js';
 import { initBulkQR } from './modules/bulk_qr.js';
+import { initSidebarGrupos } from './modules/sidebar-grupos.js';
 import { initMap, show as showMap, hide as hideMap } from './modules/map.js';
 import { initEliminar } from './modules/eliminar.js';
 import { resetQrEvento, resetearConfirmaciones, limpiarAsignaciones, ejecutarAsignacion, estadoAsignacion, publicarResultados } from './modules/api.js';
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initBulkQR();
         initMap();
         initEliminar();
+        initSidebarGrupos();
         setupEmailFormListener();
 
         // 2. Global UI Listeners

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../modelos/AlumnoModelo.php';
 require_once __DIR__ . '/../modelos/AdministradorModelo.php';
 require_once __DIR__ . '/../modelos/ModeloAsiento.php';
+require_once __DIR__ . '/../modelos/GrupoModelo.php';
 
 use Firebase\JWT\JWT;
 
@@ -58,17 +59,21 @@ class ServicioAdministrador
         return $this->respuesta(true, "Listado de alumnos", 200, $alumnos);
     }
 
+    public function listarGrupos()
+    {
+        $grupoModelo = new GrupoModelo();
+        $nombresCortos = $grupoModelo->listarNombresCortos();
+        return $this->respuesta(true, "Grupos obtenidos", 200, $nombresCortos);
+    }
+
     public function obtenerMetricas()
     {
         $alumnosConfirmados = $this->modeloAdmin->obtenerAlumnosConfirmados();
 
         $total_invitados = 0;
-        $por_grupo = [
-            'LI4-1' => 0,
-            'LI4-2' => 0,
-            'LISI4-1' => 0,
-            'LISI4-2' => 0
-        ];
+        $grupoModelo = new GrupoModelo();
+        $nombresCortos = $grupoModelo->listarNombresCortos();
+        $por_grupo = array_fill_keys($nombresCortos, 0);
         $individual = [];
 
         foreach ($alumnosConfirmados as $alumno) {
@@ -105,6 +110,10 @@ class ServicioAdministrador
         $prefix = 'LISI'; // Por defecto Licenciatura en Ingeniería (Sistemas)
         if (strpos($carLower, 'informática') !== false || strpos($carLower, 'informatica') !== false) {
             $prefix = 'LI';
+        }
+
+        if (strpos($carLower, 'virtual') !== false) {
+            return $prefix === 'LI' ? 'LI-V' : 'LISI-V';
         }
 
         $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';
