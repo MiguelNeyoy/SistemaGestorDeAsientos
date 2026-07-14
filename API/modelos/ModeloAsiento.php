@@ -31,7 +31,7 @@ class ModeloAsiento
                     LEFT JOIN alumno al ON a.numCuenta = al.numCuenta
                     LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
                     LEFT JOIN qr q ON a.numCuenta = q.numCuenta
-                    ORDER BY a.letra, a.numero";
+                    ORDER BY a.letra, CAST(a.numero AS UNSIGNED)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -53,7 +53,7 @@ class ModeloAsiento
                     LEFT JOIN alumno al ON a.numCuenta = al.numCuenta
                     LEFT JOIN asistencia asi ON a.numCuenta = asi.numCuenta
                     LEFT JOIN qr q ON a.numCuenta = q.numCuenta
-                    ORDER BY a.letra, a.numero";
+                    ORDER BY a.letra, CAST(a.numero AS UNSIGNED)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -123,7 +123,7 @@ class ModeloAsiento
     {
         try {
             $tabla = $this->validarTabla($tabla);
-            $sql = "SELECT idAsiento FROM {$tabla} ORDER BY letra ASC, numero ASC";
+            $sql = "SELECT idAsiento FROM {$tabla} ORDER BY letra ASC, CAST(numero AS UNSIGNED) ASC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -215,7 +215,7 @@ class ModeloAsiento
     {
         try {
             $tabla = $this->validarTabla($tabla);
-            $sql = "SELECT idAsiento FROM {$tabla} WHERE numCuenta IS NULL ORDER BY letra ASC, numero ASC LIMIT 1";
+            $sql = "SELECT idAsiento FROM {$tabla} WHERE numCuenta IS NULL ORDER BY letra ASC, CAST(numero AS UNSIGNED) ASC LIMIT 1";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
