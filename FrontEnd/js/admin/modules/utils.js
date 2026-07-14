@@ -12,6 +12,9 @@ export function getGrupo(carrera, turno) {
     if (carLower.includes('informática') || carLower.includes('informatica')) {
         prefix = 'LI';
     }
+    if (carLower.includes('virtual')) {
+        return prefix === 'LI' ? 'LI-V' : 'LISI-V';
+    }
     
     const turnoNum = (turnoUpper === 'M' || turnoUpper === '1') ? '1' : '2';
     
