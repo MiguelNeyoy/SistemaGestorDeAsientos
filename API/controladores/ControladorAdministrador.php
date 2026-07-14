@@ -25,6 +25,12 @@ class ControladorAdministrador
         echo json_encode($respuesta);
     }
 
+    public function listarGrupos()
+    {
+        $respuesta = $this->servicioAdmin->listarGrupos();
+        echo json_encode($respuesta);
+    }
+
     public function obtenerMetricas()
     {
         $respuesta = $this->servicioAdmin->obtenerMetricas();

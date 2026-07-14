@@ -103,6 +103,10 @@ class ServicioAsientos
             $prefix = 'LI';
         }
 
+        if (strpos($carLower, 'virtual') !== false) {
+            return 'LISI-V';
+        }
+
         $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';
 
         return "{$prefix}4-{$turnoNum}";
