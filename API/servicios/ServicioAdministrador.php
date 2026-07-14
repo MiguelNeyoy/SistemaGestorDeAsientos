@@ -113,7 +113,7 @@ class ServicioAdministrador
         }
 
         if (strpos($carLower, 'virtual') !== false) {
-            return 'LISI-V';
+            return $prefix === 'LI' ? 'LI-V' : 'LISI-V';
         }
 
         $turnoNum = ($turnoUpper === 'M' || $turnoUpper === '1') ? '1' : '2';
