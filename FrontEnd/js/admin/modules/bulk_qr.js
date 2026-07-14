@@ -2,6 +2,7 @@ import { state } from '../store/state.js';
 import { toggleGrupoQR, fetchEstadoGrupo } from './api.js';
 import { toast } from '../../core/toast.js';
 import { refreshData } from './dashboard.js';
+import { getGrupos } from './sidebar-grupos.js';
 
 /**
  * Logic for the Bulk QR Access feature.
@@ -12,7 +13,7 @@ export function initBulkQR() {
     
     // Subscribe to filter changes to show/hide the action button
     state.subscribe('filterType', async (type) => {
-        const isGroup = ['LI4-1', 'LI4-2', 'LISI4-1', 'LISI4-2'].includes(type);
+        const isGroup = getGrupos().includes(type);
         
         if (isGroup && container) {
             const estado = await fetchEstadoGrupo(type);

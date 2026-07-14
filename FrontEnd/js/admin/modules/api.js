@@ -42,6 +42,12 @@ export async function fetchEstadoGrupo(grupo) {
     return data.success ? data.data : null;
 }
 
+export async function fetchGrupos() {
+    const response = await coreFetch('/admin/grupos');
+    const data = await response.json();
+    return data.success ? data.data : [];
+}
+
 export async function validarQR(token) {
     const response = await coreFetch('/admin/qr/validar', {
         method: 'POST',
