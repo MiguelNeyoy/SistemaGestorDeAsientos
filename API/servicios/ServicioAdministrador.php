@@ -112,6 +112,18 @@ class ServicioAdministrador
         return "{$prefix}4-{$turnoNum}";
     }
 
+    /**
+     * Determina el evento ('li' o 'lisi') basado en la carrera del alumno.
+     */
+    private function determinarEventoAlumno($carrera)
+    {
+        $carLower = strtolower(trim($carrera));
+        if (strpos($carLower, 'informática') !== false || strpos($carLower, 'informatica') !== false) {
+            return 'li';
+        }
+        return 'lisi';
+    }
+
     public function editarAlumno($data)
     {
         if (empty($data['numCuenta'])) {
@@ -149,6 +161,13 @@ class ServicioAdministrador
                 $servicioAsientos->reAsignarEvento($data['numCuenta']);
             } elseif ($estado === 0 && $prevEstado === 1) {
                 $this->modeloAsiento->liberarAsientoPorAlumno($data['numCuenta']);
+                // Compactar asientos del evento afectado para eliminar huecos
+                $alumnoInfo = $this->modeloAlumno->buscarPorNumeroCuenta($data['numCuenta']);
+                if ($alumnoInfo && !empty($alumnoInfo['carrera'])) {
+                    $servicioAsientos = new ServicioAsientos();
+                    $evento = $this->determinarEventoAlumno($alumnoInfo['carrera']);
+                    $servicioAsientos->compactarEvento($evento);
+                }
             }
         }
 
@@ -198,9 +217,17 @@ class ServicioAdministrador
         $alumnos = $data['alumnos'];
         $eliminados = [];
         $errores = [];
+        $eventosAfectados = [];
 
         foreach ($alumnos as $numCuenta) {
             try {
+                // Determinar evento del alumno ANTES de eliminarlo para poder compactar después
+                $alumnoInfo = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
+                if ($alumnoInfo && !empty($alumnoInfo['carrera'])) {
+                    $evento = $this->determinarEventoAlumno($alumnoInfo['carrera']);
+                    $eventosAfectados[$evento] = true;
+                }
+
                 $db = $this->modeloAlumno->getDb();
                 $db->beginTransaction();
 
@@ -219,6 +246,14 @@ class ServicioAdministrador
             } catch (Exception $e) {
                 $db?->rollBack();
                 $errores[] = ['numCuenta' => $numCuenta, 'error' => $e->getMessage()];
+            }
+        }
+
+        // Compactar asientos de los eventos afectados para eliminar huecos
+        if (count($eliminados) > 0 && !empty($eventosAfectados)) {
+            $servicioAsientos = new ServicioAsientos();
+            foreach (array_keys($eventosAfectados) as $evento) {
+                $servicioAsientos->compactarEvento($evento);
             }
         }
 

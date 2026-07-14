@@ -213,15 +213,19 @@ class ServicioAsientos
         }
     }
 
-    public function reAsignarEvento($numCuenta)
+    /**
+     * Compacta los asientos de un evento, eliminando huecos.
+     * Limpia la tabla y reasigna todos los alumnos confirmados en orden consecutivo.
+     * Se puede llamar directamente con el nombre del evento sin necesitar un numCuenta.
+     */
+    public function compactarEvento($evento)
     {
         try {
-            $alumno = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
-            if (!$alumno) {
-                return $this->respuesta(false, "Alumno no encontrado", 404);
+            $evento = strtolower(trim($evento));
+            if (!in_array($evento, ['li', 'lisi'])) {
+                return $this->respuesta(false, "Evento inválido. Debe ser 'li' o 'lisi'.", 400);
             }
 
-            $evento = $this->determinarEvento($alumno['carrera']);
             $tabla = 'asiento_evento_' . $evento;
 
             $todosConfirmados = $this->modelo->obtenerAlumnosConfirmadosPorEvento();
@@ -231,11 +235,11 @@ class ServicioAsientos
             });
             $alumnosEvento = array_values($alumnosEvento);
 
-            if (empty($alumnosEvento)) {
-                return $this->respuesta(false, "No hay alumnos confirmados en este evento", 400);
-            }
-
             $this->modelo->limpiarTabla($tabla);
+
+            if (empty($alumnosEvento)) {
+                return $this->respuesta(true, "Evento compactado (sin alumnos confirmados)", 200);
+            }
 
             $asientos = $this->modelo->obtenerAsientosDisponibles($tabla);
             $total = min(count($alumnosEvento), count($asientos));
@@ -253,9 +257,26 @@ class ServicioAsientos
                 $this->modelo->asignarBatch($tabla, $batch);
             }
 
+            return $this->respuesta(true, "Asientos compactados correctamente para " . strtoupper($evento), 200);
+        } catch (Exception $e) {
+            return $this->respuesta(false, "Error en ServicioAsientos: Fallo al compactar evento. Detalle: " . $e->getMessage(), 500);
+        }
+    }
+
+    public function reAsignarEvento($numCuenta)
+    {
+        try {
+            $alumno = $this->modeloAlumno->buscarPorNumeroCuenta($numCuenta);
+            if (!$alumno) {
+                return $this->respuesta(false, "Alumno no encontrado", 404);
+            }
+
+            $evento = $this->determinarEvento($alumno['carrera']);
+            $resultado = $this->compactarEvento($evento);
+
             $this->modelo->guardarFechaAsignacion();
 
-            return $this->respuesta(true, "Asientos reasignados correctamente para el evento " . strtoupper($evento), 200);
+            return $resultado;
         } catch (Exception $e) {
             return $this->respuesta(false, "Error en ServicioAsientos: Fallo en reAsignarEvento. Detalle: " . $e->getMessage(), 500);
         }
