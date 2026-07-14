@@ -13,7 +13,7 @@ export function initBulkQR() {
     
     // Subscribe to filter changes to show/hide the action button
     state.subscribe('filterType', async (type) => {
-        const isGroup = getGrupos().includes(type);
+        const isGroup = (await getGrupos()).includes(type);
         
         if (isGroup && container) {
             const estado = await fetchEstadoGrupo(type);

@@ -3,6 +3,8 @@ import { fetchGrupos } from './api.js';
 import { hide as hideMap } from './map.js';
 
 let gruposList = [];
+let resolveReady;
+const readyPromise = new Promise(r => { resolveReady = r; });
 
 export async function initSidebarGrupos() {
     try {
@@ -11,13 +13,16 @@ export async function initSidebarGrupos() {
         gruposList = [];
     }
     renderGrupos();
+    if (resolveReady) resolveReady();
 }
 
 function renderGrupos() {
-    const container = document.getElementById('gruposFilterContainer');
-    if (!container) return;
+    const placeholder = document.getElementById('gruposFilterContainer');
+    if (!placeholder) return;
 
-    container.innerHTML = gruposList.map(grupo => `
+    const parentUl = placeholder.parentElement;
+
+    placeholder.outerHTML = gruposList.map(grupo => `
         <li class="admin-sidebar__item">
             <a href="javascript:void(0)" class="admin-sidebar__link" data-filter="${grupo}">
                 <span class="admin-icon admin-icon--student"></span>
@@ -26,7 +31,10 @@ function renderGrupos() {
         </li>
     `).join('');
 
-    container.querySelectorAll('[data-filter]').forEach(link => {
+    if (!parentUl) return;
+
+    parentUl.querySelectorAll('[data-filter]').forEach(link => {
+        if (link.onclick) return;
         link.addEventListener('click', (e) => {
             e.preventDefault();
             document.querySelectorAll('.admin-sidebar__link').forEach(l =>
@@ -38,6 +46,7 @@ function renderGrupos() {
     });
 }
 
-export function getGrupos() {
+export async function getGrupos() {
+    await readyPromise;
     return gruposList;
 }
